@@ -1,0 +1,107 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>*{box-sizing:border-box}body{margin:0}</style></head><body><title>Chispa y Cerilla</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Alegreya+Sans:wght@400;700;800&display=swap">
+<style>
+/* Layout: one framed film stage, centered; touch pad and live control legend stacked beneath */
+:root{
+  --bg:#1a120c; --paper:#efe0bf; --ink:#140d08; --rust:#b5402f; --brass:#d9a441; --muted:#a8916b; --frame:#3a2717; --parry:#2ec4b6;
+  --display:"Rye",Georgia,"Times New Roman",serif;
+  --body:"Alegreya Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+html,body{background:var(--bg);color:var(--paper)}
+body{font-family:var(--body);font-size:16px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 32px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 16px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(24px,4.4vw,38px);margin:0;letter-spacing:.02em;color:var(--paper);text-wrap:balance}
+h1 span{color:var(--brass)}
+.reel{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.stage{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;background:var(--ink);
+  border:4px solid var(--ink);outline:3px solid var(--frame);outline-offset:3px;border-radius:6px;overflow:hidden}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:pointer}
+canvas:focus-visible{outline:3px solid var(--brass);outline-offset:-3px}
+.touch{display:none;justify-content:space-between;gap:12px;user-select:none;-webkit-user-select:none;flex-wrap:wrap}
+@media (pointer:coarse){.touch{display:flex}}
+.pad{display:flex;gap:8px;flex-wrap:wrap}
+.pad.r{justify-content:flex-end}
+.touch button{font-family:var(--display);font-size:14px;min-width:54px;min-height:54px;padding:0 9px;border-radius:12px;
+  border:3px solid var(--ink);background:var(--paper);color:var(--ink);box-shadow:0 4px 0 var(--ink);touch-action:none}
+.touch button.hot{background:var(--brass)}
+.touch button[data-a="shoot"]{background:#f0c95c}
+.touch button[data-a="jump"]{background:#bfe3d9}
+.touch button:active,.touch button.on{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--muted)}
+.legend .row{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center}
+.legend .who{font-family:var(--display);color:var(--paper);min-width:92px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+kbd{font-family:var(--body);font-weight:800;font-size:12px;letter-spacing:.04em;color:var(--ink);background:var(--paper);
+  border-radius:5px;padding:2px 7px;box-shadow:0 2px 0 #8a7650}
+.note{font-size:14px;color:var(--muted);margin:0;max-width:72ch}
+.note b{color:var(--parry)}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Chispa <span>y</span> Cerilla</h1>
+    <div class="reel">Rollo n.º 9 · 4 islas y un casino · 35 jefes con mecánicas · 14 niveles · 5 mausoleos · 15 súpers · hasta 3 jugadores · ¡en línea!</div>
+  </header>
+
+  <div class="stage">
+    <canvas id="game" tabindex="0" aria-label="Juego: Chispa y Cerilla contra el Rey Apagón"></canvas>
+  </div>
+
+  <div class="touch" id="touch">
+    <div class="pad">
+      <button data-a="left" aria-label="Izquierda">◀</button>
+      <button data-a="up" aria-label="Arriba">▲</button>
+      <button data-a="down" aria-label="Abajo">▼</button>
+      <button data-a="right" aria-label="Derecha">▶</button>
+      <button data-a="pause" aria-label="Pausa">II</button>
+    </div>
+    <div class="pad r">
+      <button data-a="swap">ARMA</button>
+      <button data-a="dash">DASH</button>
+      <button data-a="ex" id="exBtn">EX</button>
+      <button data-a="shoot">FUEGO</button>
+      <button data-a="jump">SALTO</button>
+    </div>
+  </div>
+
+  <div class="legend" id="legend" aria-live="polite"></div>
+  <p class="note">Todo lo que brilla en <b>turquesa</b> acepta parry: pulsa saltar justo cuando lo tocas (en el aire o desde el suelo). Cada parry llena una carta de súper. En 2 o 3 jugadores, si un compañero cae, haz parry a su alma antes de que salga de la pantalla para revivirlo. Cambia jugadores, personaje, volumen y teclas en Opciones. También funcionan los mandos.</p>
+  <p class="note"><b>En línea:</b> en el menú elige EN LÍNEA → CREAR PARTIDA y pásales el código a tus amigos; ellos abren este mismo juego, eligen UNIRSE CON CÓDIGO y lo escriben. Hasta 3 jugadores (Chispa, Cerilla y Velita), sin cuenta.</p>
+  <p class="note">Música: grabaciones de Kevin MacLeod (<a href="https://incompetech.com" style="color:inherit">incompetech.com</a>), licencia <a href="https://creativecommons.org/licenses/by/4.0/" style="color:inherit">Creative Commons Atribución 4.0</a>, convertidas a mono. Lista completa en Créditos. En Opciones puedes cambiar a la música sintetizada o cargar la tuya.</p>
+</div>
+
+<script src="sfxdata.js"></script>
+<script src="core.js"></script>
+<script src="sfxpack.js"></script>
+<script src="music.js"></script>
+<script src="mymusic.js"></script>
+<script src="pack.js"></script>
+<script src="art.js"></script>
+<script src="engine.js"></script>
+<script src="bosses.js"></script>
+<script src="runs.js"></script>
+<script src="mausoleo.js"></script>
+<script src="mausoleo2.js"></script>
+<script src="arenas.js"></script>
+<script src="extras.js"></script>
+<script src="world.js"></script>
+<script src="cartoon.js"></script>
+<script src="contenido.js"></script>
+<script src="actos.js"></script>
+<script src="pulido.js"></script>
+<script src="isla4.js"></script>
+<script src="isla4b.js"></script>
+<script src="casino.js"></script>
+<script src="casino2.js"></script>
+<script src="mecanicas.js"></script>
+<script src="peerjs.min.js"></script>
+<script src="net.js"></script>
+<script src="perf.js"></script>
+<script src="dlc.js"></script>
+<script src="dlc2.js"></script>
+</body></html>
