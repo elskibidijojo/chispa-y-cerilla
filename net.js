@@ -5,7 +5,7 @@
    The friends find the host with a 4-letter code through the free public PeerJS matchmaking server;
    after that the computers talk to each other directly (or through PeerJS's relay when a network is strict).
    If the video can't get through, the picture is sent as small frames over the same link ("modo lento"). */
-const NET_ALPH='ACDEFHJKMNPRTWXY3479',NET_V=2,NET_BITS=[...ACTS,'start'],NET_PREFIX='chispaycerilla-p2p-';
+const NET_ALPH='ACDEFHJKMNPRTWXY3479',NET_V=3,NET_BITS=[...ACTS,'start'],NET_PREFIX='chispaycerilla-p2p-';
 const NET_CHAR_NAME={chispa:'Chispa',cerilla:'Cerilla',velita:'Velita'};
 const NET={role:null,st:'off',code:'',peer:null,conn:null,call:null,guests:[null,null,null],slot:0,char:null,msg:'',
   ui:'menu',sel:0,entry:'',esel:21,t:0,ping:0,pingT:0,playersWas:null,timers:[],stream:null,adest:null,
@@ -25,7 +25,7 @@ const netInClaude=()=>!!(typeof window!=='undefined'&&window.claude);
 const netRoomName=c=>'cyc3-'+c.toLowerCase();
 function netPres(patch){if(!NET.room)return;try{const p=NET.room.presence(patch);if(p&&p.catch)p.catch(()=>{});}catch(_){}}
 const NET_SX_SKIP=new Set(['move','select','back','deny','card','pause','trans','footstepMap','pageTurn']);NET.sx=[];NET.sxn=0;
-const _netSfx=sfx;sfx=function(n,...a){if(NET.role==='host'&&NET.guests.some(G=>G&&(G.room||G.mq))&&!NET_SX_SKIP.has(n)){const v=a[0],av=v==null||typeof v==='object'?null:v;NET.sx.push([++NET.sxn,n,av]);if(NET.sx.length>8)NET.sx.shift();if(NET.mq&&NET.guests.some(G=>G&&G.mq))NET.mq.pubJ(netTopic(NET.code,'down'),{t:'s',n,a:av});}return _netSfx(n,...a);};
+const _netSfx=sfx;sfx=function(n,...a){if(NET.role==='host'&&NET.guests.some(G=>G&&!G.ls&&(G.room||G.mq))&&!NET_SX_SKIP.has(n)){const v=a[0],av=v==null||typeof v==='object'?null:v;NET.sx.push([++NET.sxn,n,av]);if(NET.sx.length>8)NET.sx.shift();if(NET.mq&&NET.guests.some(G=>G&&G.mq&&!G.ls))NET.mq.pubJ(netTopic(NET.code,'down'),{t:'s',n,a:av});}return _netSfx(n,...a);};
 
 /* ---------- controls packed into one number ---------- */
 function netMask(IN){let m=0;const P=IN.P,MH=IN.MH||{};NET_BITS.forEach((a,i)=>{if(P[0].h[a]||P[1].h[a]||P[2].h[a])m|=1<<i;});
@@ -44,7 +44,7 @@ const _netMusicPlay=Music.play,_netMusicStop=Music.stop;
 Music.play=function(name){NET.mus.name=name;NET.mus.ph=null;NET.mus.v++;return _netMusicPlay.apply(this,arguments);};
 Music.stop=function(){NET.mus.name=null;NET.mus.ph=null;NET.mus.v++;return _netMusicStop.apply(this,arguments);};
 if(typeof musicPhase==='function'){const _mph=musicPhase;musicPhase=function(id,i,n){NET.mus.ph=[id,i,n];NET.mus.v++;return _mph(id,i,n);};}
-function netGuestMusic(name,ph){if(name===undefined)return;
+function netGuestMusic(name,ph){if(name===undefined||(typeof NP!=='undefined'&&NP.on))return;
   if(name!==NET.gMus.name){NET.gMus.name=name;NET.gMus.ph='';try{name?_netMusicPlay.call(Music,name):_netMusicStop.call(Music);}catch(_){}}
   const k=ph?ph.join('|'):'';if(k!==NET.gMus.ph){NET.gMus.ph=k;if(ph&&typeof musicPhase==='function')try{musicPhase(ph[0],ph[1],ph[2]);}catch(_){}}}
 
@@ -79,8 +79,9 @@ function netChanText(){const u=NET.ups||{},ch=[];if(u.p2p)ch.push('directo');if(
 function netBarText(){const c=NET.server>=0?'Servidor '+(NET.server+1):NET.code;if(NET.role==='host'){const g=netGuestsOn();
     if(NET.st==='joining')return`En línea · abriendo la partida…`;
     if(!g.length)return`En línea · ${NET.server>=0?c:'código '+c} · esperando jugadores (1/3)`;
-    return`En línea · ${c} · ${g.length+1}/3 jugadores · `+g.map(x=>NET_CHAR_NAME[netCharOf(x.slot)]+(x.slow&&x.conn?' (lento)':'')+(x.ping?' '+x.ping+' ms':'')).join(' · ');}
+    return`En línea · ${c} · ${g.length+1}/3 jugadores · `+g.map(x=>NET_CHAR_NAME[netCharOf(x.slot)]+(x.ls?' (sincronizado)':x.slow&&x.conn?' (lento)':'')+(x.ping?' '+x.ping+' ms':'')).join(' · ');}
   const who=NET.slot?NET_CHAR_NAME[NET.char]||'':'';
+  if(NET.st==='lock')return`En línea · ${c} · eres ${who} (J${NET.slot+1}) · juego sincronizado${NET.ping?' · '+NET.ping+' ms':''}`;
   if(NET.st==='live')return`En línea · ${c} · eres ${who} (J${NET.slot+1})${NET.ping?' · '+NET.ping+' ms':''}`;
   if(NET.st==='relay')return`En línea · ${c} · ${NET.tr==='room'?'vía Claude':NET.tr==='mqtt'?'vía servidor':'modo lento'} · eres ${who} (J${NET.slot+1})`;
   if(NET.st==='signal')return`En línea · ${c} · conectado, esperando la imagen…`;
@@ -88,7 +89,7 @@ function netBarText(){const c=NET.server>=0?'Servidor '+(NET.server+1):NET.code;
 function netSyncDom(dt){if(NETTOAST_T>0){NETTOAST_T-=dt;if(NETTOAST_T<=0&&NETTOAST)NETTOAST.classList.remove('on');}
   if(!NETBAR)return;const show=!!NET.role&&NET.st!=='off';NETBAR.style.display=show?'flex':'none';
   if(show){const s=netBarText();if(NETBAR_T.textContent!==s)NETBAR_T.textContent=s;NETBAR_B.textContent=NET.role==='host'&&NET.server<0?'Cerrar':'Salir';
-    const ok=NET.role==='host'?netGuestsOn().length>0:NET.st==='live';NETBAR.querySelector('.dot').style.background=ok?'#3fae5a':NET.st==='relay'?'#d9a441':'#9a9282';}
+    const ok=NET.role==='host'?netGuestsOn().length>0:(NET.st==='live'||NET.st==='lock');NETBAR.querySelector('.dot').style.background=ok?'#3fae5a':NET.st==='relay'?'#d9a441':'#9a9282';}
   NETBAR_S.style.display=NET.role==='guest'&&NET.st==='live'&&NET.audioBlocked?'':'none';
   const vid=NET.role==='guest'&&NET.st==='live';if(NETV){NETV.style.display=vid?'block':'none';NETV.volume=muted?0:1;}}
 
@@ -100,11 +101,11 @@ function netPeerErr(e){const t=e&&e.type;
   return'Algo falló al conectar. Inténtalo de nuevo en un momento.';}
 function netNewPeer(id){if(typeof Peer!=='function')return null;try{return id?new Peer(id,{debug:0}):new Peer({debug:0});}catch(_){return null;}}
 function netHostStream(){if(NET.stream&&NET.stream.getVideoTracks()[0]&&NET.stream.getVideoTracks()[0].readyState==='live')return NET.stream;
-  const vs=cv.captureStream(60),vt=vs.getVideoTracks()[0];try{vt.contentHint='motion';}catch(_){}const ms=new MediaStream([vt]);
+  const vs=cv.captureStream(30),vt=vs.getVideoTracks()[0];try{vt.contentHint='motion';}catch(_){}const ms=new MediaStream([vt]);
   if(AC&&AC.createMediaStreamDestination){if(!NET.adest){NET.adest=AC.createMediaStreamDestination();SFXG.connect(NET.adest);}const at=NET.adest.stream.getAudioTracks()[0];if(at)ms.addTrack(at);}
   NET.stream=ms;return ms;}
 function netTune(pc){try{const s=pc.getSenders().find(x=>x.track&&x.track.kind==='video');if(!s)return;const p=s.getParameters();if(!p.encodings||!p.encodings.length)p.encodings=[{}];
-  p.encodings[0].maxBitrate=3000000;p.encodings[0].maxFramerate=60;p.encodings[0].scaleResolutionDownBy=Math.max(1,cv.width/960);p.degradationPreference='maintain-framerate';
+  p.encodings[0].maxBitrate=1500000;p.encodings[0].maxFramerate=30;p.encodings[0].scaleResolutionDownBy=Math.max(1,cv.width/960);p.degradationPreference='maintain-framerate';
   const r=s.setParameters(p);if(r&&r.catch)r.catch(()=>{});}catch(_){}}
 
 /* ---------- a tiny MQTT client (WebSocket): free public brokers relay the game when direct links are blocked ---------- */
@@ -183,12 +184,12 @@ async function netHostMqtt(){const code=NET.code,c=await mqConnect('cyc-h-'+netR
   c.onclose=()=>{if(NET.mq!==c)return;NET.mq=null;NET.ups.mqtt=false;for(const G of netGuestsOn())if(G.mq)netGuestGone(G,'perdió la conexión');netLater(()=>{if(NET.role==='host'&&!NET.mq)netHostMqtt();},2000);};
   netUpCheck();}
 function netHostMqMsg(gid,d){if(NET.role!=='host'||!NET.mq)return;let G=NET.guests.find(x=>x&&x.mq===gid);const to=netTopic(NET.code,'to/'+gid);
-  if(d.t==='hey'){if(d.v!==NET_V){NET.mq.pubJ(to,{t:'old'});return;}
-    if(!G){const slot=[1,2].find(s=>!NET.guests[s]);if(!slot){NET.mq.pubJ(to,{t:'full'});return;}G={slot,mq:gid,open:true,slow:true,live:true,ping:0,last:performance.now()};NET.guests[slot]=G;netSlotsChanged();
+  if(d.t==='hey'){if(d.v!==NET_V){NET.mq.pubJ(to,{t:'old'});return;}const lsc=!!d.ls;
+    if(!G){const slot=[1,2].find(s=>!NET.guests[s]);if(!slot){NET.mq.pubJ(to,{t:'full'});return;}G={slot,mq:gid,open:true,slow:true,live:true,ping:0,last:performance.now(),lsCap:lsc};NET.guests[slot]=G;netSlotsChanged();
       const w=netWho(slot);netToast(`¡${w} se unió!`,`${netGuestsOn().length+1} de 3 jugadores`);sfx('ding');sfx('achieve');netBroadcastMsg(`¡${w} se unió!`,G);netJoinLevel();}
     NET.mq.pubJ(to,{t:'hi',slot:G.slot,char:netCharOf(G.slot),v:NET_V,code:NET.code});NET.musSent=-1;return;}
   if(!G)return;G.last=performance.now();
-  if(d.t==='in')netApplyMask(G.slot,d.m);else if(d.t==='q'&&typeof d.p==='number')G.ping=Math.round(performance.now()-d.p);else if(d.t==='bye')netGuestGone(G,'salió de la partida');}
+  if(d.t==='in'){netApplyMask(G.slot,d.m);if(d.x!=null){G.x=d.x|0;G.xT=performance.now();}}else if(typeof d.t==='string'&&d.t[0]==='L'&&typeof npHostMsg==='function')npHostMsg(G,d);else if(d.t==='q'&&typeof d.p==='number')G.ping=Math.round(performance.now()-d.p);else if(d.t==='bye')netGuestGone(G,'salió de la partida');}
 function netBroadcastMsg(s,except){for(const o of netGuestsOn())if(o!==except&&o.conn)netSend(o.conn,{t:'msg',s});if(NET.mq&&netGuestsOn().some(o=>o.mq&&o!==except))NET.mq.pubJ(netTopic(NET.code,'down'),{t:'msg',s});if(NET.room&&netGuestsOn().some(o=>o.room))netRoomMsg(s);}
 function netMqFrame(){try{if(!NET.small3){NET.small3=document.createElement('canvas');NET.small3.width=448;NET.small3.height=252;}const c=NET.small3,g=c.getContext('2d');if(!c.toBlob||!g)return;
   g.imageSmoothingEnabled=true;g.drawImage(cv,0,0,448,252);NET.busy3=true;
@@ -239,7 +240,9 @@ function netCallGuest(G){try{if(!cv.captureStream||typeof RTCPeerConnection==='u
     call.on('error',()=>{if(NET.guests[G.slot]===G&&!G.slow){G.slow=true;netSend(G.conn,{t:'slow'});}});}
   catch(_){G.slow=true;netSend(G.conn,{t:'slow'});}}
 function netHostData(G,d){if(!d||typeof d!=='object'||NET.guests[G.slot]!==G)return;
-  if(d.t==='in')netApplyMask(G.slot,d.m);
+  if(d.t==='in'){netApplyMask(G.slot,d.m);if(d.x!=null){G.x=d.x|0;G.xT=performance.now();}}
+  else if(d.t==='hey'){G.lsCap=!!d.ls;}
+  else if(typeof d.t==='string'&&d.t[0]==='L'&&typeof npHostMsg==='function')npHostMsg(G,d);
   else if(d.t==='q'&&typeof d.p==='number')G.ping=Math.round(performance.now()-d.p);
   else if(d.t==='live'){G.live=true;G.slow=false;}
   else if(d.t==='slow'){G.slow=true;}
@@ -256,8 +259,8 @@ function netHostTick(dt){const g=netGuestsOn();if(!g.length)return;const now=per
   if(g.some(G=>G.room)){NET.frameT2=(NET.frameT2||0)-dt;if(NET.frameT2<=0&&!NET.busy2){NET.frameT2=.066;netRoomFrame();}}
   NET.pingT-=dt;if(NET.pingT<=0){NET.pingT=1;for(const G of g)if(G.conn)netSend(G.conn,{t:'p',p:now,rtt:G.ping});if(NET.mq&&g.some(G=>G.mq))NET.mq.pubJ(netTopic(NET.code,'down'),{t:'p',p:now});}
   NET.musT-=dt;if(NET.musSent!==NET.mus.v||NET.musT<=0){NET.musSent=NET.mus.v;NET.musT=2;const mu={t:'mu',mu:[NET.mus.name,NET.mus.ph]};for(const G of g)if(G.conn)netSend(G.conn,mu);if(NET.mq&&g.some(G=>G.mq))NET.mq.pubJ(netTopic(NET.code,'down'),mu);}
-  if(NET.mq&&g.some(G=>G.mq)){NET.frameT3=(NET.frameT3||0)-dt;if(NET.frameT3<=0&&!NET.busy3){NET.frameT3=.075;netMqFrame();}}
-  if(g.some(G=>G.slow&&G.conn)){NET.frameT-=dt;if(NET.frameT<=0&&!NET.busy){NET.frameT=.07;netSendFrame(g.filter(G=>G.slow&&G.conn));}}}
+  if(NET.mq&&g.some(G=>G.mq&&!G.ls)){NET.frameT3=(NET.frameT3||0)-dt;if(NET.frameT3<=0&&!NET.busy3){NET.frameT3=.075;netMqFrame();}}
+  if(g.some(G=>G.slow&&G.conn&&!G.ls)){NET.frameT-=dt;if(NET.frameT<=0&&!NET.busy){NET.frameT=.07;netSendFrame(g.filter(G=>G.slow&&G.conn&&!G.ls));}}}
 function netSendFrame(list){try{if(!NET.small){NET.small=document.createElement('canvas');NET.small.width=384;NET.small.height=216;}const c=NET.small,g=c.getContext('2d');if(!c.toBlob||!g)return;
   g.imageSmoothingEnabled=true;g.drawImage(cv,0,0,384,216);NET.busy=true;
   c.toBlob(b=>{if(!b){NET.busy=false;return;}b.arrayBuffer().then(ab=>{NET.busy=false;for(const G of list)if(NET.guests[G.slot]===G)netSend(G.conn,{t:'f',ty:b.type,d:ab});},()=>{NET.busy=false;});},'image/webp',.6);}
@@ -270,11 +273,11 @@ function netJoin(code){netTeardown();NET.role='guest';NET.st='joining';NET.ui='g
   const peer=netNewPeer(null);if(!peer){netJoinMqtt(code);return;}NET.peer=peer;
   const next=()=>{if(NET.peer!==peer||NET.role!=='guest'||NET.st!=='joining')return;const pr=NET.peer;NET.peer=null;NET.conn=null;setTimeout(()=>{try{pr.destroy();}catch(_){}},200);netJoinMqtt(code);};
   peer.on('open',()=>{if(NET.peer!==peer)return;const conn=peer.connect(netPeerId(code),{reliable:true});NET.conn=conn;
-    conn.on('open',()=>{if(NET.conn!==conn)return;netSend(conn,{t:'hey',v:NET_V});});
+    conn.on('open',()=>{if(NET.conn!==conn)return;netSend(conn,{t:'hey',v:NET_V,ls:1});});
     conn.on('data',d=>netGuestData(d));
     conn.on('close',()=>{if(NET.conn===conn&&NET.role==='guest'){if(NET.slot)netEnd('Tu amigo cerró la partida.');else next();}});});
-  peer.on('call',call=>{if(NET.peer!==peer)return;NET.call=call;call.answer();
-    call.on('stream',s=>{if(!NETV)return;if(NETV.srcObject!==s)NETV.srcObject=s;try{for(const r of call.peerConnection.getReceivers()){try{r.playoutDelayHint=0;}catch(_){}try{r.jitterBufferTarget=0;}catch(_){}}}catch(_){}
+  peer.on('call',call=>{if(NET.peer!==peer)return;if(typeof NP!=='undefined'&&NP.on){try{call.close();}catch(_){}return;}NET.call=call;call.answer();
+    call.on('stream',s=>{if(!NETV||(typeof NP!=='undefined'&&NP.on))return;if(NETV.srcObject!==s)NETV.srcObject=s;try{for(const r of call.peerConnection.getReceivers()){try{r.playoutDelayHint=0;}catch(_){}try{r.jitterBufferTarget=0;}catch(_){}}}catch(_){}
       netPlayVideo();if(NET.st!=='live'){NET.st='live';netSend(NET.conn,{t:'live'});}});
     call.on('error',()=>{if(NET.st==='signal'||NET.st==='live')netGoSlow();});});
   peer.on('error',()=>next());
@@ -283,16 +286,16 @@ async function netJoinMqtt(code){if(NET.role!=='guest')return;NET.tr='mqtt';cons
   const c=await mqConnect('cyc-g-'+gid,{t:netTopic(code,'up/'+gid),p:'{"t":"bye"}'});if(NET.role!=='guest'||NET.code!==code){if(c)c.end();return;}
   if(!c){if(netInClaude())netJoinRoom(code);else if(NET.server>=0)netHost(code);else netEnd('No se pudo llegar a ningún servidor de partidas. Revisa tu internet e inténtalo de nuevo.');return;}
   NET.mq=c;const up=netTopic(code,'up/'+gid);NET.mqUp=up;c.sub(netTopic(code,'host'));c.sub(netTopic(code,'down'));c.sub(netTopic(code,'to/'+gid));
-  const hey=()=>{if(NET.mq===c&&!NET.slot){c.pubJ(up,{t:'hey',v:NET_V});netLater(hey,1500);}};
+  const hey=()=>{if(NET.mq===c&&!NET.slot){c.pubJ(up,{t:'hey',v:NET_V,ls:1});netLater(hey,1500);}};
   c.onmsg=(topic,pl)=>{if(NET.mq!==c)return;const k=topic.split('/').pop();
     if(k==='host'){const d=mqJSON(pl);if(d&&d.open){if(!NET.hostSeen){NET.hostSeen=true;hey();
         netLater(()=>{if(NET.mq===c&&!NET.slot){if(NET.server>=0){c.pub(netTopic(code,'host'),new Uint8Array(0),true);netNoHost(code);}else netEnd('La partida no responde. Pídele a tu amigo que la vuelva a crear.');}},7000);}}else if(NET.hostSeen||NET.slot)netEnd('Tu amigo cerró la partida.');return;}
-    if(pl[0]===0x46){if(!NET.slot)return;try{const bl=new Blob([pl.slice(2)],{type:pl[1]===0x77?'image/webp':'image/jpeg'}),u=URL.createObjectURL(bl),im=new Image();im.onload=()=>{const old=NET.imgU;NET.img=im;NET.imgU=u;if(old)URL.revokeObjectURL(old);};im.src=u;}catch(_){}return;}
+    if(pl[0]===0x46){if(!NET.slot||NP.on)return;try{const bl=new Blob([pl.slice(2)],{type:pl[1]===0x77?'image/webp':'image/jpeg'}),u=URL.createObjectURL(bl),im=new Image();im.onload=()=>{const old=NET.imgU;NET.img=im;NET.imgU=u;if(old)URL.revokeObjectURL(old);};im.src=u;}catch(_){}return;}
     const d=mqJSON(pl);if(!d)return;
     if(d.t==='hi'){if(NET.slot)return;NET.slot=d.slot;NET.char=d.char;NET.st='relay';NET.gMus={name:undefined,ph:''};_netMusicStop.call(Music);sfx('ding');sfx('achieve');NET.mask=-1;netToast((NET.server>=0?`¡Entraste al ${netSrvName(NET.server)}!`:`¡Te uniste a la partida ${NET.code}!`),`Eres ${netWho(d.slot)}`);}
     else if(d.t==='full')netEnd(NET.server>=0?'Ese servidor está lleno (3/3). Prueba con otro.':'Esa partida ya tiene tres jugadores.');else if(d.t==='old')netEnd('Tu amigo tiene otra versión del juego. Usen los dos la misma versión.');
     else if(d.t==='p')c.pubJ(up,{t:'q',p:d.p});else if(d.t==='mu'&&d.mu)netGuestMusic(d.mu[0],d.mu[1]);else if(d.t==='msg'&&typeof d.s==='string'&&NET.slot)netToast(d.s);
-    else if(d.t==='s'&&typeof d.n==='string'&&NET.slot)_netSfx(d.n,d.a??undefined);else if(d.t==='bye')netEnd('Tu amigo cerró la partida.');};
+    else if(d.t==='s'&&typeof d.n==='string'&&NET.slot&&!NP.on)_netSfx(d.n,d.a??undefined);else if(typeof d.t==='string'&&d.t[0]==='L'&&NET.slot)npGuestMsg(d);else if(d.t==='bye')netEnd('Tu amigo cerró la partida.');};
   c.onclose=()=>{if(NET.mq===c&&NET.role==='guest')netEnd('Se cortó la conexión con la partida.');};
   netLater(()=>{if(NET.mq===c&&!NET.hostSeen){if(netInClaude()){c.end();NET.mq=null;netJoinRoom(code);}else netNoHost(code);}},5000);}
 /* ---------- guest inside Claude ---------- */
@@ -325,16 +328,17 @@ function netGuestData(d){if(!d||typeof d!=='object')return;
   else if(d.t==='p'){netSend(NET.conn,{t:'q',p:d.p});if(d.rtt)NET.ping=d.rtt;}
   else if(d.t==='mu'&&d.mu)netGuestMusic(d.mu[0],d.mu[1]);
   else if(d.t==='msg'&&typeof d.s==='string')netToast(d.s);
-  else if(d.t==='slow')netGoSlow();
+  else if(typeof d.t==='string'&&d.t[0]==='L'&&typeof npGuestMsg==='function')npGuestMsg(d);
+  else if(d.t==='slow'){if(!(typeof NP!=='undefined'&&NP.on))netGoSlow();}
   else if(d.t==='f'&&d.d){if(NET.st!=='relay')NET.st='relay';try{const bl=new Blob([d.d],{type:d.ty||'image/webp'}),u=URL.createObjectURL(bl),im=new Image();im.onload=()=>{const old=NET.imgU;NET.img=im;NET.imgU=u;if(old)URL.revokeObjectURL(old);};im.src=u;}catch(_){}}}
 function netPlayVideo(){if(!NETV)return;NETV.muted=false;try{const p=NETV.play();if(p&&p.catch)p.catch(()=>{NETV.muted=true;NET.audioBlocked=true;try{NETV.play().catch(()=>{});}catch(_){}});}catch(_){}}
 function netGuestTick(dt){const IN=NET.lastIN;if(!IN||!NET.slot)return;const m=netMask(IN);NET.sendT-=dt;
   if(NET.tr==='room'){if(m!==NET.mask){NET.mask=m;netPres({in:m});}return;}
-  if(NET.tr==='mqtt'){if(NET.mq&&(m!==NET.mask||NET.sendT<=0)){NET.mask=m;NET.sendT=.25;NET.mq.pubJ(NET.mqUp,{t:'in',m});}return;}
-  if(m!==NET.mask||NET.sendT<=0){NET.mask=m;NET.sendT=.1;netSend(NET.conn,{t:'in',m});}}
+  if(NET.tr==='mqtt'){if(NET.mq&&(m!==NET.mask||NET.sendT<=0)){NET.mask=m;NET.sendT=.25;NET.mq.pubJ(NET.mqUp,{t:'in',m,x:npMaskOf(IN)});}return;}
+  if(m!==NET.mask||NET.sendT<=0){NET.mask=m;NET.sendT=.1;netSend(NET.conn,{t:'in',m,x:npMaskOf(IN)});}}
 
 /* ---------- leaving ---------- */
-function netTeardown(){for(const t of NET.timers)clearTimeout(t);NET.timers=[];
+function netTeardown(){for(const t of NET.timers)clearTimeout(t);NET.timers=[];if(typeof NP!=='undefined'){if(NET.role==='guest')npGuestEnd();else if(NP.on){NP.on=false;NP.role=null;}}
   if(NET.role==='guest')netSend(NET.conn,{t:'bye'});
   if(NET.mq){const c=NET.mq;NET.mq=null;try{if(NET.role==='host'){c.pubJ(netTopic(NET.code,'down'),{t:'bye'});c.pub(netTopic(NET.code,'host'),new Uint8Array(0),true);}else if(NET.mqUp)c.pubJ(NET.mqUp,{t:'bye'});}catch(_){}c.end();}
   for(const G of netGuestsOn()){if(G.conn)netSend(G.conn,{t:'msg',s:'El anfitrión cerró la partida.'});try{G.call&&G.call.close();}catch(_){}}
@@ -462,4 +466,4 @@ step=function(dt){_netStep(dt);
 const _netDrawAch=drawAchToast;drawAchToast=function(){if(scene==='online')drawOnline();_netDrawAch();};
 const _netSaveCfg=saveCfg;saveCfg=function(){const cp=cfg.players,cg=cfg.grain;if(NET.playersWas!=null)cfg.players=NET.playersWas;if(NET.grainWas!=null)cfg.grain=NET.grainWas;try{_netSaveCfg();}finally{cfg.players=cp;cfg.grain=cg;}};
 const _netLegend=updateLegend;updateLegend=function(){if(NETIN.on){const cur=cfg.players;cfg.players=1;try{_netLegend();}finally{cfg.players=cur;}}else _netLegend();};
-if(window.__game){window.__game.step=step;window.__game.render=render;window.__game.NET=NET;window.__game.NETIN=NETIN;window.__game.openOnline=openOnline;window.__game.netClose=netClose;window.__game.saveCfg=saveCfg;}
+if(window.__game){window.__game.step=step;window.__game.render=render;window.__game.NET=NET;window.__game.NETIN=NETIN;window.__game.openOnline=openOnline;window.__game.netHost=netHost;window.__game.netJoin=netJoin;window.__game.netServerJoin=netServerJoin;window.__game.netClose=netClose;window.__game.saveCfg=saveCfg;}

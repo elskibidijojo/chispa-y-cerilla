@@ -1,6 +1,6 @@
 'use strict';
 /* ================= CORE: canvas, palette, utils, settings, saves, input, sfx ================= */
-const cv=document.getElementById('game'),ctx=cv.getContext('2d');
+const cv=document.getElementById('game'),ctx=cv.getContext('2d',{alpha:false});
 const W=960,H=540,GROUND=448,TAU=Math.PI*2;
 let DPR=Math.min(2,window.devicePixelRatio||1);cv.width=W*DPR;cv.height=H*DPR;
 const REDUCE=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -10,7 +10,7 @@ const C={ink:'#140d08',paper:'#efe0bf',paper2:'#e3cd9d',rust:'#b5402f',rustD:'#8
   sand:'#e2c98f',sea:'#5b8580',seaD:'#466d69',bronze:'#9a7446',bronzeL:'#c49a5f',bronzeD:'#6c4f2c',gold:'#f2c14e',match:'#e2b77a',matchHead:'#c8392b',
   night:'#2b2540',nightL:'#4b4170',plum:'#6b4a7a',moss:'#6f7a45',white:'#fffaf0',shadow:'#231c33'};
 const FONT='"Rye", Georgia, serif',BFONT='"Alegreya Sans", system-ui, sans-serif';
-const rand=Math.random,clamp=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,t)=>a+(b-a)*t,dist=(a,b,c,d)=>Math.hypot(a-c,b-d),pick=a=>a[Math.floor(rand()*a.length)];
+let RNG_SIM=null,RI_OVERRIDE=null;const rand=()=>RNG_SIM?RNG_SIM():Math.random(),clamp=(v,a,b)=>v<a?a:v>b?b:v,lerp=(a,b,t)=>a+(b-a)*t,dist=(a,b,c,d)=>Math.hypot(a-c,b-d),pick=a=>a[Math.floor(rand()*a.length)];
 function srand(seed){let a=(seed>>>0)||1;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};}
 function circRect(cx,cy,r,rx,ry,rw,rh){const nx=clamp(cx,rx,rx+rw),ny=clamp(cy,ry,ry+rh);return(cx-nx)**2+(cy-ny)**2<r*r;}
 function rectHit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;}
@@ -76,7 +76,7 @@ function padRaw(i){try{if(!navigator.getGamepads)return null;const gs=[...naviga
 let prevP=[{},{},{}],prevM={};
 /* online play: the friend's controls arrive from the network and drive player 2 (see net.js) */
 const NETIN={on:false,s:[null,{on:false,h:{},t:0},{on:false,h:{},t:0}],ok:false,no:false,pause:false};
-function readInputs(){const kd=c=>keysDown.has(c)||tapQ.has(c);const R=NETIN.on?NETIN:null;const np=R?Math.max(2,cfg.players||1):cfg.players||1,two=np>=2,prof=R?[cfg.keys.solo,null,null]:np===3?[cfg.keys.t1,cfg.keys.t2,cfg.keys.t3]:np===2?[cfg.keys.p1,cfg.keys.p2,null]:[cfg.keys.solo,null,null];
+function readInputs(){if(RI_OVERRIDE)return RI_OVERRIDE;const kd=c=>keysDown.has(c)||tapQ.has(c);const R=NETIN.on?NETIN:null;const np=R?Math.max(2,cfg.players||1):cfg.players||1,two=np>=2,prof=R?[cfg.keys.solo,null,null]:np===3?[cfg.keys.t1,cfg.keys.t2,cfg.keys.t3]:np===2?[cfg.keys.p1,cfg.keys.p2,null]:[cfg.keys.solo,null,null];
   const out=[0,1,2].map(i=>{const h={},k=prof[i],pad=R?(i===0?padRaw(0):null):padRaw(two?i:0),rh=R&&i>0&&R.s[i]&&R.s[i].on?R.s[i].h:null;
     if(i>=np){for(const a of ACTS)h[a]=false;}
     else for(const a of ACTS)h[a]=(k?k[a].some(c=>kd(c)):false)||!!(pad&&pad[a])||(i===0&&!!touch[a])||!!(rh&&rh[a]);

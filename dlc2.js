@@ -130,20 +130,29 @@ function proyecFx(L,B){const dw=L.drawBG;L.drawBG=()=>{dw();const t=L.t;ctx.save
 
 /* ---------- LA SOMBRA (secret): your own shadow stepped out of the film ---------- */
 const FILTER_SET=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,'filter');
-function drawSilhouette(B,L,x,y,s,alpha){const P=L.Ps.find(p=>!p.dead)||L.Ps[0],ch=P?P.char:'chispa';ctx.save();ctx.globalAlpha=alpha;try{FILTER_SET.set.call(ctx,'brightness(0)');}catch(_){}
-  drawHero({x,y,char:ch,face:B.face||-1,anim:B.t*(B.run?10:3),scale:s,run:B.run,air:B.air,vy:B.vy||0,shoot:B.throwT>0,aimX:B.face||-1,aimY:0,noBlink:true});try{FILTER_SET.set.call(ctx,'none');}catch(_){}ctx.restore();
-  const ey=y-80*s,fx=x+(B.face||-1)*5*s;for(const d of[-1,1])ell(fx+d*6*s,ey,2.6*s,4*s,'#fff',0);ctx.beginPath();ctx.moveTo(fx-6*s,ey+8*s);ctx.quadraticCurveTo(fx,ey+13*s,fx+6*s,ey+8*s);ctx.lineWidth=1.4*s;ctx.strokeStyle='#fff';ctx.stroke();ctx.save();ctx.globalAlpha=.25*alpha;circ(x,y-50*s,60*s,'#4a3a6a',0);ctx.restore();}
+/* a pure-black cartoon figure drawn with shapes (no colour filter: filters are very slow on small laptops) */
+function drawShadowFig(x,y,s,face,t,run,air,shoot,col){col=col||'#0d0a12';ctx.save();ctx.translate(x,y);ctx.scale(s*face,s);ctx.lineCap='round';ctx.lineJoin='round';
+  const sw=run?Math.sin(t*12):0,bob=run?Math.abs(Math.cos(t*12))*2:Math.sin(t*3)*1;ctx.strokeStyle=col;ctx.fillStyle=col;
+  for(const k of[-1,1]){ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(k*5,-30);ctx.quadraticCurveTo(k*7+sw*k*8,-16,k*6+(air?k*6:sw*k*12),air?-6:-3);ctx.stroke();ctx.beginPath();ctx.ellipse(k*7+(air?k*6:sw*k*12)+3,air?-4:-1,9,5,0,0,TAU);ctx.fill();}
+  ctx.beginPath();ctx.ellipse(0,-44-bob,15,18,0,0,TAU);ctx.fill();
+  ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(-10,-50-bob);ctx.quadraticCurveTo(-22,-40,-20+sw*6,-28);ctx.stroke();ctx.beginPath();ctx.arc(-20+sw*6,-27,6,0,TAU);ctx.fill();
+  const ax=shoot?26:16,ay=shoot?-52:-34;ctx.beginPath();ctx.moveTo(10,-50-bob);ctx.quadraticCurveTo(20,-50,ax,ay-bob);ctx.stroke();ctx.beginPath();ctx.arc(ax,ay-bob,6,0,TAU);ctx.fill();
+  ctx.beginPath();ctx.arc(0,-78-bob,21,0,TAU);ctx.fill();ctx.beginPath();ctx.moveTo(-4,-97-bob);ctx.quadraticCurveTo(6,-112-bob,2+Math.sin(t*9)*3,-122-bob);ctx.quadraticCurveTo(14,-108-bob,8,-96-bob);ctx.fill();
+  ctx.restore();}
+function drawSilhouette(B,L,x,y,s,alpha){ctx.save();ctx.globalAlpha=alpha;const f=B.face||-1;drawShadowFig(x,y,s,f,B.t,B.run,B.air,B.throwT>0);ctx.restore();
+  const ey=y-80*s,fx=x+f*5*s;for(const d of[-1,1])ell(fx+d*6*s,ey,2.6*s,4*s,'#fff',0);ctx.beginPath();ctx.moveTo(fx-6*s,ey+8*s);ctx.quadraticCurveTo(fx,ey+13*s,fx+6*s,ey+8*s);ctx.lineWidth=1.4*s;ctx.strokeStyle='#fff';ctx.stroke();
+  ctx.save();ctx.globalAlpha=.25*alpha;circ(x,y-50*s,60*s,'#4a3a6a',0);ctx.restore();}
 defBoss({id:'sombra',name:'Tu Sombra',sub:'Jefe secreto · Detrás de la pantalla',isl:3,hp:680,par:140,arena:'cine_vacio',song:'sombra',x:720,intro:'…',
   center(B){return B.giant?{x:B.gx,y:200}:{x:B.x,y:B.y-90};},anchor(B,n){if(B.giant){if(n==='hand')return{x:B.gx+(B.face||-1)*180,y:260};return{x:B.gx,y:180};}if(n==='hand')return{x:B.x+(B.face||-1)*60,y:B.y-80};return{x:B.x,y:B.y-90};},
   shapes(B){return B.giant?[{x:B.gx,y:220,r:120}]:[{x:B.x,y:B.y-80,r:60}];},faceTarget:true,
   setup(B){B.gx=480;B.vy=0;},
-  move(B,dt,L){const P=L.Ps.find(p=>!p.dead);B.run=false;if(!P||B.giant)return;const dx=P.x-B.x;if(Math.abs(dx)>260){B.x+=Math.sign(dx)*170*dt;B.run=true;}else if(Math.abs(dx)<140){B.x-=Math.sign(dx)*150*dt;B.run=true;}B.x=clamp(B.x,90,W-90);B.face=dx<0?-1:1;},
+  move(B,dt,L){const P=L.Ps.find(p=>!p.dead);B.run=false;B.air=!!(B.act&&B.act.type==='leap');if(B.giant){B.gx=lerp(B.gx,480+Math.sin(B.t*.4)*160,Math.min(1,dt*1.2));return;}if(!P)return;const dx=P.x-B.x;if(Math.abs(dx)>260){B.x+=Math.sign(dx)*170*dt;B.run=true;}else if(Math.abs(dx)<140){B.x-=Math.sign(dx)*150*dt;B.run=true;}B.x=clamp(B.x,90,W-90);B.face=dx<0?-1:1;},
   onPhase(B,L,i){if(i===2){B.giant=true;B.gx=480;L.permDark=()=>!B.dead;L.darkA=.82;sfx('rasgado');}},
   phases:[{atk:[{f:'aimed',every:.85,from:'hand',n:1,spd:520,spr:'sbala',r:10,parry:5},{f:'leap',every:3.2,vy:-1050,T:.95},{f:'charge',every:4.6,spd:780,warn:.6}]},
     {banner:'¡SOMOS DOS!',atk:[{f:'aimed',every:1,from:'hand',n:2,spread:.18,spd:500,spr:'sbala',r:10,parry:4},{f:'minion',every:5,from:'hand',ai:'hopper',skin:'sombrita',hp:6,r:24,max:2,spd:170},{f:'ring',every:3.6,from:'center',n:10,spd:210,spr:'sbala',r:10,parry:5},{f:'leap',every:3.8,vy:-1100,T:1}]},
     {banner:'¡LA SOMBRA GIGANTE!',atk:[{f:'sweep',every:3,alt:true,style:'darkbolt',warn:.85},{f:'column',every:3.2,n:3,gap:.3,style:'darkbolt',warn:.75,spread:170},{f:'spiral',every:4,from:'center',dur:1.5,rate:.09,spd:220,spr:'sbala',r:10,arms:3,parry:6},{f:'aimed',every:1.6,from:'hand',n:3,spread:.25,spd:420,spr:'sbala',r:10,parry:3}]}],
-  draw(B,L){if(B.giant){B.gx=lerp(B.gx,480+Math.sin(B.t*.4)*160,.02);drawSilhouette(B,L,B.gx,GROUND+40,3.6,.9);const c=B.center();flashOver(B,c.x,c.y,120);koStars(B,L,c.x,60);return;}
-    shadowE(B.x,GROUND+3,50,.4);ctx.save();bossSquash(B,L);B.air=!!(B.act&&B.act.type==='leap');drawSilhouette(B,L,B.x,B.y,1.7,1);ctx.restore();const c=B.center();flashOver(B,c.x,c.y,60);koStars(B,L,c.x,B.y-190);}});
+  draw(B,L){if(B.giant){drawSilhouette(B,L,B.gx,GROUND+40,3.6,.9);const c=B.center();flashOver(B,c.x,c.y,120);koStars(B,L,c.x,60);return;}
+    shadowE(B.x,GROUND+3,50,.4);ctx.save();bossSquash(B,L);drawSilhouette(B,L,B.x,B.y,1.7,1);ctx.restore();const c=B.center();flashOver(B,c.x,c.y,60);koStars(B,L,c.x,B.y-190);}});
 ENC.sombrita=function(e,t,F){const b=Math.abs(Math.sin(t*9))*6;ctx.translate(0,-b);ell(0,0,20,24,F('#120e18'),3);ell(-7,-6,4,5,'#fff',0);ell(7,-6,4,5,'#fff',0);ctx.beginPath();ctx.moveTo(-8,8);ctx.quadraticCurveTo(0,4,8,8);ctx.lineWidth=2;ctx.strokeStyle='#fff';ctx.stroke();};
 
 /* ---------- songs, taunts, levels list ---------- */
@@ -181,7 +190,7 @@ function drawCine(){const t=clock;if(!CINEBG){const [c,g]=mk(W,H);g.fillStyle='#
     ctx.save();ctx.translate(x+pw/2+sh,y+120);if(sel)ctx.scale(1.08,1.08);ctx.translate(-pw/2,-120);rr(0,0,pw,240,8,'#2b1d14',4);rr(8,8,pw-16,190,4,open?'#efe0bf':'#5a4a40',3);
     if(open){if(c.suit){drawSuit(c.suit,pw/2,80,2,t);btxt(L2.name.split(' ')[0].toUpperCase(),pw/2,150,15,SUIT[c.suit].ink,'center',900);btxt('SOLO PARRY',pw/2,174,11,C.rust,'center',900);}
       else if(c.id==='proyec'){ctx.save();ctx.translate(pw/2,90);ctx.rotate(t);circ(0,0,34,'#2b2a33',3.5);circ(0,0,10,'#c9c2d6',2.5);for(let k=0;k<5;k++){const a=k*TAU/5;circ(Math.cos(a)*22,Math.sin(a)*22,6,'#14101a',2);}ctx.restore();btxt('PROYECCIONISTA',pw/2,150,13,'#2b2a33','center',900);btxt('ESTRENO',pw/2,174,11,C.rust,'center',900);}
-      else{ctx.save();ctx.translate(pw/2,120);ctx.scale(.9,.9);ctx.globalAlpha=.9;try{FILTER_SET.set.call(ctx,'brightness(0)');}catch(_){}drawHero({x:0,y:0,char:heroChar(0),face:1,anim:t*3});try{FILTER_SET.set.call(ctx,'none');}catch(_){}ctx.restore();ell(pw/2+8,62,3,4,'#fff',0);ell(pw/2-2,62,3,4,'#fff',0);btxt('TU SOMBRA',pw/2,174,13,'#2b2a33','center',900);}}
+      else{drawShadowFig(pw/2,158,.95,1,t,false,false,false);ell(pw/2+10,82,2.6,3.8,'#fff',0);ell(pw/2-1,82,2.6,3.8,'#fff',0);btxt('TU SOMBRA',pw/2,174,13,'#2b2a33','center',900);}}
     else{txt('?',pw/2,90,60,'#8a7a6a',C.ink);btxt('BLOQUEADA',pw/2,150,13,'#efe0bf','center',900);}
     btxt(done?'✔ '+(save.done[c.id]||''):'',pw/2,220,14,'#2f7d45','center',900);if(sel){ctx.globalAlpha=.6+Math.sin(t*6)*.3;rr(-4,-4,pw+8,248,10,null,4);ctx.strokeStyle=C.gold;ctx.lineWidth=4;ctx.stroke();ctx.globalAlpha=1;}ctx.restore();});
   const c=CINE[CN.sel],open=!c.lock||c.lock(),L2=LEVELS[c.id];card(W/2-300,404,600,70,'rgba(239,224,191,.95)',3.5,10);
