@@ -136,11 +136,46 @@ drawSkinAcc=function(o,ch,fy,f,ex){const sk=SKINS[o.skin];if(!sk||!['vaquero','r
     ctx.lineWidth=2.5;ctx.strokeStyle=C.ink;ctx.beginPath();ctx.moveTo(ex,fy+10);ctx.quadraticCurveTo(ex-10*f,fy+6,ex-16*f,fy+12);ctx.moveTo(ex,fy+10);ctx.quadraticCurveTo(ex+10*f,fy+6,ex+16*f,fy+12);ctx.stroke();}
   ctx.restore();};
 
+
+/* ======================= más cosas para las islas 1 y 3 ======================= */
+function drawCanica(b,L){ctx.translate(b.x,b.y);circ(0,0,b.r,b.big?'#7bb7c9':'#9fd8e8',2.5);ctx.save();ctx.rotate(L.t*10+b.x*.05);ctx.beginPath();ctx.moveTo(-b.r*.7,0);ctx.quadraticCurveTo(0,-b.r*.8,b.r*.7,0);ctx.lineWidth=2.5;ctx.strokeStyle='#e86a5a';ctx.stroke();ctx.restore();ell(-b.r*.35,-b.r*.4,b.r*.3,b.r*.2,'rgba(255,255,255,.85)',0);}
+function drawBat(b,L){ctx.translate(b.x,b.y);ctx.scale(b.vx<0?-1:1,1);const f=Math.sin(L.t*30+b.y)*8,s=b.big?1.6:1;ctx.scale(s,s);ctx.fillStyle='#2a1d3a';ctx.strokeStyle=C.ink;ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(-10,-10-f,-20,-2-f);ctx.quadraticCurveTo(-12,0,-8,6);ctx.closePath();ctx.fill();ctx.stroke();ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(10,-10-f,20,-2-f);ctx.quadraticCurveTo(12,0,8,6);ctx.closePath();ctx.fill();ctx.stroke();
+  ell(0,2,7,8,'#3a2a50',2);circ(-3,0,1.6,'#ffe27a',0);circ(3,0,1.6,'#ffe27a',0);}
+function drawGlobito(b,L){ctx.translate(b.x,b.y+Math.sin(L.t*5+b.k2)*3);line(0,b.r,Math.sin(L.t*4)*4,b.r+20,1.5);ell(0,0,b.r*.86,b.r,['#e86a5a','#f2c14e','#7bb7c9','#b8d08a','#d6a2e8'][b.k2%5],3);ell(-b.r*.3,-b.r*.4,b.r*.2,b.r*.3,'rgba(255,255,255,.7)',0);poly([[-4,b.r],[4,b.r],[0,b.r+6]],C.ink,0);}
+Object.assign(WEAPONS,{
+  canica:{name:'Lanzacanicas',price:3,isl:1,desc:'Canicas de cristal que botan dos veces por el suelo antes de romperse. Muy fáciles de usar.',exd:'EX: una canica gigante que rueda por el suelo.',
+    fire(L,p,h,ax,ay){p.cool=.2;B_(L,p,{x:h.x,y:h.y,vx:ax*700,vy:ay*700-110,r:8,dmg:1.87,life:2,k:'canica',g:900,bounce:2,draw:drawCanica});},
+    ex(L,p,h,ax,ay){B_(L,p,{x:h.x,y:h.y,vx:(ax||p.face)*520,vy:-60,r:24,dmg:2.4,life:2.6,k:'canica',g:1200,bounce:9,big:true,pierce:true,tickHit:true,draw:drawCanica});}},
+  murcielago:{name:'Murciélagos',price:5,isl:3,desc:'Murciélagos de papel que vuelan solos hasta el enemigo. Persiguen mejor que las luciérnagas y pegan más.',exd:'EX: una bandada de cinco murciélagos grandes.',
+    fire(L,p,h,ax,ay){p.cool=.22;B_(L,p,{x:h.x,y:h.y,vx:ax*560,vy:ay*560-60,r:9,dmg:2.17,life:2.2,k:'bat',homing:4.2,draw:drawBat});},
+    ex(L,p,h,ax,ay){for(let i=0;i<5;i++)B_(L,p,{x:h.x,y:h.y,vx:ax*400+(i-2)*60,vy:ay*400-200+i*40,r:16,dmg:3.4,life:3,k:'bat',homing:5,big:true,draw:drawBat});}}});
+Object.assign(SHOTS,{canica:()=>tn(900,.04,{type:'triangle',v:.03,slide:300}),murcielago:()=>tn(2400,.04,{type:'sine',v:.015,slide:-800})});
+Object.assign(CHARMS,{
+  bellota:{name:'Bellota de la Suerte',price:2,isl:1,desc:'El primer golpe de cada pelea no te quita vida: la bellota se rompe en tu lugar.'},
+  arena:{name:'Reloj de Arena',price:4,isl:3,desc:'Cuando te queda un solo corazón, haces un 25% más de daño. ¡Para valientes!'}});
+Object.assign(SUPERS,{globos:{name:'Globos Bomba',price:4,isl:1,desc:'Cinco globos de colores flotan solos hasta el enemigo y le explotan en la cara.'}});
+const _np3=newPlayer;newPlayer=function(L,i,type,x,y){const p=_np3(L,i,type,x,y);if(p.eq&&p.eq.charm==='bellota')p.acorn=1;return p;};
+const _hurt3=hurt;hurt=function(L,p){if(L.state==='play'&&!p.dead&&p.acorn>0&&HC(p,'bellota')){p.acorn=0;p.inv=1.4;p.hurtT=.2;pop(L,p.x,p.y-110,'¡BELLOTA!',C.rust);sfx('pop');puff(L,p.x,p.y-50,6,'#a0663a');return;}return _hurt3(L,p);};
+const _dm3=dmgM;dmgM=function(p){return _dm3(p)*(p&&p.hp===1&&HC(p,'arena')?1.25:1);};
+const _ss3=startSuper;startSuper=function(L,p){if((p.eq.sup||'chispazo')!=='globos'){_ss3(L,p);return;}if(typeof unlockAch==='function')unlockAch('super');
+  p.cards=0;L.supers++;p.superK='globos';p.superT=.5;p.inv=Math.max(p.inv,1.2);L.superFlash=.35;sfx('super');shake(L,10);banner(L,'¡GLOBOS BOMBA!',1.1);const c=pCenter(p);
+  for(let i=0;i<5;i++){const b=B_(L,p,{x:c.x+(i-2)*30,y:c.y-20,vx:(i-2)*40,vy:-160-i*20,r:16,dmg:0,life:5,k:'globito',pierce:true,draw:drawGlobito,k2:i,t:0});
+    b.upd=(b,L,dt)=>{b.t+=dt;const tg=near(L,b.x,b.y);if(tg&&b.t>.35){const cc=nearPt(tg,b.x,b.y),a=Math.atan2(cc.y-b.y,cc.x-b.x);b.vx+=(Math.cos(a)*380-b.vx)*Math.min(1,dt*2.5);b.vy+=(Math.sin(a)*380-b.vy)*Math.min(1,dt*2.5);
+      if(tg.hitBy(b.x,b.y,b.r+6)){b.life=0;boom(L,b.x,b.y,34);sfx('pop');tg.damage(9.4*dmgM(p),p);for(let k=0;k<6;k++)L.fx.push({k:'spark',x:b.x,y:b.y,vx:(rand()-.5)*300,vy:(rand()-.5)*300,life:.3,max:.3,r:3,col:'#fff'});}}
+      if(b.y<L.camX*0+10&&b.vy<0)b.vy=Math.abs(b.vy);};}};
+
 /* ======================= ICONOS ======================= */
-const NEWI=['solar','agua','shuriken','petardo','varita','corazonoro','turbo','picas','colmillo','dragon','piano','arcoiris'];
+const NEWI=['canica','murcielago','bellota','arena','globos','solar','agua','shuriken','petardo','varita','corazonoro','turbo','picas','colmillo','dragon','piano','arcoiris'];
 const _iiS=itemIcon;
 itemIcon=function(id,x,y,t){if(!NEWI.includes(id)){_iiS(id,x,y,t);return;}ctx.save();ctx.translate(x,y);ctx.lineJoin='round';ctx.lineCap='round';ctx.lineWidth=3;ctx.strokeStyle=C.ink;
   switch(id){
+    case 'canica':for(let i=0;i<3;i++){ctx.save();ctx.translate(-14+i*14,6-Math.abs(Math.sin(t*4+i))*14);drawCanica({x:0,y:0,r:8},{t});ctx.restore();}break;
+    case 'murcielago':ctx.translate(Math.sin(t*2)*6,Math.cos(t*3)*3);ctx.scale(1.4,1.4);drawBat({x:0,y:0,vx:1},{t});break;
+    case 'bellota':ctx.rotate(Math.sin(t*2)*.15);ell(0,6,13,15,'#c58a4a');ctx.beginPath();ctx.ellipse(0,-6,16,9,0,Math.PI,0);ctx.closePath();ctx.fillStyle='#7a4a2a';ctx.fill();ctx.stroke();line(0,-14,4,-22,3);ell(-4,4,3,5,'rgba(255,255,255,.5)',0);break;
+    case 'arena':ctx.rotate(Math.sin(t)*.2);rr(-15,-22,30,5,2,C.woodL,2.5);rr(-15,17,30,5,2,C.woodL,2.5);ctx.beginPath();ctx.moveTo(-11,-17);ctx.lineTo(11,-17);ctx.lineTo(2,0);ctx.lineTo(11,17);ctx.lineTo(-11,17);ctx.lineTo(-2,0);ctx.closePath();ctx.fillStyle='rgba(220,240,240,.6)';ctx.fill();ctx.stroke();
+      const k=(t*.3)%1;poly([[-8+k*6,-14+k*12],[8-k*6,-14+k*12],[0,-1]],'#f2c14e',0);poly([[-9,16],[9,16],[0,16-k*12]],'#f2c14e',0);line(0,-1,0,15,1.5);break;
+    case 'globos':for(let i=0;i<3;i++){ctx.save();ctx.translate(-14+i*14,-4+Math.sin(t*3+i)*4);drawGlobito({x:0,y:0,r:10,k2:i},{t});ctx.restore();}break;
     case 'solar':ctx.save();ctx.rotate(t*.8);for(let i=0;i<10;i++){ctx.rotate(TAU/10);poly([[0,-15],[5,-26],[-5,-26]].map(([a,b])=>[a,b]),'#ffd25a',2);}ctx.restore();circ(0,0,15,'#ffe27a',3);circ(-5,-3,2,C.ink,0);circ(5,-3,2,C.ink,0);ctx.beginPath();ctx.arc(0,3,6,.2,Math.PI-.2);ctx.stroke();
       ctx.globalAlpha=.6+.4*Math.sin(t*6);btxt('TOP 1',0,32,10,'#e23b3b','center',900);break;
     case 'agua':rr(-20,-8,26,14,5,'#5aa8e8');rr(-10,6,10,14,3,'#5aa8e8');rr(6,-5,10,8,2,C.goldL,2);for(let i=0;i<3;i++){const k=((t*2+i/3)%1);ctx.globalAlpha=1-k;ell(18+k*16,-1+k*k*14,4,3,'#7bc6e8',1.5);}break;
