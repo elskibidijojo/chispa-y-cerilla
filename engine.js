@@ -321,7 +321,7 @@ function drawPlayers(L){for(const p of L.Ps){
   else drawHero({x:p.x,y:p.y,char:p.char,face:p.face,anim:p.anim,run:p.ground&&Math.abs(p.vx)>1&&p.dash<=0,air:!p.ground,vy:p.vy,duck:p.duck,shoot:p.shoot,aimX:p.aimX,aimY:p.aimY,
     hurt:p.hurtT>0,dash:p.dash>0||p.drillDash>0,spin:p.spin,skin:p.eq.skin,ghostDash:p.dash>0&&hasCharm(p,'fantasma'),ball:p.jumped&&!p.ground&&!(p.dash>0)&&!(p.hurtT>0)?p.ballA:null,land:p.landT,flash:p.flashT>0||(io&&io.pose==='flex'&&Math.floor(L.t*8)%2===0),
     exPose:p.exPose||0,superPose:p.superPose||0,superK:p.superK,
-    ...(io&&io.pose==='flex'?{aimX:0,aimY:-1,run:false,air:false}:{}),...(io&&io.dy<-5?{air:true}:{})});
+    ...(io&&io.pose==='flex'?{aimX:0,aimY:-1,run:false,air:false}:{}),...(io&&io.dy<-5?{air:true}:{}),...(typeof heroExtra==='function'?heroExtra(L,p,io):{})});
   if(io)ctx.restore();
   const c=pCenter(p);
   if(p.shield>0){ctx.globalAlpha=.55+Math.sin(L.t*10)*.1;circ(c.x,c.y,64,'rgba(200,235,240,.35)',3);ctx.globalAlpha=1;}

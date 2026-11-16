@@ -59,7 +59,7 @@ const _bossUpdDLC=bossUpdate;
 bossUpdate=function(L,B,dt){_bossUpdDLC(L,B,dt);const ph=B.def.phases;
   if(B.dead){if(!B.koFx){B.koFx=true;sfx('ovacion');const c=B.center();for(let i=0;i<46;i++)L.fx.push({k:'spark',x:c.x+(rand()-.5)*80,y:c.y-40,vx:(rand()-.5)*900,vy:-300-rand()*600,life:1.4,max:1.4,r:4+rand()*4,col:['#e8562e','#f2c14e','#2ec4b6','#8a63c7','#fff6df'][i%5]});}return;}
   if(!B.desp&&B.phase===ph.length-1&&B.hp<B.max*.15&&L.state==='play'&&!B.def.noDesp){B.desp=true;banner(L,'¡A LA DESESPERADA!',1.2);sfx('latido');if(typeof Pack!=='undefined'&&Pack.audio)try{Pack.audio.playbackRate=1.07;}catch(_){}}
-  if(B.desp&&!(B.transT>0)){for(let i=0;i<B.timers.length;i++)B.timers[i]-=dt*.24;B.despT=(B.despT||0)-dt;if(B.despT<=0){B.despT=.22;const c=B.center();L.fx.push({k:'puff',x:c.x+(rand()-.5)*120,y:c.y-60-rand()*60,vx:(rand()-.5)*120,vy:-120,life:.5,max:.5,r:6+rand()*6,col:rand()<.5?'#bfe7ff':'#efe0bf'});}
+  if(B.desp&&!(B.transT>0)){{const k=({1:.1,2:.17}[B.def.isl]||.24);for(let i=0;i<B.timers.length;i++)B.timers[i]-=dt*k;}B.despT=(B.despT||0)-dt;if(B.despT<=0){B.despT=.22;const c=B.center();L.fx.push({k:'puff',x:c.x+(rand()-.5)*120,y:c.y-60-rand()*60,vx:(rand()-.5)*120,vy:-120,life:.5,max:.5,r:6+rand()*6,col:rand()<.5?'#bfe7ff':'#efe0bf'});}
     B.hbT=(B.hbT||0)-dt;if(B.hbT<=0){B.hbT=1.1;sfx('latido');}}};
 const _startLevelDLC=startLevel;
 startLevel=function(id){try{if(typeof Pack!=='undefined'&&Pack.audio)Pack.audio.playbackRate=1;}catch(_){}_startLevelDLC(id);};

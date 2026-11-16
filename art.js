@@ -72,7 +72,8 @@ function drawHero(o){
   if(o.spin>0){ctx.translate(0,-40);ctx.rotate(o.face*(1-o.spin/.35)*TAU);ctx.translate(0,40);}
   const f=o.face,s=o.run?Math.sin(o.anim):0,hip=o.duck?-16:-30,air=o.air,ch=o.char||'chispa';
   if(!o.noLegs)for(const i of[-1,1]){const fx=air?i*9+f*4:i*7+s*i*14,fy=air?-10:-Math.max(0,s*i)*7;hose(i*5,hip,i*5+s*i*8,hip*.5,fx,fy,5);ell(fx+f*5,fy-2,9,5,ch==='cerilla'?'#3a2a20':C.ink,0);}
-  hose(-f*8,hip-(ch==='cerilla'?10:6),-f*16,hip,-f*14,hip+6+s*4,4.5);glove(-f*14,hip+6+s*4,5.5);
+  const pump=o.run&&!o.shoot&&!o.flash&&!(o.exPose>0)&&!(o.superPose>0),bx=pump?-f*(4-s*15):-f*14,bya=pump?hip-2-Math.abs(s)*5:hip+6+s*4;
+  hose(-f*8,hip-(ch==='cerilla'?10:6),-f*16,hip,bx,bya,4.5);glove(bx,bya,5.5);
   const by=hip,cy=by-37,hy=heroBody(ch,cy,by,f,o),ex=f*5;
   const fy=ch==='cerilla'?hy-2:cy-5;
   if(o.hurt){ctx.lineWidth=3;ctx.strokeStyle=ch==='cerilla'?C.white:C.ink;for(const d of[-6,6]){ctx.beginPath();ctx.moveTo(ex+d-4,fy-4);ctx.lineTo(ex+d+4,fy+4);ctx.moveTo(ex+d+4,fy-4);ctx.lineTo(ex+d-4,fy+4);ctx.stroke();}}
@@ -80,7 +81,7 @@ function drawHero(o){
   else for(const d of[-6,6]){if(ch==='cerilla')ell(ex+d,fy,3.6,5.5,C.white,0);ell(ex+d+(ch==='cerilla'?f:0),fy+(ch==='cerilla'?1:0),ch==='cerilla'?2.2:3.6,ch==='cerilla'?3.6:7,C.ink,0);circ(ex+d+f,fy-3,1.3,'#fff',0);}
   ctx.beginPath();if(o.hurt)ctx.ellipse(ex,fy+12,3.5,4.5,0,0,TAU);else ctx.arc(ex,fy+(ch==='cerilla'?4:10),6,.15*Math.PI,.85*Math.PI);ctx.lineWidth=2.6;ctx.strokeStyle=ch==='cerilla'?C.white:C.ink;ctx.stroke();
   if(ch!=='cerilla'){ctx.fillStyle='rgba(230,120,90,.45)';for(const d of[-13,13]){ctx.beginPath();ctx.arc(ex+d,fy+9,3.2,0,TAU);ctx.fill();}}
-  const ax=o.aimX??f,ay=o.aimY??0,hx=ax*27,hyy=(o.duck?-24:-44)+ay*27,sh=ch==='cerilla'?by-24:by-8;
+  const ax=o.aimX??f,ay=o.aimY??0,sh=ch==='cerilla'?by-24:by-8;let hx=ax*27,hyy=(o.duck?-24:-44)+ay*27;if(pump){hx=f*(4+s*15);hyy=by-2-Math.abs(s)*6;}if(o.armsUp){hx=f*10;hyy=by-54-Math.sin((o.anim||0)*3)*4;}
   hose(f*(ch==='cerilla'?5:8),sh,f*8+ax*8,by,hx,hyy,4.5);glove(hx,hyy,6.5);
   if(o.flash){ctx.save();ctx.translate(hx+ax*10,hyy+ay*10);ctx.rotate((o.anim||0)*30);star(0,0,10,4,5);ctx.fillStyle=ch==='cerilla'?'#ffb35a':'#ffe27a';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=C.ink;ctx.stroke();ctx.restore();}
   if(o.exPose>0&&typeof heroExFx==='function')heroExFx(o,hx,hyy,ax,ay,ch);

@@ -35,7 +35,7 @@ function npStep(ms,e){if(e&&e.np!=null)cfg.players=e.np;
   finally{RI_OVERRIDE=null;RNG_SIM=null;NP.inTick=false;}NP.tick++;}
 function npHash(){let s=scene+'|'+(TR?1:0)+'|'+NP.rc+'|'+Math.round(MAPS.x*8)+','+Math.round(MAPS.y*8)+'|'+(save.coins|0);
   if(scene==='level'&&LV){s+='|'+LV.state+'|'+Math.round((LV.t||0)*60);for(const p of LV.Ps||[])s+='|'+Math.round(p.x*8)+','+Math.round(p.y*8)+','+(p.hp|0);
-    const B=LV.boss;if(B)s+='|'+Math.round((B.hp||0)*100)+','+Math.round((B.x||0)*4)+','+(B.phase|0);s+='|'+(LV.eb?LV.eb.length:0);}
+    const B=LV.boss;if(B)s+='|'+Math.round((B.hp||0)*100)+','+Math.round((B.x||0)*4)+','+(B.phase|0);s+='|'+(LV.eb?LV.eb.length:0);if(LV.ents){let n=0,hp=0;for(const e of LV.ents)if(!e.dead){n++;hp+=e.hp||0;}s+='|'+n+','+Math.round(hp*10);}}
   NP.hs=s;let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193);}return h>>>0;}
 /* a friend arriving mid-level is added at a tick boundary, so every computer does it at the same moment */
 {const _jl=netJoinLevel;netJoinLevel=function(){if(NP.on&&!NP.inTick)return;return _jl.apply(this,arguments);};}
