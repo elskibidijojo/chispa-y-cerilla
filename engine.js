@@ -231,11 +231,12 @@ function doParry(L,p,o){
   if(o.ghostOf)revive(L,o.ghostOf);else if(o.k==='pstar')o.cool=1.4;else o.dead=true;
   if(p.type==='plat'){p.vy=-800;p.ground=false;p.airDash=true;p.airJumps=hasCharm(p,'muelle')?1:0;}
   p.parryWin=0;p.spin=.35;p.cards=Math.min(5,p.cards+1);p.inv=Math.max(p.inv,.3);L.parries++;L.freeze=.07;p.parryTried=false;L.flash=Math.max(L.flash,.06);
-  if(hasCharm(p,'anillo')){if(o.ghostOf)ringRestore(L,p);p.ringP=(p.ringP||0)+1;p.ringTot=(p.ringTot||0)+1;if(p.ringTot%10===0)ringRestore(L,p);
-    if(p.ringP>=3){p.ringP=0;if(p.ringN<3&&p.hp<6){p.ringN++;p.hp++;p.maxHp=Math.max(p.maxHp,p.hp);pop(L,p.x,p.y-110,'+1 VIDA',C.gold);sfx('revive');}}}
+  if(hasCharm(p,'anillo')){if(o.ghostOf)ringRestore(L,p);p.ringP=Math.min(3,(p.ringP||0)+1);p.ringTot=(p.ringTot||0)+1;if(p.ringTot%10===0)ringRestore(L,p);ringGive(L,p);}
   ring(L,o.x,o.y);ring(L,o.x,o.y,'#ffffff');sparks(L,o.x,o.y,16,C.parryL);for(let i=0;i<6;i++){const a=i*TAU/6;L.fx.push({k:'spark',x:o.x,y:o.y,vx:Math.cos(a)*420,vy:Math.sin(a)*420,life:.25,max:.25,r:5,col:'#ffffff'});}pop(L,o.x,o.y-30,'¡PARRY!',C.parryL);sfx('parry');shake(L,4);}
 /* Anillo Corazón: every 3 parries = +1 life (up to 6). It gives 3 lives, then waits to be restored by a Super, a revive or 10 parries */
-function ringRestore(L,p){if(!hasCharm(p,'anillo')||!p.ringN)return;p.ringN=0;pop(L,p.x,p.y-140,'¡ANILLO LISTO!',C.parryL);sfx('ding');}
+/* a finished set of 3 parries is never lost: if the ring is spent or you are at 6, it waits and pays out as soon as it can */
+function ringRestore(L,p){if(!hasCharm(p,'anillo')||!p.ringN)return;p.ringN=0;pop(L,p.x,p.y-140,'¡ANILLO LISTO!',C.parryL);sfx('ding');ringGive(L,p);}
+function ringGive(L,p){if(!hasCharm(p,'anillo')||p.dead||(p.ringP||0)<3||(p.ringN||0)>=3||p.hp>=6)return;p.ringP=0;p.ringN=(p.ringN||0)+1;p.hp++;p.maxHp=Math.max(p.maxHp,p.hp);pop(L,p.x,p.y-110,'+1 VIDA',C.gold);sfx('revive');}
 function revive(L,q){const g=q.ghost;q.dead=false;q.ghost=null;q.hp=1;q.inv=2.2;q.x=g.x;
   if(q.type==='plat'){const fl=L.floorAt(g.x);if(fl>9999){const al=alive(L).find(a=>a!==q);if(al){q.x=al.x;}}q.y=Math.min(g.y+40,GROUND);q.vy=-200;q.ground=false;}else q.y=g.y;
   sfx('revive');pop(L,q.x,q.y-60,'¡DE VUELTA!',C.gold);}
