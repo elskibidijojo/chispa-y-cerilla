@@ -162,8 +162,8 @@ drawTornillo=function(x,y,t){const cel=SH.cel||0,jump=cel>0?-Math.abs(Math.sin(c
     txt('¡GRACIAS!',x,y-300,26,C.gold,C.ink);}
   ctx.restore();};
 const _drawShopC=drawShop;
-drawShop=function(){_drawShopC();if(SH.fly){const k=Math.min(1,SH.fly.t/.9),tab=SHOP_TABS[SH.tab],n=tab.ids.length,{rows,per}=shopGrid(n),i=Math.max(0,tab.ids.indexOf(SH.fly.id)),gap=Math.min(86,620/per),
-    sx=306+(i%per)*gap+30,sy=(rows>1?192+Math.floor(i/per)*72:200)+30,ex=160,ey=300,x=sx+(ex-sx)*k,y=sy+(ey-sy)*k-Math.sin(k*Math.PI)*140;
+drawShop=function(){_drawShopC();if(SH.fly){const k=Math.min(1,SH.fly.t/.9),tab=SHOP_TABS[SH.tab],n=tab.ids.length,{rows,per,gap,rowH,y0}=shopLay(n),i=Math.max(0,tab.ids.indexOf(SH.fly.id)),
+    sx=306+(i%per)*gap+30,sy=y0+Math.floor(i/per)*rowH+30,ex=160,ey=300,x=sx+(ex-sx)*k,y=sy+(ey-sy)*k-Math.sin(k*Math.PI)*140;
   ctx.save();ctx.translate(x,y);ctx.rotate(k*TAU*1.5);ctx.scale(1-k*.6,1-k*.6);itemIcon(SH.fly.id,0,0,SH.t);ctx.restore();}};
 
 /* ---------- one new signature attack per boss (original) ---------- */

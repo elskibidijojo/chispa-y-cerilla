@@ -3,6 +3,7 @@
    Only the normal shot is scaled; EX moves and Súpers keep their own damage. */
 (function(){
 const TIERS={
+  solar:[1,'El mejor de todos (se recalienta)'],
   taladro:[1.074,'Altísimo (pegado al jefe)'],
   lanzallamas:[1.04,'Altísimo (de cerca)'],
   carga:[1,'Altísimo (hay que cargarlo)'],
@@ -11,6 +12,9 @@ const TIERS={
   arco:[.916,'Muy bueno (alcance medio)'],
   trompetazo:[1.2,'Muy bueno (de cerca)'],
   bumeran:[.795,'Bueno'],
+  shuriken:[1,'Bueno (atraviesa)'],
+  agua:[1,'Bueno (moja: +15% de daño)'],
+  petardo:[1,'Bueno (explota en área)'],
   rebote:[1.158,'Bueno'],
   convergente:[.861,'Bueno'],
   espiral:[.854,'Bueno'],
@@ -20,6 +24,7 @@ const TIERS={
   sierra:[.8,'Decente (te protege)'],
   burbujas:[.765,'Decente (se come balas)'],
   rebotapared:[1.023,'Decente'],
+  varita:[1,'Bajo (pero llena el súper rapidísimo)'],
   luciernaga:[1.1,'Bajo (nunca falla)']};
 window.WEAPON_TIERS=TIERS;
 let CUR=1;const wm=w=>(TIERS[w]?TIERS[w][0]:1);

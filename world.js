@@ -289,10 +289,11 @@ function shopBG(){if(SHOPBG)return SHOPBG;const [c,b]=mk(W,H);b.fillStyle='#6b3a
   const g2=b.createRadialGradient(620,70,10,620,200,320);g2.addColorStop(0,'rgba(255,230,160,.28)');g2.addColorStop(1,'rgba(255,230,160,0)');b.fillStyle=g2;b.fillRect(0,0,W,H);SHOPBG=c;return c;}
 (function(){const cv=document.getElementById('game');if(!cv||!cv.addEventListener)return;cv.addEventListener('pointerdown',e=>{if(scene!=='shop'||!cv.getBoundingClientRect)return;const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;
   for(let i=0;i<SHOP_TABS.length;i++){const tx=306+i*130;if(x>=tx&&x<=tx+120&&y>=150&&y<=182){SH.click={tab:i};return;}}
-  const n=SHOP_TABS[SH.tab].ids.length,{rows,per}=shopGrid(n),gap=Math.min(86,620/per),cw=Math.min(78,gap-8),ch=rows>1?64:94;
-  for(let i=0;i<n;i++){const row=Math.floor(i/per),ix=306+(i%per)*gap,iy=rows>1?192+row*72:200;if(x>=ix&&x<=ix+cw&&y>=iy-6&&y<=iy+ch){SH.click={item:i};return;}}});})();
+  const n=SHOP_TABS[SH.tab].ids.length,{rows,per,gap,cw,ch,rowH,y0}=shopLay(n);
+  for(let i=0;i<n;i++){const row=Math.floor(i/per),ix=306+(i%per)*gap,iy=y0+row*rowH;if(x>=ix&&x<=ix+cw&&y>=iy-6&&y<=iy+ch){SH.click={item:i};return;}}});})();
 function openShop(){syncSecrets();scene='shop';SH.tab=0;SH.sel=0;SH.pl=0;SH.msg='¡Pasa, pasa! Todo lo que brilla aquí se paga con monedas. Arriba y abajo cambian de estante.';Music.play('shop');}
-function shopGrid(n){const rows=n>8?2:1;return{rows,per:Math.ceil(n/rows)};}
+function shopLay(n){const rows=n>18?3:n>8?2:1,per=Math.ceil(n/rows),gap=Math.min(86,620/per),cw=Math.min(78,gap-8),ch=rows>2?46:rows>1?64:94,rowH=rows>2?49:72,iy=rows>2?17:rows>1?26:40,sc=rows>2?.5:rows>1?.78:1,y0=rows>1?192:200,ly=rows>2?38:(rows>1?64:94)-14,fs=rows>2?10:11;return{rows,per,gap,cw,ch,rowH,iy,sc,y0,ly,fs};}
+function shopGrid(n){const l=shopLay(n);return{rows:l.rows,per:l.per};}
 function shopTab(t,sel){const nt=SHOP_TABS.length;SH.tab=(t+nt)%nt;SH.sel=Math.min(sel||0,SHOP_TABS[SH.tab].ids.length-1);sfx('trans');}
 function updShop(dt,IN){const I=IN.M;SH.t+=dt;let tab=SHOP_TABS[SH.tab];const n=tab.ids.length,{rows,per}=shopGrid(n),row=Math.floor(SH.sel/per),col=SH.sel%per;
   if(I.left){SH.sel=(SH.sel+n-1)%n;sfx('move');}if(I.right){SH.sel=(SH.sel+1)%n;sfx('move');}
@@ -362,13 +363,13 @@ function drawShopAmbience(t){/* swinging lamp, warm light cone, shelves of curio
   const tx=268,ty=300;ell(tx,ty,20,15,'#d6cfc2',3);rr(tx-5,ty-20,10,5,2,C.rust,2);line(tx+18,ty-4,tx+32,ty-12,4);for(let i=0;i<3;i++){const k=(t*.5+i/3)%1;ctx.globalAlpha=1-k;circ(tx+34+k*8,ty-18-k*40,4+k*6,'rgba(255,255,255,.5)',0);ctx.globalAlpha=1;}}
 function drawShop(){const t=SH.t,tab=SH_TABS_SAFE(),e=save.eq[SH.pl];ctx.drawImage(shopBG(),0,0,W,H);drawShopAmbience(t);drawTornillo(160,470,t);
   SHOP_TABS.forEach((tb,i)=>{const on=i===SH.tab,x=306+i*130;rr(x,150,120,32,8,on?C.brass:'rgba(239,224,191,.55)',3);txt(tb.name,x+60,167,16,C.ink,null);btxt(String(i+1),x+12,158,10,C.rustD,'center',900);});
-  const ids=tab.ids,n=ids.length,rows=n>8?2:1,per=Math.ceil(n/rows),gap=Math.min(86,620/per),cw=Math.min(78,gap-8),ch=rows>1?64:94;
-  ids.forEach((id,i)=>{const d=itemDef(tab.type,id),sel=i===SH.sel,row=Math.floor(i/per),x=306+(i%per)*gap,y=(rows>1?192+row*72:200)+(sel?-5:0),own=save.owned.includes(id),locked=d.isl>maxIsl(),
+  const ids=tab.ids,n=ids.length,{rows,per,gap,cw,ch,rowH,iy:IY,sc:SC,y0:Y0,ly:LY,fs:FS}=shopLay(n);
+  ids.forEach((id,i)=>{const d=itemDef(tab.type,id),sel=i===SH.sel,row=Math.floor(i/per),x=306+(i%per)*gap,y=Y0+row*rowH+(sel?-5:0),own=save.owned.includes(id),locked=d.isl>maxIsl(),
     eq=tab.type==='w'?(e.w1===id||e.w2===id):tab.type==='c'?e.charm===id:tab.type==='k'?e.skin===id:(e.sup||'chispazo')===id;
-    const iy=rows>1?26:40,ly=ch-14;if(sel)rr(x-5,y-5,cw+10,ch+10,10,'rgba(242,193,78,.45)',0);rr(x,y,cw,ch,6,locked?'#8a7650':own?'#e6dcc0':C.paper,sel?4:3);
-    if(locked){txt('?',x+cw/2,y+iy,rows>1?24:30,C.ink,null);btxt(`Isla ${d.isl}`,x+cw/2,y+ly-2,12,C.ink,'center',800);}
-    else{if(rows>1){ctx.save();ctx.translate(x+cw/2,y+iy);ctx.scale(.78,.78);itemIcon(id,0,0,t);ctx.restore();}else itemIcon(id,x+cw/2,y+iy,t);
-      if(own)btxt(eq?(tab.type==='w'?(e.w1===id?'ARMA 1':'ARMA 2'):'PUESTO'):'TUYO',x+cw/2,y+ly,11,eq?C.rust:C.ink,'center',800);else{coinIcon(x+cw/2-12,y+ly,8);btxt(String(d.price),x+cw/2+2,y+ly,15,C.ink,'left',800);}}});
+    const iy=IY,ly=LY;if(sel)rr(x-5,y-5,cw+10,ch+10,10,'rgba(242,193,78,.45)',0);rr(x,y,cw,ch,6,locked?'#8a7650':own?'#e6dcc0':C.paper,sel?4:3);
+    if(locked){txt('?',x+cw/2,y+iy,rows>2?18:rows>1?24:30,C.ink,null);btxt(`Isla ${d.isl}`,x+cw/2,y+ly-2,FS+1,C.ink,'center',800);}
+    else{if(rows>1){ctx.save();ctx.translate(x+cw/2,y+iy);ctx.scale(SC,SC);itemIcon(id,0,0,t);ctx.restore();}else itemIcon(id,x+cw/2,y+iy,t);
+      if(own)btxt(eq?(tab.type==='w'?(e.w1===id?'ARMA 1':'ARMA 2'):'PUESTO'):'TUYO',x+cw/2,y+ly,FS,eq?C.rust:C.ink,'center',800);else{coinIcon(x+cw/2-12,y+ly,rows>2?6:8);btxt(String(d.price),x+cw/2+2,y+ly,rows>2?12:15,C.ink,'left',800);}}});
   const id=ids[SH.sel],d=itemDef(tab.type,id),locked=d.isl>maxIsl();card(306,340,624,170,C.paper);
   txt(locked?'Llegará más adelante':d.name,326,368,22,C.brass,C.ink,'left');btxt(tab.type==='w'?'ARMA':tab.type==='c'?'AMULETO':tab.type==='k'?'SKIN':'SÚPER (5 cartas)',910,368,13,C.rust,'right',800);
   const yy=wrap(locked?`Don Tornillo trae esto en el barco cuando llegues a la isla ${d.isl}.`:d.desc,326,398,580,21,16);if(!locked&&d.exd)wrap(d.exd,326,yy+22,580,21,15,C.rustD,700);
