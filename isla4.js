@@ -182,11 +182,14 @@ defBoss({id:'cometa',name:'Dragona Cometa',sub:'Jefa · Mar de Nubes',isl:4,hp:5
   shapes(B){const s=[{x:B.x,y:B.y,r:66}];const tr=B.trail||[];for(const k of[10,20]){const q=tr[Math.min(tr.length-1,k)];if(q)s.push({x:q.x+60,y:q.y+10,r:30});}return s;},
   setup(B){B.trail=[];},
   mech(L,B){for(const s of L.solids)if(s.ground){s.y=99999;s.gone=1e9;}L.groundGone=true;const ys=[392,330,380,300,360,410,340];
-    const mkC=(x,y,w)=>addCS(L,{x,y,w,skin:'nube',app:1,shake:0,fall:0});[[100,400,170],[330,330,140],[560,385,150],[780,310,130],[990,370,150]].forEach(([x,y,w])=>mkC(x,y,w));
-    for(const p of L.Ps){p.x=190;p.y=400;}let yi=0;
-    chainUpd(L,dt=>{const sp=(L.state==='intro'?0:[58,78,98][B.phase]||58)*(L.state==='play'||L.state==='ko'?1:0);
-      for(const s of L.cs){if(s.y0===undefined)s.y0=s.y;const px=s.x;s.py=s.y;s.x-=sp*dt;let wrap=false;if(s.x+s.w<-70){s.x=W+40+rand()*60;s.y0=ys[yi++%ys.length];wrap=true;}
-        s.y=s.y0+Math.sin(L.t*1.6+s.x*.01)*5;if(wrap)s.py=s.y;s.dx=wrap?0:s.x-px;}});},
+    const kinds=['nube','globo','nube','cometa','nube','luna','globo','nube'];let ki=0;
+    const mkC=(x,y,w,k)=>{const s=addCS(L,{x,y,w,skin:'nube',app:1,shake:0,fall:0});s.kind=k||kinds[ki++%kinds.length];s.seed=1+ki*1.7;s.draw=(s,L)=>{if(typeof drawSkyPlat==='function')drawSkyPlat(s,L);else drawPlat(s,L.t);};return s;};
+    mkC(30,400,290,'nube');[[390,330,140],[610,385,150],[820,310,130],[1030,370,150]].forEach(([x,y,w])=>mkC(x,y,w));
+    L.Ps.forEach((p,i)=>{p.x=150+i*80;p.y=400;});let yi=0;L.cmScroll=0;L.cmPT=0;
+    chainUpd(L,dt=>{const on=L.state==='play'||L.state==='ko';if(L.state==='play')L.cmPT+=dt;const ramp=L.state==='ko'?1:Math.min(1,Math.max(0,L.cmPT-.6)/3.4);
+      const sp=on?([58,78,98][B.phase]||58)*ramp:0;L.cmSp=sp;L.cmScroll+=sp*dt;
+      for(const s of L.cs){if(s.y0===undefined)s.y0=s.y;const px=s.x;s.py=s.y;s.x-=sp*dt;let wrap=false;if(s.x+s.w<-70){s.x=W+40+rand()*60;s.y0=ys[yi++%ys.length];s.kind=kinds[ki++%kinds.length];s.seed=1+ki*1.7;wrap=true;}
+        s.y=s.y0+Math.sin(L.t*1.6+s.x*.01)*(s.kind==='globo'?7:5);if(wrap)s.py=s.y;s.dx=wrap?0:s.x-px;}});},
   move(B,dt,L){B.trail.unshift({x:B.x,y:B.y});if(B.trail.length>40)B.trail.length=40;const t=B.t,e=B.phase===2;
     B.x=lerp(B.x,700+Math.sin(t*.6)*120+(e?Math.sin(t*2.7)*60:0),Math.min(1,dt*2));B.y=lerp(B.y,200+Math.sin(t*1.1)*55+(e?Math.cos(t*3.1)*40:0),Math.min(1,dt*2));},
   phases:[

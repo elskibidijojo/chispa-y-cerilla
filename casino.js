@@ -115,7 +115,7 @@ defBoss({id:'topo',name:'Topo Tito',sub:'Concursante · Golpea al Topo',isl:4,hp
   setup(B){B.st='up';B.stT=2.4;B.k=1;},
   move(B,dt,L){const ph=B.phase;B.stT-=dt;
     if(B.st==='up'&&B.stT<=0){B.st='sink';sfx('whistleDown');}
-    else if(B.st==='sink'){B.k=Math.max(0,B.k-dt*4.5);if(B.k<=0){B.st='down';B.hidden=true;B.stT=ph?.45:.6;const t=L.Ps.find(p=>!p.dead)||L.Ps[0],opts=TOPO_HOLES.filter(x=>x!==B.x);B.x=rand()<.55?opts.reduce((a,b)=>Math.abs(b-t.x)<Math.abs(a-t.x)?b:a):pick(opts);}}
+    else if(B.st==='sink'){B.k=Math.max(0,B.k-dt*4.5);if(B.k<=0){B.st='down';B.hidden=true;B.stT=ph?.45:.6;const t=L.Ps.find(p=>!p.dead)||L.Ps[0],opts=TOPO_HOLES.filter(x=>x!==B.x);const early=L._pt!=null&&L._pt<4;B.x=early?opts.reduce((a,b)=>Math.min(...L.Ps.map(q=>Math.abs(b-q.x)))>Math.min(...L.Ps.map(q=>Math.abs(a-q.x)))?b:a):rand()<.55?opts.reduce((a,b)=>Math.abs(b-t.x)<Math.abs(a-t.x)?b:a):pick(opts);}}
     else if(B.st==='down'&&B.stT<=0){B.st='rise';B.hidden=false;sfx('boing');puff(L,B.x,GROUND-6,8,'#8a5a3a');}
     else if(B.st==='rise'){B.k=Math.min(1,B.k+dt*5);if(B.k>=1){B.st='up';B.stT=ph?1.9:2.5;B.squash=.25;}}},
   phases:[
