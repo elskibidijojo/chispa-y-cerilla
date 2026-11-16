@@ -1,11 +1,11 @@
 /* armas.js — weapon damage ladder, from best to worst (measured on a boss at each weapon's best range).
-   Short range weapons pay for the risk with the highest damage; the Cañón de Carga is 3rd.
+   Short range weapons pay for the risk with the highest damage; the Cañón de Carga, fully charged, is the strongest.
    Only the normal shot is scaled; EX moves and Súpers keep their own damage. */
 (function(){
 const TIERS={
   taladro:[1.074,'Altísimo (pegado al jefe)'],
   lanzallamas:[1.04,'Altísimo (de cerca)'],
-  carga:[.704,'Muy alto (hay que cargarlo)'],
+  carga:[1,'Altísimo (hay que cargarlo)'],
   abanico:[.745,'Muy alto (de cerca)'],
   tachuelas:[.935,'Muy bueno'],
   arco:[.916,'Muy bueno (alcance medio)'],
@@ -29,5 +29,4 @@ const _hw=holdWeapon;holdWeapon=function(L,p,dt,h,w){const m=wm(w),pc=CUR,ph=HOL
 for(const [id,W] of Object.entries(WEAPONS)){if(!W.fire)continue;const f=W.fire;const m=wm(id);
   W.fire=function(...a){const pc=CUR;CUR=m;try{return f.apply(this,a);}finally{CUR=pc;}};
   if(TIERS[id]&&W.desc&&!/ Daño:/.test(W.desc))W.desc=W.desc.replace(/\s*\((Ajustado|Mejorada)[^)]*\)/,'')+' Daño: '+TIERS[id][1]+'.';}
-if(WEAPONS.carga)WEAPONS.carga.desc=WEAPONS.carga.desc.replace('uno de los golpes más fuertes del juego','un golpe muy fuerte');
 })();
