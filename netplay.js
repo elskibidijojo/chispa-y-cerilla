@@ -6,7 +6,7 @@
    until the host is back on the map, and then everyone is re-synchronised. */
 const NP_TICK=1/60;
 const NP={on:false,role:null,tick:0,acc:0,last:0,rng:null,rc:0,prevP:[{},{},{}],prevM:{},np:1,inTick:false,
-  out:[],hist:[],buf:new Map(),jit:2,stall:0,gapT:0,lm:-1,lmT:0,bak:null,mqT:0,mqOut:[],hashBad:0,syncT:0,lastRtt:0};
+  out:[],hist:[],lastA:[0,0,0],seq:0,sent:new Map(),lh:[],ackSeq:-1,lat:0,buf:new Map(),jit:2,stall:0,gapT:0,lm:-1,lmT:0,bak:null,mqT:0,mqOut:[],hashBad:0,syncT:0,lastRtt:0};
 /* --- seeded random numbers (mulberry32) --- */
 function npRng(seed){let a=seed>>>0;return()=>{NP.rc++;a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296;};}
 /* sound and music never touch the shared random numbers: they differ per computer */
@@ -68,11 +68,12 @@ function npHostCheck(){if(NET.role!=='host'){if(NP.on&&NP.role==='host')npHostSt
   if(want.length&&scene==='map'&&!TR&&!MAPS.dialog&&!MAPS.menu&&!MAPS.card)npSyncAll();}
 function npHostFrame(dt){NP.acc+=Math.min(dt,.2);const lm=npLocalMask();let n=0;
   while(NP.acc>=NP_TICK-1e-6&&n<4){const ms=[lm,npSlotMask(1),npSlotMask(2)],np=cfg.players||1,rec={n:NP.tick,m:ms};if(np!==NP.np){rec.e={np};NP.np=np;}
+    {const a=[0,0,0];let ch=false;for(let s=1;s<3;s++){const G=NET.guests[s];a[s]=G&&G.xs!=null?G.xs:0;if(a[s]!==(NP.lastA[s]||0))ch=true;}if(ch||NP.tick%30===0){rec.a=a;NP.lastA=a;}}
     npStep(ms,null);if(NP.tick%20===0){rec.h=npHash();if(NP.dbg)NP.dbg[NP.tick]=NP.hs;}NP.out.push(rec);NP.hist.push(rec);NP.acc-=NP_TICK;n++;if(!NP.on)break;}
   if(n>=4)NP.acc=Math.min(NP.acc,NP_TICK);if(NP.hist.length>900)NP.hist.splice(0,NP.hist.length-900);npFlush();}
 function npFlush(){if(!NP.out.length)return;const f=NP.out;NP.out=[];const g=netGuestsOn().filter(G=>G.ls);
   for(const G of g)if(G.conn)netSend(G.conn,{t:'Lf',f});
-  if(NET.mq&&g.some(G=>G.mq)){NP.mqOut.push(...f);const now=performance.now();if(NP.mqOut.length>=3||now-NP.mqT>60){NP.mqT=now;NET.mq.pubJ(netTopic(NET.code,'down'),{t:'Lf',f:NP.mqOut});NP.mqOut=[];}}}
+  if(NET.mq&&g.some(G=>G.mq)){NP.mqOut.push(...f);const now=performance.now();if(NP.mqOut.length>=2||now-NP.mqT>34){NP.mqT=now;NET.mq.pubJ(netTopic(NET.code,'down'),{t:'Lf',f:NP.mqOut});NP.mqOut=[];}}}
 function npHostMsg(G,d){if(d.t==='Ld'){if(NP.dbg)console.warn('DESYNC tick',d.n,'\nguest '+d.s+'\nhost  '+NP.dbg[d.n]);if(!G.ls)return;G.ls=false;G.lsFail=(G.lsFail||0)+1;G.lsNext=performance.now()+1500;npStream(G);
     if(G.lsFail>=3)netToast(`${netWho(G.slot)} sigue con video`,'Sus juegos no coincidían');}
   else if(d.t==='Lg'&&G.ls){const from=d.n|0,f=NP.hist.filter(r=>r.n>=from).slice(0,300);if(f.length)npSendG(G,{t:'Lf',f});}
@@ -81,7 +82,7 @@ function npHostMsg(G,d){if(d.t==='Ld'){if(NP.dbg)console.warn('DESYNC tick',d.n,
 /* ================= GUEST ================= */
 function npGuestMsg(d){if(NET.role!=='guest')return;
   if(d.t==='Ls'){if(!NP.bak)NP.bak={save,cfg:{players:cfg.players,char:cfg.char,diff:cfg.diff,cine:cfg.cine}};const keep=NP.buf;npApply(d);NP.role='guest';NP.buf=new Map();for(const [k,v] of keep)if(k>=d.n)NP.buf.set(k,v);
-    NP.jit=NET.tr==='mqtt'?4:2;NP.hashBad=0;NP.syncT=performance.now();NET.st='lock';if(NETV){try{NETV.pause();}catch(_){}NETV.srcObject=null;}
+    NP.jit=NET.tr==='mqtt'?3:1;NP.ackSeq=-1;NP.lat=0;NP.hashBad=0;NP.syncT=performance.now();NET.st='lock';if(NETV){try{NETV.pause();}catch(_){}NETV.srcObject=null;}
     try{Music.play(MAPS.jukebox||curWorld().song);}catch(_){}netToast('¡Sincronizado!',`Eres ${netWho(NET.slot)} · el juego corre en tu compu`,2.6);return;}
   if(d.t==='Lf'&&Array.isArray(d.f)){for(const r of d.f)if(r&&typeof r.n==='number'&&Array.isArray(r.m)&&(!NP.on||r.n>=NP.tick))NP.buf.set(r.n,r);
     if(NP.buf.size>2400){const ks=[...NP.buf.keys()].sort((a,b)=>a-b);for(const k of ks.slice(0,NP.buf.size-2400))NP.buf.delete(k);}return;}
@@ -90,25 +91,49 @@ function npGuestFall(msg){if(!NP.on)return;NP.on=false;NP.role=null;NP.buf=new M
   if(NET.gMus)NET.gMus.name=undefined;if(msg)netToast(msg,'Mientras tanto ves su pantalla');}
 function npGuestUp(m){if(NET.tr==='mqtt'){if(NET.mq&&NET.mqUp)NET.mq.pubJ(NET.mqUp,m);}else netSend(NET.conn,m);}
 function npGuestFrame(dt){const now=performance.now(),lm=npLocalMask();
-  if(lm!==NP.lm||now-NP.lmT>(NET.tr==='mqtt'?220:100)){NP.lm=lm;NP.lmT=now;npGuestUp({t:'in',m:0,x:lm});}
+  if(lm!==NP.lm||now-NP.lmT>(NET.tr==='mqtt'?150:80)){NP.lm=lm;NP.lmT=now;const sq=++NP.seq;NP.sent.set(sq,now);if(NP.sent.size>300){const k=NP.sent.keys().next().value;NP.sent.delete(k);}npGuestUp({t:'in',m:0,x:lm,s:sq});}
+  NP.lh.push([now,lm]);while(NP.lh.length&&now-NP.lh[0][0]>1500)NP.lh.shift();
   NP.acc+=Math.min(dt,.2);let avail=0;while(NP.buf.has(NP.tick+avail))avail++;
   let steps=Math.floor(NP.acc/NP_TICK);NP.acc-=steps*NP_TICK;
   if(avail-steps>NP.jit+2)steps+=Math.min(3,avail-steps-NP.jit);
-  if(!avail){NP.acc=Math.min(NP.acc,NP_TICK);NP.stall+=dt;if(NP.stall>.25&&NP.jit<8){NP.jit++;NP.stall=0;}
+  if(!avail){NP.acc=Math.min(NP.acc,NP_TICK);NP.stall+=dt;if(NP.stall>.12&&NP.jit<8){NP.jit++;NP.stall=0;}
     if(NP.buf.size&&now-NP.gapT>400){let lo=Infinity;for(const k of NP.buf.keys())if(k>NP.tick&&k<lo)lo=k;if(lo<Infinity){NP.gapT=now;npGuestUp({t:'Lg',n:NP.tick});}}
     else if(!NP.buf.size&&NP.stall>2&&now-NP.gapT>2000){NP.gapT=now;npGuestUp({t:'Lg',n:NP.tick});}}
-  else if(NP.jit>2&&avail>NP.jit+6)NP.jit--;
+  else if(NP.jit>1&&avail>NP.jit+4){NP.jit--;}
   steps=Math.min(steps,avail,6);
   for(let i=0;i<steps;i++){const r=NP.buf.get(NP.tick);NP.buf.delete(NP.tick);npStep(r.m,r.e);
+    if(r.a&&r.a[NET.slot]>NP.ackSeq){NP.ackSeq=r.a[NET.slot];const st=NP.sent.get(NP.ackSeq);if(st!=null){const l=now-st;NP.lat=NP.lat?NP.lat*.8+l*.2:l;}}
     if(r.h!=null&&npHash()!==r.h){npGuestUp({t:'Ld',n:NP.tick,s:NP.hs});npGuestFall('Se desincronizó un momento');return;}}
   for(const k of NP.buf.keys())if(k<NP.tick)NP.buf.delete(k);}
 function npGuestEnd(){if(!NP.bak)return;const B=NP.bak;NP.bak=null;NP.on=false;NP.role=null;NP.buf=new Map();save=B.save;Object.assign(cfg,B.cfg);MAPBG={k:null};try{placeOnMap();}catch(_){}}
+
+/* ================= ZERO-DELAY FEEL: the guest sees its own hero where its latest buttons will put it =================
+   Your buttons take a round trip before they reach the shared game. While they travel, your own hero is drawn
+   ahead, as if they had already arrived (same running, jumping, dashing and landing rules). The shared game itself
+   is never touched: this only changes where your hero is painted, and it snaps back the moment the real result arrives. */
+function npPredict(L,p,ms,prev){const q={x:p.x,y:p.y,vx:p.vx,vy:p.vy,ground:p.ground,face:p.face,dash:Math.max(0,p.dash||0),dashCd:Math.max(0,p.dashCd||0),airDash:p.airDash,duck:false,shoot:p.shoot},dt=NP_TICK;let pm=prev;
+  for(const m of ms){const h=k=>!!(m&(1<<ACTS.indexOf(k))),e=k=>h(k)&&!(pm&(1<<ACTS.indexOf(k)));pm=m;const mv=(h('right')?1:0)-(h('left')?1:0);
+    q.dashCd=Math.max(0,q.dashCd-dt);q.duck=h('down')&&q.ground&&q.dash<=0&&!h('lock');q.shoot=h('shoot');
+    if(e('dash')&&q.dashCd<=0&&q.dash<=0&&(q.ground||q.airDash)){if(mv)q.face=mv;q.dash=.21;q.dashCd=.42;if(!q.ground)q.airDash=false;q.vy=0;}
+    if(q.dash>0){q.dash-=dt;q.vx=q.face*760;q.vy=0;}
+    else{if(mv&&!q.duck&&!h('lock'))q.face=mv;q.vx=(q.duck||(h('lock')&&q.ground))?0:mv*310;if(L.wind)q.vx+=L.wind.f;
+      if(e('jump')&&q.ground&&!h('down')){q.vy=-880;q.ground=false;}q.vy=Math.min(1400,q.vy+((q.vy<0&&!h('jump'))?3800:2300)*dt);}
+    q.x=clamp(q.x+q.vx*dt,L.minX,L.maxX);if(L.kind==='run')q.x=clamp(q.x,L.camX+20,L.camX+W-20);const py=q.y;q.y+=q.vy*dt;let land=null;
+    if(q.vy>=0)for(const s of L.solids){if(s.spring)continue;if(q.x+9>s.x&&q.x-9<s.x+s.w&&py<=s.y+.5&&q.y>=s.y){if(!land||s.y<land.y)land=s;}}
+    if(land){q.y=land.y;q.vy=0;q.ground=true;q.airDash=true;}else q.ground=false;}
+  return q;}
+function npPredictedSwap(){if(!NP.on||NP.role!=='guest'||scene!=='level'||!LV||LV.state!=='play'||LV.climb)return null;const p=LV.Ps&&LV.Ps[NET.slot];
+  if(!p||p.dead||p.type!=='plat'||p.superT>0||p.hurtT>0||(p.drillDash>0)||!NP.lat)return null;const now=performance.now(),lat=Math.min(NP.lat,500),n=Math.round(lat/1000/NP_TICK);if(n<1)return null;
+  const ms=[];let prev=0;const t0=now-lat;for(let k=0;k<NP.lh.length;k++)if(NP.lh[k][0]<=t0)prev=NP.lh[k][1];let j=0;
+  for(let i=0;i<n;i++){const tt=t0+i*NP_TICK*1000;while(j<NP.lh.length-1&&NP.lh[j+1][0]<=tt)j++;ms.push(NP.lh.length?NP.lh[j][1]:0);}
+  const q=npPredict(LV,p,ms,prev),keep={x:p.x,y:p.y,vx:p.vx,vy:p.vy,ground:p.ground,face:p.face,shoot:p.shoot,duck:p.duck,dash:p.dash};
+  /* ease toward the guess so a wrong guess never jumps around */const k=.85;p.x=lerp(p.x,q.x,k);p.y=lerp(p.y,q.y,k);p.vx=q.vx;p.vy=q.vy;p.ground=q.ground;p.face=q.face;p.shoot=q.shoot;p.duck=q.duck;p.dash=q.dash;return[p,keep];}
 
 /* ================= the loop: fixed ticks while playing in sync ================= */
 const _frameNP=frame;
 frame=function(now){if(NP.role==='test'){requestAnimationFrame(frame);return;}try{npHostCheck();}catch(e){console.error(e);}
   if(!NP.on){NP.last=now;return _frameNP(now);}
   const dt=Math.min(.25,Math.max(0,(now-(NP.last||now))/1000));NP.last=now;
-  try{if(NP.role==='host')npHostFrame(dt);else npGuestFrame(dt);if(NET.role)netSyncDom(0);render();}catch(err){console.error(err);}
+  try{if(NP.role==='host')npHostFrame(dt);else npGuestFrame(dt);if(NET.role)netSyncDom(0);const sw=npPredictedSwap();try{render();}finally{if(sw)Object.assign(sw[0],sw[1]);}}catch(err){console.error(err);}
   requestAnimationFrame(frame);};
-if(window.__game)Object.assign(window.__game,{NP,npStep,npHash,npApply,npSnapshot,npRng,npBuildIN,setRng:r=>{RNG_SIM=r;}});
+if(window.__game)Object.assign(window.__game,{npPredictedSwap:()=>npPredictedSwap(),NP,npStep,npHash,npApply,npSnapshot,npRng,npBuildIN,setRng:r=>{RNG_SIM=r;}});

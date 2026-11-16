@@ -81,7 +81,7 @@ function netBarText(){const c=NET.server>=0?'Servidor '+(NET.server+1):NET.code;
     if(!g.length)return`En línea · ${NET.server>=0?c:'código '+c} · esperando jugadores (1/3)`;
     return`En línea · ${c} · ${g.length+1}/3 jugadores · `+g.map(x=>NET_CHAR_NAME[netCharOf(x.slot)]+(x.ls?' (sincronizado)':x.slow&&x.conn?' (lento)':'')+(x.ping?' '+x.ping+' ms':'')).join(' · ');}
   const who=NET.slot?NET_CHAR_NAME[NET.char]||'':'';
-  if(NET.st==='lock')return`En línea · ${c} · eres ${who} (J${NET.slot+1}) · juego sincronizado${NET.ping?' · '+NET.ping+' ms':''}`;
+  if(NET.st==='lock')return`En línea · ${c} · eres ${who} (J${NET.slot+1}) · juego sincronizado${typeof NP!=='undefined'&&NP.lat?' · ida y vuelta '+Math.round(NP.lat)+' ms (tu personaje responde al instante)':NET.ping?' · '+NET.ping+' ms':''}`;
   if(NET.st==='live')return`En línea · ${c} · eres ${who} (J${NET.slot+1})${NET.ping?' · '+NET.ping+' ms':''}`;
   if(NET.st==='relay')return`En línea · ${c} · ${NET.tr==='room'?'vía Claude':NET.tr==='mqtt'?'vía servidor':'modo lento'} · eres ${who} (J${NET.slot+1})`;
   if(NET.st==='signal')return`En línea · ${c} · conectado, esperando la imagen…`;
@@ -189,7 +189,7 @@ function netHostMqMsg(gid,d){if(NET.role!=='host'||!NET.mq)return;let G=NET.gues
       const w=netWho(slot);netToast(`¡${w} se unió!`,`${netGuestsOn().length+1} de 3 jugadores`);sfx('ding');sfx('achieve');netBroadcastMsg(`¡${w} se unió!`,G);netJoinLevel();}
     NET.mq.pubJ(to,{t:'hi',slot:G.slot,char:netCharOf(G.slot),v:NET_V,code:NET.code});NET.musSent=-1;return;}
   if(!G)return;G.last=performance.now();
-  if(d.t==='in'){netApplyMask(G.slot,d.m);if(d.x!=null){G.x=d.x|0;G.xT=performance.now();}}else if(typeof d.t==='string'&&d.t[0]==='L'&&typeof npHostMsg==='function')npHostMsg(G,d);else if(d.t==='q'&&typeof d.p==='number')G.ping=Math.round(performance.now()-d.p);else if(d.t==='bye')netGuestGone(G,'salió de la partida');}
+  if(d.t==='in'){netApplyMask(G.slot,d.m);if(d.x!=null){G.x=d.x|0;G.xT=performance.now();if(d.s!=null&&(G.xs==null||d.s>G.xs))G.xs=d.s|0;}}else if(typeof d.t==='string'&&d.t[0]==='L'&&typeof npHostMsg==='function')npHostMsg(G,d);else if(d.t==='q'&&typeof d.p==='number')G.ping=Math.round(performance.now()-d.p);else if(d.t==='bye')netGuestGone(G,'salió de la partida');}
 function netBroadcastMsg(s,except){for(const o of netGuestsOn())if(o!==except&&o.conn)netSend(o.conn,{t:'msg',s});if(NET.mq&&netGuestsOn().some(o=>o.mq&&o!==except))NET.mq.pubJ(netTopic(NET.code,'down'),{t:'msg',s});if(NET.room&&netGuestsOn().some(o=>o.room))netRoomMsg(s);}
 function netMqFrame(){try{if(!NET.small3){NET.small3=document.createElement('canvas');NET.small3.width=448;NET.small3.height=252;}const c=NET.small3,g=c.getContext('2d');if(!c.toBlob||!g)return;
   g.imageSmoothingEnabled=true;g.drawImage(cv,0,0,448,252);NET.busy3=true;
@@ -240,7 +240,7 @@ function netCallGuest(G){try{if(!cv.captureStream||typeof RTCPeerConnection==='u
     call.on('error',()=>{if(NET.guests[G.slot]===G&&!G.slow){G.slow=true;netSend(G.conn,{t:'slow'});}});}
   catch(_){G.slow=true;netSend(G.conn,{t:'slow'});}}
 function netHostData(G,d){if(!d||typeof d!=='object'||NET.guests[G.slot]!==G)return;
-  if(d.t==='in'){netApplyMask(G.slot,d.m);if(d.x!=null){G.x=d.x|0;G.xT=performance.now();}}
+  if(d.t==='in'){netApplyMask(G.slot,d.m);if(d.x!=null){G.x=d.x|0;G.xT=performance.now();if(d.s!=null&&(G.xs==null||d.s>G.xs))G.xs=d.s|0;}}
   else if(d.t==='hey'){G.lsCap=!!d.ls;}
   else if(typeof d.t==='string'&&d.t[0]==='L'&&typeof npHostMsg==='function')npHostMsg(G,d);
   else if(d.t==='q'&&typeof d.p==='number')G.ping=Math.round(performance.now()-d.p);
