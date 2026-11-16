@@ -3,7 +3,8 @@
    Only the normal shot is scaled; EX moves and Súpers keep their own damage. */
 (function(){
 const TIERS={
-  solar:[1,'El mejor de todos (se recalienta)'],
+  cometon:[1,'¡El más fuerte de todos! (dispara lento)'],
+  solar:[1,'Altísimo, el 2.º mejor (se recalienta)'],
   taladro:[1.074,'Altísimo (pegado al jefe)'],
   lanzallamas:[1.04,'Altísimo (de cerca)'],
   carga:[1,'Altísimo (hay que cargarlo)'],

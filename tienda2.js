@@ -18,7 +18,7 @@ function petBoom(L,b,R,dm){b.life=0;boom(L,b.x,b.y,R*.7);sfx('pop');shake(L,R>70
   for(let i=0;i<6;i++)L.fx.push({k:'spark',x:b.x,y:b.y,vx:(rand()-.5)*360,vy:(rand()-.8)*360,life:.3,max:.3,r:3,col:['#e23b3b','#f2c14e','#7bb7c9'][i%3]});}
 function petUpd(b,L,dt){b.fuse-=dt;let hit=b.fuse<=0;if(!hit)for(const e of L.ents)if(!e.dead&&e.hitBy(b.x,b.y,b.r+4)){hit=true;break;}if(hit)petBoom(L,b,b.big?95:62,b.boomD);}
 Object.assign(WEAPONS,{
-  solar:{name:'Rayo Solar',price:9,isl:4,hold:true,desc:'Mantén el disparo: un rayo de sol que quema sin parar a cualquier distancia. Es el arma más fuerte del juego, pero te mueves más lento mientras disparas y se recalienta si no lo sueltas.',exd:'EX: un sol en miniatura que lo atraviesa todo.',
+  solar:{name:'Rayo Solar',price:9,isl:4,hold:true,desc:'Mantén el disparo: un rayo de sol que quema sin parar a cualquier distancia. Es la segunda arma más fuerte del juego, pero te mueves más lento mientras disparas y se recalienta si no lo sueltas.',exd:'EX: un sol en miniatura que lo atraviesa todo.',
     fire(){},ex(L,p,h,ax,ay){B_(L,p,{x:h.x,y:h.y,vx:ax*620,vy:ay*620,r:30,dmg:15,life:1.4,k:'ex',pierce:true});sfx('ex');}},
   agua:{name:'Pistola de Agua',price:5,isl:2,desc:'Chorros de agua que caen un poco. El enemigo mojado recibe un 15% más de daño de todo, también de tu compañero.',exd:'EX: un globo de agua que revienta y empapa.',
     fire(L,p,h,ax,ay){p.cool=.11;const b=B_(L,p,{x:h.x,y:h.y,vx:ax*780,vy:ay*780-40,r:7,dmg:1.08,life:1.4,k:'agua',g:520,draw:drawDrop});b.upd=wetUpd;},
@@ -165,11 +165,26 @@ const _ss3=startSuper;startSuper=function(L,p){if((p.eq.sup||'chispazo')!=='glob
       if(tg.hitBy(b.x,b.y,b.r+6)){b.life=0;boom(L,b.x,b.y,34);sfx('pop');tg.damage(9.4*dmgM(p),p);for(let k=0;k<6;k++)L.fx.push({k:'spark',x:b.x,y:b.y,vx:(rand()-.5)*300,vy:(rand()-.5)*300,life:.3,max:.3,r:3,col:'#fff'});}}
       if(b.y<L.camX*0+10&&b.vy<0)b.vy=Math.abs(b.vy);};}};
 
+
+/* ======================= Cañón Cometa: el arma TOP 1 ======================= */
+function drawCometa(b,L){const a=Math.atan2(b.vy,b.vx),r=b.r;ctx.translate(b.x,b.y);ctx.rotate(a);
+  for(let i=5;i>=1;i--){const k=i/5,x=-i*r*.85,w=Math.sin(L.t*30+i)*3;ctx.globalAlpha=.85-k*.5;ell(x,w,r*(1.15-k*.6),r*(.9-k*.5),i%2?'#ff8a3a':'#ffd25a',0);}ctx.globalAlpha=1;
+  circ(0,0,r*1.45,'rgba(255,200,80,.35)',0);ctx.save();ctx.rotate(L.t*12);star(0,0,r*1.15,r*.75,7,0);ctx.fillStyle='#ff8a3a';ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle=C.ink;ctx.stroke();ctx.restore();
+  circ(0,0,r*.72,'#fff1a8',2.5);circ(r*.2,-r*.2,r*.22,'#fffdf5',0);}
+function cometHit(b,L,dt){b.sp=(b.sp||0)-dt;if(b.sp<=0){b.sp=.03;L.fx.push({k:'spark',x:b.x-b.vx*.02,y:b.y-b.vy*.02,vx:(rand()-.5)*80,vy:(rand()-.5)*80,life:.25,max:.25,r:4,col:rand()<.5?'#ff8a3a':'#ffe27a'});}
+  for(const e of L.ents){if(e.dead||(b.hits&&b.hits.has(e)))continue;if(e.hitBy(b.x,b.y,b.r)){boom(L,b.x,b.y,b.big?60:34);shake(L,b.big?8:3);sfx('boom');}}}
+WEAPONS.cometon={name:'Cañón Cometa',price:10,isl:3,desc:'¡El arma más fuerte de todas! Dispara cometas de fuego enormes que lo atraviesan todo y revientan al chocar. Dispara lento y el retroceso te empuja un poquito hacia atrás.',exd:'EX: una lluvia de cinco cometas cae sobre el enemigo.',
+  fire(L,p,h,ax,ay){p.cool=.42;const b=B_(L,p,{x:h.x,y:h.y,vx:ax*760,vy:ay*760,r:19,dmg:8.75,life:1.6,k:'cometon',pierce:true,draw:drawCometa});b.upd=cometHit;shake(L,3);
+    if(p.type==='plat'&&p.ground&&p.dash<=0)p.x-=(p.aimX||p.face)*7;puff(L,h.x,h.y,3,'#ffd25a');},
+  ex(L,p,h,ax,ay){const t=near(L,h.x,h.y),tx=t?t.center().x:h.x+(ax||p.face)*300;for(let i=0;i<5;i++){const x=tx+(i-2)*46-160,b=B_(L,p,{x,y:-60-i*70,vx:240,vy:820,r:22,dmg:7,life:2.2,k:'cometon',pierce:true,big:true,draw:drawCometa});b.upd=cometHit;}sfx('ex');}};
+SHOTS.cometon=()=>{tn(160,.12,{type:'sawtooth',v:.04,slide:-90});nz(.12,{f:600,v:.05,q:.8});};
+
 /* ======================= ICONOS ======================= */
-const NEWI=['canica','murcielago','bellota','arena','globos','solar','agua','shuriken','petardo','varita','corazonoro','turbo','picas','colmillo','dragon','piano','arcoiris'];
+const NEWI=['cometon','canica','murcielago','bellota','arena','globos','solar','agua','shuriken','petardo','varita','corazonoro','turbo','picas','colmillo','dragon','piano','arcoiris'];
 const _iiS=itemIcon;
 itemIcon=function(id,x,y,t){if(!NEWI.includes(id)){_iiS(id,x,y,t);return;}ctx.save();ctx.translate(x,y);ctx.lineJoin='round';ctx.lineCap='round';ctx.lineWidth=3;ctx.strokeStyle=C.ink;
   switch(id){
+    case 'cometon':ctx.save();ctx.translate(6,4);ctx.scale(.95,.95);drawCometa({x:0,y:0,vx:Math.cos(-.6+Math.sin(t*2)*.1),vy:Math.sin(-.6),r:14},{t});ctx.restore();ctx.globalAlpha=.6+.4*Math.sin(t*6);btxt('TOP 1',0,32,10,'#e23b3b','center',900);break;
     case 'canica':for(let i=0;i<3;i++){ctx.save();ctx.translate(-14+i*14,6-Math.abs(Math.sin(t*4+i))*14);drawCanica({x:0,y:0,r:8},{t});ctx.restore();}break;
     case 'murcielago':ctx.translate(Math.sin(t*2)*6,Math.cos(t*3)*3);ctx.scale(1.4,1.4);drawBat({x:0,y:0,vx:1},{t});break;
     case 'bellota':ctx.rotate(Math.sin(t*2)*.15);ell(0,6,13,15,'#c58a4a');ctx.beginPath();ctx.ellipse(0,-6,16,9,0,Math.PI,0);ctx.closePath();ctx.fillStyle='#7a4a2a';ctx.fill();ctx.stroke();line(0,-14,4,-22,3);ell(-4,4,3,5,'rgba(255,255,255,.5)',0);break;
@@ -177,7 +192,7 @@ itemIcon=function(id,x,y,t){if(!NEWI.includes(id)){_iiS(id,x,y,t);return;}ctx.sa
       const k=(t*.3)%1;poly([[-8+k*6,-14+k*12],[8-k*6,-14+k*12],[0,-1]],'#f2c14e',0);poly([[-9,16],[9,16],[0,16-k*12]],'#f2c14e',0);line(0,-1,0,15,1.5);break;
     case 'globos':for(let i=0;i<3;i++){ctx.save();ctx.translate(-14+i*14,-4+Math.sin(t*3+i)*4);drawGlobito({x:0,y:0,r:10,k2:i},{t});ctx.restore();}break;
     case 'solar':ctx.save();ctx.rotate(t*.8);for(let i=0;i<10;i++){ctx.rotate(TAU/10);poly([[0,-15],[5,-26],[-5,-26]].map(([a,b])=>[a,b]),'#ffd25a',2);}ctx.restore();circ(0,0,15,'#ffe27a',3);circ(-5,-3,2,C.ink,0);circ(5,-3,2,C.ink,0);ctx.beginPath();ctx.arc(0,3,6,.2,Math.PI-.2);ctx.stroke();
-      ctx.globalAlpha=.6+.4*Math.sin(t*6);btxt('TOP 1',0,32,10,'#e23b3b','center',900);break;
+      ctx.globalAlpha=.6+.4*Math.sin(t*6);btxt('TOP 2',0,32,10,'#e23b3b','center',900);break;
     case 'agua':rr(-20,-8,26,14,5,'#5aa8e8');rr(-10,6,10,14,3,'#5aa8e8');rr(6,-5,10,8,2,C.goldL,2);for(let i=0;i<3;i++){const k=((t*2+i/3)%1);ctx.globalAlpha=1-k;ell(18+k*16,-1+k*k*14,4,3,'#7bc6e8',1.5);}break;
     case 'shuriken':ctx.rotate(t*6);star(0,0,22,8,4,0);ctx.fillStyle=C.steel;ctx.fill();ctx.stroke();circ(0,0,5,C.paper,2);break;
     case 'petardo':ctx.rotate(-.4);rr(-18,-8,36,16,4,'#e23b3b');rr(-6,-8,12,16,0,C.goldL,0);rr(-18,-8,36,16,4,null,3);line(18,0,26,-8,2.5);if(Math.floor(t*10)%2)star(27,-9,7,3,6,t*4),ctx.fillStyle='#ffe27a',ctx.fill();break;
