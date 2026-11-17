@@ -14,14 +14,14 @@ Object.assign(STORIES,{
     {cap:'Capítulo 1 · Isla de Hojalata',t:'La aventura empezaba en casa: una isla de engranajes, ferias y juguetes donde cinco cacharros malhumorados escondían los primeros trocitos de luz.',d:'hojalata'}],
   fin1:[
     {cap:'¡Isla de Hojalata, encendida!',t:'Con cinco trocitos de luz brillando en el frasco, la Isla de Hojalata volvió a sonar: tic-tac, tilín, ¡cucú! Hasta Don Tornillo cerró la tienda para hacer una fiesta.',d:'trozos',n:5},
-    {t:'Pero el frasco seguía casi vacío. En el muelle, el Capitán Remo señaló la niebla del horizonte: «El resto se lo llevaron a Bahía Bruma. Subid, grumetes, que la marea no espera».',d:'barco',to:'bruma'}],
+    {t:'Pero el frasco seguía casi vacío. En el muelle, el Capitán Remo señaló la niebla del horizonte: «El resto se lo llevaron a Bahía Bruma. Cuando no quede ni un rincón de esta isla por recorrer, subid, grumetes».',d:'barco',to:'bruma'}],
   isla2:[
     {cap:'Capítulo 2 · Bahía Bruma',t:'Una niebla tan espesa que se podía untar en pan cubría la bahía. Allí hasta el faro había olvidado cómo alumbrar, y los barcos chocaban entre sí pidiéndose perdón.',d:'bruma'},
     {t:'Los vecinos del mar, cangrejos, ballenas y pulpos, bailaban al ritmo del Rey Apagón sin darse cuenta: su sombra se les había metido en los zapatos (y en las aletas).',d:'jefes',isl:2},
     {t:'Chispa infló el pecho: «Si el faro no alumbra, alumbramos nosotros». Cerilla, que no sabía nadar, solo pidió una cosa: no mojarse la cabeza.',d:'heroes',pose:'agua'}],
   fin2:[
     {cap:'¡Adiós a la niebla!',t:'La niebla se levantó como el telón de un teatro. El faro, ya tranquilo, giró su luz hacia el norte… y entre rayos y truenos apareció una montaña negra.',d:'trozos',n:10},
-    {t:'«La Cumbre Apagón», tembló el Capitán Remo. «El castillo del Rey. Os dejo en la orilla, pero de ahí arriba no paso ni con diez anclas».',d:'barco',to:'cumbre'}],
+    {t:'«La Cumbre Apagón», tembló el Capitán Remo. «El castillo del Rey. Terminad todo lo de la bahía y os dejo en la orilla, pero de ahí arriba no paso ni con diez anclas».',d:'barco',to:'cumbre'}],
   isla3:[
     {cap:'Capítulo 3 · Cumbre Apagón',t:'Aquí nunca salía el sol. Los búhos leían a oscuras, los murciélagos daban clases de silencio y las velas se derretían de puro miedo.',d:'cumbre'},
     {t:'Desde su torre, el Rey Apagón lo vigilaba todo. «Que suban», se rió, «cuantos más trocitos de luz me traigan, más grande será mi colección».',d:'rey'},
@@ -94,10 +94,10 @@ function book(){if(BOOK)return BOOK;const [c,g]=mk(W,H);
   g.fillStyle='#4a1414';g.fillRect(W/2-4,PY-4,8,PH+8);BOOK=c;return c;}
 function grain(){if(GRAIN)return GRAIN;const [c,g]=mk(400,300,1);const r=srand(91);for(let i=0;i<1600;i++){g.fillStyle=`rgba(${r()<.5?'40,25,10':'255,245,220'},${r()*.14})`;g.fillRect(r()*400,r()*300,1+r()*1.5,1+r()*1.5);}
   const v=g.createRadialGradient(200,150,90,200,150,260);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(60,30,10,.55)');g.fillStyle=v;g.fillRect(0,0,400,300);GRAIN=c;return c;}
-const CHAP={intro:'Prólogo',fin1:'Capítulo 1 · Isla de Hojalata',isla2:'Capítulo 2 · Bahía Bruma',fin2:'Capítulo 2 · Bahía Bruma',isla3:'Capítulo 3 · Cumbre Apagón',fin3:'Capítulo 3 · Cumbre Apagón',ending:'El gran final',isla4:'Capítulo 4 · Valle Escarcha',fin4:'Capítulo 4 · Valle Escarcha',ending2:'El final de verdad',cine:'Extra · Cine Fantasma',casino:'Extra · Casino Tómbola'};
+const CHAP={intro:'Prólogo',fin1:'Capítulo 1 · Isla de Hojalata',isla2:'Capítulo 2 · Bahía Bruma',fin2:'Capítulo 2 · Bahía Bruma',isla3:'Capítulo 3 · Cumbre Apagón',fin3:'Capítulo 3 · Cumbre Apagón',ending:'El gran final',isla4:'Capítulo 4 · Valle Escarcha',fin4:'Capítulo 4 · Valle Escarcha',ending2:'El final de verdad',cine:'Extra · Cine Fantasma',casino:'Extra · Casino Tómbola',isla5:'Extra · Isla Cascabel',fin5:'Extra · Isla Cascabel'};
 const IX=LX+22,IY=PY+24,IWD=PW-44,IHT=IWD*.75;
 function pagePic(p,t){ctx.save();ctx.translate(IX,IY);ctx.beginPath();ctx.roundRect(0,0,IWD,IHT,8);ctx.clip();const s=IWD/400;ctx.scale(s,s);ctx.lineJoin='round';ctx.lineCap='round';
-  try{(SCN[p.d]||SCN.heroes)(p,t);}catch(e){ctx.fillStyle='#d9c39a';ctx.fillRect(0,0,400,300);}
+  try{(SCN[p.d]||(window.EXTRA_SCN||{})[p.d]||SCN.heroes)(p,t);}catch(e){ctx.fillStyle='#d9c39a';ctx.fillRect(0,0,400,300);}
   ctx.globalCompositeOperation='multiply';ctx.fillStyle='rgba(240,205,150,.28)';ctx.fillRect(0,0,400,300);ctx.globalCompositeOperation='source-over';
   ctx.drawImage(grain(),0,0,400,300);if(Math.floor(t*12)%7===0){ctx.fillStyle='rgba(30,20,10,.25)';ctx.fillRect((t*997)%400,0,1.5,300);}ctx.restore();
   ctx.lineWidth=4;ctx.strokeStyle=C.ink;ctx.beginPath();ctx.roundRect(IX,IY,IWD,IHT,8);ctx.stroke();
@@ -231,7 +231,7 @@ SCN.islas=SCN.hojalata;
 /* ---------------- Libro de cuentos (map menu): replay the chapters you have reached ---------------- */
 const LIB=[['intro','Prólogo',()=>true],['fin1','Cap. 1 · Hojalata, encendida',()=>F().fin1||cleared(BOSS_LIST[1])>=5],['isla2','Cap. 2 · Bahía Bruma',()=>!!save.visited[2]],['fin2','Cap. 2 · Adiós a la niebla',()=>F().fin2||cleared(BOSS_LIST[2])>=5],
   ['isla3','Cap. 3 · Cumbre Apagón',()=>!!save.visited[3]],['fin3','Cap. 3 · Las puertas del castillo',()=>F().fin3||!!save.cleared.apagon],['ending','El gran final',()=>!!save.ended||!!save.cleared.apagon],
-  ['isla4','Cap. 4 · Valle Escarcha',()=>!!save.visited[4]],['fin4','Cap. 4 · El deshielo',()=>F().fin4||!!save.cleared.hollin],['ending2','El final de verdad',()=>!!F().ending2],['cine','Extra · Cine Fantasma',()=>!!F().capCine],['casino','Extra · Casino Tómbola',()=>!!F().capCasino]];
+  ['isla4','Cap. 4 · Valle Escarcha',()=>!!save.visited[4]],['fin4','Cap. 4 · El deshielo',()=>F().fin4||!!save.cleared.hollin],['ending2','El final de verdad',()=>!!F().ending2],['cine','Extra · Cine Fantasma',()=>!!F().capCine],['casino','Extra · Casino Tómbola',()=>!!F().capCasino],['isla5','Extra · Isla Cascabel',()=>!!save.visited[5]]];
 window.openLibro=function(){MAPS.libro={sel:0,t:0};sfx('card');};
 window.updLibro=function(I){const L=MAPS.libro,n=LIB.length;L.t+=1/60;if(I.up){L.sel=(L.sel+n-1)%n;sfx('move');}if(I.down){L.sel=(L.sel+1)%n;sfx('move');}
   if(I.no||I.pause){MAPS.libro=null;sfx('back');return;}

@@ -10,6 +10,7 @@ const TIERS={
   carga:[1,'Altísimo (hay que cargarlo)'],
   abanico:[.745,'Muy alto (de cerca)'],
   yoyo:[1,'Muy alto (de cerca)'],
+  bastones:[1,'Muy bueno (atraviesan)'],
   tachuelas:[.935,'Muy bueno'],
   arco:[.916,'Muy bueno (alcance medio)'],
   trompetazo:[1.2,'Muy bueno (de cerca)'],

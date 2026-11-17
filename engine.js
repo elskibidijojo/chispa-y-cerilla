@@ -126,7 +126,7 @@ function shieldTick(L,p,dt){if(p.shield<=0)return;p.shield-=dt;const c=pCenter(p
   if(p.shield<=0){for(let i=0;i<8;i++){const a=i*TAU/8;B_(L,p,{x:c.x,y:c.y,vx:Math.cos(a)*500,vy:Math.sin(a)*500,r:14,dmg:2.5,life:.8,k:'bubble'});}sfx('pop');}}
 
 /* ---------- bullets ---------- */
-function explode(L,b){boom(L,b.x,b.y,70);shake(L,10);sfx('boom');for(const en of L.ents)if(en.hitBy(b.x,b.y,70)){en.damage(b.dmg*dmgM(b.own),b.own);gain(b.own,b.dmg);}}
+function explode(L,b){boom(L,b.x,b.y,70);shake(L,10);sfx('boom');for(const en of L.ents)if(en.hitBy(b.x,b.y,70)){en.damage(b.dmg*dmgM(b.own),b.own);if(!b.noGain)gain(b.own,b.dmg);}}
 function stickTack(L,b,en){const c=en.center();L.tacks.push({en,dx:b.x-c.x,dy:b.y-c.y,t:b.big?.8:1.5,dmg:b.dmg,own:b.own,big:b.big});sfx('hit');
   const mine=L.tacks.filter(t=>t.en===en);if(mine.length>=6)for(const t of mine)t.t=0;}
 function updTacks(L,dt){for(const t of L.tacks){t.t-=dt;if(t.en.dead){t.gone=true;continue;}if(t.t<=0){t.gone=true;const c=t.en.center(),x=c.x+t.dx,y=c.y+t.dy;t.en.damage(t.dmg*dmgM(t.own),t.own);gain(t.own,t.dmg);
@@ -144,7 +144,7 @@ function updBullets(L,dt){
     if(b.tickHit)b.tk=(b.tk||0)-dt;
     if(b.life>0)for(const en of L.ents){if(en.dead)continue;if(b.hits&&b.hits.has(en))continue;if(b.tickHit&&b.tk>0)break;if(!en.hitBy(b.x,b.y,b.r))continue;
       if(b.k==='bomba'){explode(L,b);b.life=0;break;}if(b.k==='tack'){stickTack(L,b,en);b.life=0;break;}
-      const d=b.dmg*dmgM(b.own);en.damage(d,b.own);gain(b.own,d);sparks(L,b.x,b.y,3);
+      const d=b.dmg*dmgM(b.own);en.damage(d,b.own);if(!b.noGain)gain(b.own,d);sparks(L,b.x,b.y,3);
       if(b.tickHit){b.tk=.1;break;}if(b.pierce)(b.hits=b.hits||new Set()).add(en);else{b.life=0;break;}}
     if(b.x<L.camX-80||b.x>L.camX+W+80||b.y<-120||b.y>H+60)b.life=0;}
   L.bul=L.bul.filter(b=>b.life>0);L.ents=L.ents.filter(e=>!e.dead||e.keep);}

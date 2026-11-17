@@ -14,7 +14,7 @@ function drawVarita(b,L){ctx.translate(b.x,b.y);ctx.rotate(L.t*7);const r=b.big?
 function wetUpd(b,L){for(const e of L.ents)if(!e.dead&&e.hitBy(b.x,b.y,b.r+8))e._wet=2.2;}
 function varitaUpd(b,L,dt){b.wt=(b.wt||0)+dt;const s=Math.cos(b.wt*16)*260*dt;b.x+=-b.vy/Math.hypot(b.vx,b.vy)*s;b.y+=b.vx/Math.hypot(b.vx,b.vy)*s;
   for(const e of L.ents)if(!e.dead&&!(b.hits&&b.hits.has(e))&&e.hitBy(b.x,b.y,b.r)){if(typeof gain==='function')gain(b.own,b.dmg*.7);break;}}
-function petBoom(L,b,R,dm){b.life=0;boom(L,b.x,b.y,R*.7);sfx('pop');shake(L,R>70?8:3);for(const e of L.ents)if(!e.dead&&e.hitBy(b.x,b.y,R)){e.damage(dm*dmgM(b.own),b.own);if(typeof gain==='function')gain(b.own,dm);}
+function petBoom(L,b,R,dm){b.life=0;boom(L,b.x,b.y,R*.7);sfx('pop');shake(L,R>70?8:3);for(const e of L.ents)if(!e.dead&&e.hitBy(b.x,b.y,R)){e.damage(dm*dmgM(b.own),b.own);if(typeof gain==='function'&&!b.noGain)gain(b.own,dm);}
   for(let i=0;i<6;i++)L.fx.push({k:'spark',x:b.x,y:b.y,vx:(rand()-.5)*360,vy:(rand()-.8)*360,life:.3,max:.3,r:3,col:['#e23b3b','#f2c14e','#7bb7c9'][i%3]});}
 function petUpd(b,L,dt){b.fuse-=dt;let hit=b.fuse<=0;if(!hit)for(const e of L.ents)if(!e.dead&&e.hitBy(b.x,b.y,b.r+4)){hit=true;break;}if(hit)petBoom(L,b,b.big?95:62,b.boomD);}
 Object.assign(WEAPONS,{
