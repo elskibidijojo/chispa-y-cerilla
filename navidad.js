@@ -129,7 +129,7 @@ mapAmbience=function(w,M){_maN(w,M);if(save.island!==5)return;const t=M.t,cx=cla
 
 /* ======================= EL BARCO: todos los niveles para avanzar ======================= */
 const SKIPK=['cine','casino'];
-window.islandLeft=function(i){const w=WORLDS[i];if(!w)return[];return w.nodes.filter(n=>n.kind==='level'&&LEVELS[n.id]&&!SKIPK.includes(LEVELS[n.id].kind)&&!SKIPK.includes(n.id)&&!save.cleared[n.id]).map(n=>n.id);};
+window.islandLeft=function(i){const w=WORLDS[i];if(!w)return[];return w.nodes.filter(n=>n.kind==='level'&&LEVELS[n.id]&&!SKIPK.includes(LEVELS[n.id].kind)&&!SKIPK.includes(n.id)&&!(typeof ensureN==='function'?ensureN():save.clearedN||{})[n.id]).map(n=>n.id);};
 dockTalk=function(){const isl=save.island,opts=[];
   const go=i=>()=>{transition(()=>{save.pos[save.island]=[MAPS.x,MAPS.y];save.island=i;save.visited[i]=true;const w=WORLDS[i];save.pos[i]=w.dockArr;persist();MAPBG={k:null};placeOnMap();MAPS.jukebox=null;MAPS.banner={t:3,text:w.name};toMap();});};
   const done=i=>islandLeft(i).length===0;
@@ -138,7 +138,7 @@ dockTalk=function(){const isl=save.island,opts=[];
   if(isl!==5&&save.flags&&save.flags.navidad)opts.push({label:'Viajar a '+names[5],fn:go(5)});
   opts.push({label:'Quedarme aquí',fn:()=>{}});
   const left=isl<=4?islandLeft(isl):[];let txt0='¡Ahoy! ¿A qué isla navegamos?';
-  if(isl<4&&!save.visited[isl+1]&&left.length)txt0=`¡Ahoy! Mi barco no zarpa a la siguiente isla hasta que completes TODOS los niveles de aquí, también los de correr y disparar. Te faltan ${left.length}: ${left.map(id=>LEVELS[id].name).slice(0,4).join(', ')}${left.length>4?'…':''}.`;
+  if(isl<4&&!save.visited[isl+1]&&left.length)txt0=`¡Ahoy! Mi barco no zarpa a la siguiente isla hasta que completes TODOS los niveles de aquí en dificultad Normal o Experto (Fácil no cuenta), también los de correr y disparar. Te faltan ${left.length}: ${left.map(id=>LEVELS[id].name).slice(0,4).join(', ')}${left.length>4?'…':''}.`;
   else if(isl<4&&!save.visited[isl+1])txt0=`¡Ahoy! ¡Has completado toda la isla! Ya podemos zarpar hacia ${names[isl+1]}.`;
   else if(isl===5)txt0='¡Ahoy! Qué frío hace aquí… ¿Volvemos?';
   say('Capitán Remo',txt0,opts);};

@@ -77,7 +77,7 @@ Object.assign(ACZ,{tuto_sala(g){const gr=g.createLinearGradient(0,0,0,GROUND);gr
 const startTuto=id=>{if(typeof NP!=='undefined'&&NP.on){say('Profe Tuerca','La escuela solo abre cuando juegas sin conexión.');return;}transition(()=>startLevel(id));};
 window.openTuto=function(intro){save.flags.tutoOffer=true;persist();
   say('Profe Tuerca',intro?'¡Bienvenidos, novatos! Soy el Profe Tuerca. Antes de pelear contra cacharros gruñones, ¿queréis una clase rápida? Aquí no se pierde nunca.':'¿Qué clase quieres repasar? En las dos no puedes perder.',
-    [{label:'Tutorial a pie (saltar, disparar, parry, EX)',fn:()=>startTuto('tutorial')},{label:'Tutorial de avión',fn:()=>startTuto('tutorial_avion')},{label:intro?'Ahora no, ¡a la aventura!':'Ahora no',fn:()=>{}}]);};
+    [{label:'Tutorial a pie (saltar, disparar, parry, EX)',fn:()=>startTuto('tutorial')},{label:'Tutorial de avión',fn:()=>startTuto('tutorial_avion')}].concat(!intro&&typeof openRush==='function'?[{label:'Desafío: Jefe tras jefe (esta isla)',fn:()=>openRush()}]:[]).concat([{label:intro?'Ahora no, ¡a la aventura!':'Ahora no',fn:()=>{}}]));};
 (function place(){const w=WORLDS[1];if(w.nodes.some(n=>n.id==='profe'))return;const [sx,sy]=w.start;let best=null;
   for(let r=110;r<380&&!best;r+=30)for(let a=0;a<TAU&&!best;a+=.4){const x=Math.round(sx+Math.cos(a)*r),y=Math.round(sy+Math.sin(a)*r*.7);
     if(typeof walkable==='function'&&!walkable(w,x,y))continue;if(w.nodes.some(n=>Math.hypot(n.x-x,n.y-y)<95))continue;best=[x,y];}
