@@ -14,7 +14,8 @@ function phaseInfo(L){const B=L.boss;if(!B)return null;if(L._bgP===undefined){L.
   const n=(B.def&&B.def.phases?B.def.phases.length:3);return{ph:B.phase,n,last:B.phase>0&&B.phase>=n-1,age:L.t-L._bgT};}
 function rays(cx,cy,t,c1,a,n=14){ctx.save();ctx.translate(cx,cy);ctx.rotate(t);ctx.globalAlpha=a;ctx.fillStyle=c1;for(let i=0;i<n;i++){ctx.rotate(TAU/n);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(1100,-70);ctx.lineTo(1100,70);ctx.closePath();ctx.fill();}ctx.restore();}
 function spiral(cx,cy,t,c1,c2,a){ctx.save();ctx.translate(cx,cy);ctx.globalAlpha=a;ctx.fillStyle=c2;ctx.fillRect(-1200,-1200,2400,2400);ctx.rotate(t*.9);ctx.fillStyle=c1;
-  for(let arm=0;arm<4;arm++){ctx.beginPath();for(let k=0;k<=60;k++){const th=k*.12+arm*TAU/4,r=k*18;ctx.lineTo(Math.cos(th)*r,Math.sin(th)*r);}for(let k=60;k>=0;k--){const th=k*.12+arm*TAU/4+.5,r=k*18;ctx.lineTo(Math.cos(th)*r,Math.sin(th)*r);}ctx.fill();}
+  for(let arm=0;arm<5;arm++){ctx.beginPath();for(let k=0;k<=64;k++){const th=k*.11+arm*TAU/5,r=k*17;ctx.lineTo(Math.cos(th)*r,Math.sin(th)*r);}for(let k=64;k>=0;k--){const th=k*.11+arm*TAU/5+.55,r=k*17;ctx.lineTo(Math.cos(th)*r,Math.sin(th)*r);}ctx.closePath();ctx.fill();ctx.lineWidth=4;ctx.strokeStyle='rgba(20,13,8,.45)';ctx.stroke();}
+  const g2=ctx.createRadialGradient(0,0,10,0,0,160);g2.addColorStop(0,'rgba(255,240,200,.55)');g2.addColorStop(1,'rgba(255,240,200,0)');ctx.fillStyle=g2;ctx.beginPath();ctx.arc(0,0,160,0,TAU);ctx.fill();
   ctx.restore();}
 function layer(L){const P=phaseInfo(L);if(!P||P.ph<1)return;const B=L.boss,c=B.center?B.center():{x:W*.7,y:H/2},t=L.t,[c1,c2,c3]=pal(L),plane=LEVELS[L.id]&&LEVELS[L.id].kind==='plane';
   const k=Math.min(1,Math.max(0,P.age/.6));const cx=c.x-(L.camX||0),cy=c.y;
@@ -23,7 +24,7 @@ function layer(L){const P=phaseInfo(L);if(!P||P.ph<1)return;const B=L.boss,c=B.c
     rays(cx,cy,t*.25,c1,.16*k);
     for(let i=0;i<7;i++){const x=((i*173+t*(plane?60:14))%(W+200))-100,y=60+(i*67)%240;ctx.globalAlpha=.18*k;cloudShape(ctx,x,y,.5+(i%3)*.2,c1,0);}
     for(let i=0;i<24;i++){const x=(i*97+Math.sin(t*.7+i)*30)%W,y=(i*53+t*20)%H;ctx.globalAlpha=.5*k;circ(x,y,1.5+(i%3),'#fff6c8',0);}}
-  else{spiral(cx,cy,t,c2,c3,.55*k);rays(cx,cy,-t*.4,c1,.12*k,10);
+  else{ctx.save();if(!plane){ctx.beginPath();ctx.rect(0,0,W,GROUND);ctx.clip();}spiral(cx,cy,t,c2,c3,.62*k);rays(cx,cy,-t*.4,c1,.12*k,10);ctx.restore();
     const g=ctx.createRadialGradient(cx,cy,60,cx,cy,Math.max(W,H));g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,'+(.55*k)+')');ctx.globalAlpha=1;ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
     if(Math.floor(t*1.7)%6===0&&(t*1.7)%1<.18){ctx.globalAlpha=.22;ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);ctx.globalAlpha=.9;ctx.strokeStyle='#fff6c8';ctx.lineWidth=3;const x=(Math.floor(t*1.7)*211)%W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x-22,90);ctx.lineTo(x+12,100);ctx.lineTo(x-16,230);ctx.stroke();}
     for(let i=0;i<30;i++){const a=i*2.4+t*.6,r=(i*37+t*60)%520;ctx.globalAlpha=.6*k*(1-r/520);circ(cx+Math.cos(a)*r,cy+Math.sin(a)*r,2+(i%3),c1,0);}}
