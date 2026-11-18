@@ -142,7 +142,7 @@ function updBullets(L,dt){
     if(b.g){const fy=L.floorAt(b.x);if(b.y>fy-b.r){if(b.k==='bomba'){explode(L,b);b.life=0;}else if(b.bounce>0){b.bounce--;b.y=fy-b.r;b.vy=-Math.abs(b.vy)*.65;puff(L,b.x,fy,2);}else{b.life=0;sparks(L,b.x,fy,3);}}}
     if(b.absorb)for(const e of L.eb){if(!e.dead&&destroyable(e)&&dist(e.x,e.y,b.x,b.y)<(e.r||10)+b.r){e.dead=true;b.life=0;puff(L,b.x,b.y,3,'#cfe8ee');sfx('pop');break;}}
     if(b.tickHit)b.tk=(b.tk||0)-dt;
-    if(b.life>0)for(const en of L.ents){if(en.dead)continue;if(b.hits&&b.hits.has(en))continue;if(b.tickHit&&b.tk>0)break;if(!en.hitBy(b.x,b.y,b.r))continue;
+    if(b.life>0)for(const en of L.ents){if(en.dead)continue;if(b.hits&&b.hits.has(en))continue;if(b.tickHit&&b.tk>0)break;if(!(typeof bulHit==='function'?bulHit(en,b,dt):en.hitBy(b.x,b.y,b.r)))continue;
       if(b.k==='bomba'){explode(L,b);b.life=0;break;}if(b.k==='tack'){stickTack(L,b,en);b.life=0;break;}
       const d=b.dmg*dmgM(b.own);en.damage(d,b.own);if(!b.noGain)gain(b.own,d);sparks(L,b.x,b.y,3);
       if(b.tickHit){b.tk=.1;break;}if(b.pierce)(b.hits=b.hits||new Set()).add(en);else{b.life=0;break;}}
