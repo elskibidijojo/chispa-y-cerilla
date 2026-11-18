@@ -50,7 +50,6 @@ function results(L){const r=L.result,T=L.stateT,t=L.t;ctx.fillStyle='#2a1a10';ct
     for(let i=0;i<8;i++){const a=i*TAU/8+t;star(Math.cos(a)*70,Math.sin(a)*70,6,2.5,4,t*2);ctx.fillStyle='#ffd25a';ctx.fill();}ctx.restore();
     let yy=gy+60;if(r.unlock){btxt('¡Súper nuevo: '+r.unlock+'!',0,yy-150,17,C.rust,'center',800);}if(r.reward){coinIcon(-90,yy-120,10);btxt(`+${r.reward} moneda${r.reward>1?'s':''}`,-72,yy-120,17,'#2a1d14','left',800);}}
   ctx.restore();
-  if(cfg.diff==='facil'&&L.kind!=='run'&&r.shown>=6){ctx.save();ctx.translate(W*.72,H-26);ctx.rotate(-.02);rr(-230,-15,460,30,6,'#c8392b',3);btxt('En Fácil no cuenta para el barco: gánalo en Normal',0,1,14,C.paper,'center',800);ctx.restore();}
   if(T>2.4&&Math.floor(t*2)%2===0)txt('Enter o saltar: continuar',W*.24,H-22,18,C.paper,C.ink);}
 const _lo=levelOverlay;
 levelOverlay=function(L){if(L.state==='dead'){ctx.save();try{deadCard(L);}finally{ctx.restore();}return;}if(L.state==='results'){ctx.save();try{results(L);}finally{ctx.restore();}return;}_lo(L);};
