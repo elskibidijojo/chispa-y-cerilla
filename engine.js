@@ -230,7 +230,7 @@ function findParry(L,p){const c=pCenter(p),R=reachOf(p);let best=null,bd=1e9;
 function doParry(L,p,o){
   if(o.ghostOf)revive(L,o.ghostOf);else if(o.k==='pstar')o.cool=1.4;else o.dead=true;
   if(p.type==='plat'){p.vy=-800;p.ground=false;p.airDash=true;p.airJumps=hasCharm(p,'muelle')?1:0;}
-  p.parryWin=0;p.spin=.35;p.cards=Math.min(5,p.cards+1);p.inv=Math.max(p.inv,.3);L.parries++;L.freeze=.07;p.parryTried=false;L.flash=Math.max(L.flash,.06);
+  p.parryWin=0;p.spin=.35;p.cards=Math.min(5,p.cards+1);p.inv=Math.max(p.inv,.6);L.parries++;L.freeze=.07;p.parryTried=false;L.flash=Math.max(L.flash,.06);
   if(hasCharm(p,'anillo')){if(o.ghostOf)ringRestore(L,p);p.ringP=Math.min(3,(p.ringP||0)+1);p.ringTot=(p.ringTot||0)+1;if(p.ringTot%10===0)ringRestore(L,p);ringGive(L,p);}
   ring(L,o.x,o.y);ring(L,o.x,o.y,'#ffffff');sparks(L,o.x,o.y,16,C.parryL);for(let i=0;i<6;i++){const a=i*TAU/6;L.fx.push({k:'spark',x:o.x,y:o.y,vx:Math.cos(a)*420,vy:Math.sin(a)*420,life:.25,max:.25,r:5,col:'#ffffff'});}pop(L,o.x,o.y-30,'¡PARRY!',C.parryL);sfx('parry');shake(L,4);}
 /* Anillo Corazón: every 3 parries = +1 life (up to 6). It gives 3 lives, then waits to be restored by a Super, a revive or 10 parries */
