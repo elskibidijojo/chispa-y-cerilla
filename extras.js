@@ -93,7 +93,7 @@ const ACH=[
   ['primer_jefe','¡Primera victoria!','Vence a tu primer jefe.',1],['isla1','Dueño de Hojalata','Vence a los 5 jefes de la Isla de Hojalata.',2],['isla2','Rey de la Bahía','Vence a los 5 jefes de Bahía Bruma.',2],
   ['isla3','Luz en la Cumbre','Vence a los 7 jefes de Cumbre Apagón.',3],['final','¡Se hizo la luz!','Vence al Rey Apagón.',3],['runs','Piernas de Acero','Termina todos los niveles de correr y disparar.',2],
   ['monedas_run','Bolsillo Lleno','Junta las 5 monedas de un nivel de correr.',1],['parry10','Manos Rápidas','Haz 10 parrys en un solo nivel.',1],['parry100','Maestro del Parry','Haz 100 parrys en total.',2],
-  ['grado_a','¡Sobresaliente!','Saca A+ contra un jefe.',1],['grado_s','Leyenda','Saca S en dificultad Experto.',3],['pacifista','Pacifista','Saca grado P: termina un nivel de correr sin derrotar a nadie ni recibir golpes.',2],
+  ['grado_a','¡Sobresaliente!','Saca A+ contra un jefe.',1],['grado_s','Leyenda','Saca S en dificultad Experto.',3],['pacifista','Pacifista','Saca grado P: termina un nivel de correr sin derrotar a nadie ni recibir golpes (los minijefes no cuentan, a esos sí hay que ganarles).',2],
   ['sin_dano','Intocable','Vence a un jefe sin recibir ni un golpe.',2],['super','¡Súper!','Usa tu primer súper.',1],['mausoleos','Guardián de Urnas','Supera los 3 mausoleos.',2],
   ['armas','Arsenal Completo','Compra todas las armas.',2],['amuletos','Coleccionista','Compra todos los amuletos.',2],['skin','¡Qué Estilo!','Consigue tu primera skin.',1],
   ['estatua','Homenaje','Lee la placa de la estatua.',1],['gato','Ojo de Gato','Encuentra 3 veces al Gato Tinta.',1],['explorador','Explorador','Encuentra todas las monedas escondidas de los mapas.',2],

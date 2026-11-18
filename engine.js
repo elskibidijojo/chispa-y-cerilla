@@ -177,7 +177,7 @@ function updEB(L,dt){const plane=L.kind==='plane';
     }
     if(e.life!==undefined&&e.k!=='puddle'){if(e.k!=='bounce'||true){e.life-=e.k==='puddle'?0:dt;}if(e.life<=0)e.dead=true;}
     if(!['pstar','column','sweep','puddle','boomer'].includes(e.k)&&(e.x<L.camX-160||e.x>L.camX+W+220||e.y>H+80||e.y<-320))e.dead=true;}
-  L.eb=L.eb.filter(e=>!e.dead);}
+  L.eb=L.eb.filter(e=>!e.dead&&Number.isFinite(e.x)&&Number.isFinite(e.y));}
 function ebHit(L,e,pb){if(e.harmless)return false;
   switch(e.k){
     case 'wave':return rectHit(pb,{x:e.x-e.w/2+6,y:e.y-e.h+8,w:e.w-12,h:e.h-8});
@@ -353,7 +353,7 @@ function drawBullets(L){for(const b of L.bul){ctx.save();ctx.translate(b.x,b.y);
 /* ---------- enemies & minions (shared by bosses and run levels) ---------- */
 function mkEnt(L,o){const e=Object.assign({hp:3,r:20,flash:0,dead:false,t:0,face:-1,vx:0,vy:0},o);
   e.center=()=>({x:e.x,y:e.y});e.hitBy=(x,y,r)=>!e.dead&&!e.hidden&&Math.hypot(x-e.x,y-e.y)<e.r+r;
-  e.damage=d=>{if(e.dead||e.hidden)return;e.hp-=d;e.flash=.06;sfx('hit');if(e.hp<=0){e.dead=true;L.kills=(L.kills||0)+1;boom(L,e.x,e.y,26);puff(L,e.x,e.y,6);stars(L,e.x,e.y);sfx('pop');}};
+  e.damage=d=>{if(e.dead||e.hidden)return;e.hp-=d;e.flash=.06;sfx('hit');if(e.hp<=0){e.dead=true;if(e.ai!=='mini')L.kills=(L.kills||0)+1;boom(L,e.x,e.y,26);puff(L,e.x,e.y,6);stars(L,e.x,e.y);sfx('pop');}};
   e.contact=pb=>!e.dead&&!e.hidden&&circRect(e.x,e.y,e.r*.8,pb.x,pb.y,pb.w,pb.h);L.ents.push(e);return e;}
 function fireAt(L,e,p,s){const c=aimPt(p),a=Math.atan2(c.y-e.y,c.x-e.x);L.shotN=(L.shotN||0)+1;spawnEB(L,{k:'shot',x:e.x+Math.cos(a)*20,y:e.y+Math.sin(a)*20,vx:Math.cos(a)*(s.spd||260),vy:Math.sin(a)*(s.spd||260),r:s.r||10,spr:s.spr||'ball',parry:L.shotN%3===0});}
 function updEnemies(L,dt){
