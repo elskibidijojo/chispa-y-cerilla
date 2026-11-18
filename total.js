@@ -58,6 +58,6 @@ const _toR=toMap;toMap=function(){if(RUSH&&scene==='level'&&LV&&LV.state!=='resu
 if(!ACHD.jefetrasjefe){ACH.push(['jefetrasjefe','Maratón de Jefes','Supera un desafío Jefe tras jefe.',3]);ACHD.jefetrasjefe={id:'jefetrasjefe',name:'Maratón de Jefes',desc:'Supera un desafío Jefe tras jefe.',coins:3};}
 
 /* ---------- levels only count for the boat when won on Normal or Experto ---------- */
-window.ensureN=function(){if(!save.clearedN){save.clearedN={};for(const k in save.cleared||{})if(save.cleared[k])save.clearedN[k]=true;try{persist();}catch(e){}}return save.clearedN;};ensureN();
+window.ensureN=function(){if(!save.clearedN){save.clearedN={};for(const k in save.cleared||{})if(save.cleared[k])save.clearedN[k]=true;}return save.clearedN;};
 const _alN2=afterLevel;afterLevel=function(L){const d=LEVELS[L.id];if(d&&L.state==='results'&&!(L.result&&L.result.fail)&&!/^tutorial/.test(L.id)){const k=d.kind;if(cfg.diff!=='facil'||k==='run'||k==='maus'||k==='mausoleo'){ensureN();save.clearedN[L.id]=true;persist();}}_alN2(L);};
 })();
