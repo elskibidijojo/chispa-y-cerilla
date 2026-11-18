@@ -188,8 +188,8 @@ function updMap(dt,IN){const M=MAPS,w=curWorld(),I=IN.M;M.t+=dt;M.hintT=Math.max
   for(const k in M.shake)M.shake[k]=Math.max(0,M.shake[k]-dt);if(M.coinFx&&(M.coinFx.t-=dt)<=0)M.coinFx=null;
   if(M.birds.length<3&&rand()<.004)M.birds.push({x:-40,y:80+rand()*300,v:60+rand()*40,t:0});for(const b of M.birds){b.x+=b.v*dt;b.t+=dt;}M.birds=M.birds.filter(b=>b.x<w.W+60);
   if(M.libro&&typeof updLibro==='function'){updLibro(I);return;}
-  if(M.menu){const o=5;if(I.up){M.menu.sel=(M.menu.sel+o-1)%o;sfx('move');}if(I.down){M.menu.sel=(M.menu.sel+1)%o;sfx('move');}if(I.pause||I.no){M.menu=null;return;}
-    if(I.ok){sfx('select');const s=M.menu.sel;M.menu=null;if(s===1)openLogros('map');else if(s===2)openOptions('map');else if(s===3){if(typeof openLibro==='function')openLibro();}else if(s===4){save.pos[save.island]=[M.x,M.y];persist();transition(()=>{scene='title';Music.play('title');});}}return;}
+  if(M.menu){const o=6;if(I.up){M.menu.sel=(M.menu.sel+o-1)%o;sfx('move');}if(I.down){M.menu.sel=(M.menu.sel+1)%o;sfx('move');}if(I.pause||I.no){M.menu=null;return;}
+    if(I.ok){sfx('select');const s=M.menu.sel;M.menu=null;if(s===1)openLogros('map');else if(s===2)openOptions('map');else if(s===3){if(typeof openLibro==='function')openLibro();}else if(s===4){M.menu=null;if(typeof openTuto==='function')openTuto(false);}else if(s===5){save.pos[save.island]=[M.x,M.y];persist();transition(()=>{scene='title';Music.play('title');});}}return;}
   if(M.dialog){const D=M.dialog;D.t+=dt;if(Math.floor(D.t*40)%3===0&&D.t*40<D.text.length)sfx('talk');const done=D.t*40>=D.text.length;
     if(done&&D.opts){if(I.up){D.sel=(D.sel+D.opts.length-1)%D.opts.length;sfx('move');}if(I.down){D.sel=(D.sel+1)%D.opts.length;sfx('move');}if(I.ok){const f=D.opts[D.sel].fn;M.dialog=null;sfx('select');f();}else if(I.no)M.dialog=null;return;}
     if(I.ok||I.no){if(!done)D.t=99;else M.dialog=null;}return;}
@@ -247,7 +247,7 @@ function drawMap(){const M=MAPS,w=curWorld(),cx=clamp(M.x-W/2,0,w.W-W),cy=clamp(
   if(M.banner){const a=Math.min(1,M.banner.t,(3-M.banner.t)*3);ctx.globalAlpha=a;txt(M.banner.text,W/2,H/2-120,54,C.paper);ctx.globalAlpha=1;}
   if(M.card)drawLevelCard(M.card,M.t);
   if(M.dialog)drawDialog(M.dialog,M.t);
-  if(M.menu){ctx.fillStyle='rgba(20,13,8,.6)';ctx.fillRect(0,0,W,H);txt('MENÚ',W/2,150,54,C.paper);menuList(['Seguir explorando','Logros','Opciones','Libro de cuentos','Guardar y salir al título'],M.menu.sel,W/2,222,340);btxt('Shift: abrir el menú de equipo',W/2,430,15,C.paper,'center',800);}
+  if(M.menu){ctx.fillStyle='rgba(20,13,8,.6)';ctx.fillRect(0,0,W,H);txt('MENÚ',W/2,150,54,C.paper);menuList(['Seguir explorando','Logros','Opciones','Libro de cuentos','Tutorial (Escuela de Héroes)','Guardar y salir al título'],M.menu.sel,W/2,196,360);btxt('Shift: abrir el menú de equipo',W/2,478,15,C.paper,'center',800);}
   if(M.libro&&typeof drawLibro==='function')drawLibro();}
 const CARD_QUOTES=['¡Que empiece la función!','¡Ni un paso atrás!','¡Prepárate para bailar!','¡Esta vez no te escapas!','¡Abran el telón!','¡A ver de qué estás hecho!'];
 function drawLevelCard(c,t){const id=c.id,d=LEVELS[id],k=easeOutBack(Math.min(1,(c.t||0)/.35)),bossy=d.kind!=='run'&&d.kind!=='maus';
