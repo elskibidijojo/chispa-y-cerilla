@@ -20,4 +20,7 @@ const _seb=spawnEB;spawnEB=function(L,o){const e=_seb(L,o);if(L&&L._spd&&e&&!e.g
 /* run-and-gun: tougher enemies and mini-bosses */
 const _mk=mkEnt;mkEnt=function(L,o){const e=_mk(L,o);if(L&&L.kind==='run'&&e&&!e.boss&&e.ai!=='mini'&&!e._duro){const f=k(L);if(f){e._duro=true;e.hp=Math.max(e.hp,Math.round(e.hp*f.ent));if(e.max)e.max=Math.max(e.max,Math.round(e.max*f.ent));if(!L._spd)L._spd=f.spd;}}return e;};
 if(typeof miniStart==='function'){const _ms=miniStart;miniStart=function(L,g){const e=_ms(L,g),f=k(L);if(e&&f){e.hp*=f.hp;e.max*=f.hp;}return e;};}
+/* bosses hand out fewer parry cards: only 1 of every 3 pink shots stays pink
+   (card bosses that you can only beat by parrying, mausoleums and tutorials keep all of theirs) */
+const _sebP=spawnEB;spawnEB=function(L,o){if(L&&L.boss&&o&&o.parry&&o.k!=='pstar'&&!(L.boss.def&&L.boss.def.parryOnly)&&!/^(tutorial|mausoleo)/.test(L.id)){L._pc=(L._pc||0)+1;if(L._pc%3!==0)o=Object.assign({},o,{parry:false});}return _sebP(L,o);};
 })();
