@@ -124,7 +124,7 @@ function drawBld(n,t,night){const x=n.x,y=n.y,dk=c=>night?'#4b4170':c;ctx.save()
       for(let i=0;i<3;i++)circ(x-16+i*16,y-80,6,Math.floor(t*3+i)%2?'#5a5a5a':'#3a3a3a',2);break;
   }
   if(n.em){circ(x-(n.ob||30)-6,y-14,13,C.paper,3);ctx.save();ctx.translate(x-(n.ob||30)-6,y-14);ctx.scale(.55,.55);drawSpr({x:0,y:0,spr:n.em,r:16,rot:0,vx:-1,vy:0,ch:'A'},t);ctx.restore();}
-  if(save.done[n.id]){const fx=x+(n.ob||30)+8;line(fx,y,fx,y-40,3);poly([[fx,y-40],[fx+30,y-32],[fx,y-22]],C.parry);txt(save.done[n.id],fx+12,y-31,11,C.ink,null);}
+  if(save.done[n.id]){window._flagDrawn=n.id;const fx=x+(n.ob||30)+8;line(fx,y,fx,y-40,3);poly([[fx,y-40],[fx+30,y-32],[fx,y-22]],C.parry);txt(save.done[n.id],fx+12,y-31,11,C.ink,null);}
   ctx.restore();}
 function drawStatue(x,y,t){ctx.save();ctx.lineJoin='round';ctx.lineCap='round';ctx.lineWidth=3;ctx.strokeStyle=C.ink;
   /* soft spotlight + flowers */

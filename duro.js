@@ -5,7 +5,7 @@
    - Fácil only gets half of the extra, so it stays a good way to learn a boss; Experto keeps all of it
    Everything is plain multipliers on the simulation, the same on every machine, so online play stays in sync. */
 (function(){
-const ISL={1:{hp:1.35,pace:.88,spd:1.05,ent:1.25},2:{hp:1.45,pace:.84,spd:1.08,ent:1.35},3:{hp:1.55,pace:.8,spd:1.1,ent:1.45},4:{hp:1.65,pace:.77,spd:1.12,ent:1.55},5:{hp:1.7,pace:.75,spd:1.14,ent:1.6}};
+const ISL={1:{hp:1,pace:.88,spd:1.05,ent:1.25},2:{hp:1.04,pace:.84,spd:1.08,ent:1.35},3:{hp:1.08,pace:.8,spd:1.1,ent:1.45},4:{hp:1.12,pace:.77,spd:1.12,ent:1.55},5:{hp:1.15,pace:.75,spd:1.14,ent:1.6}};
 window.DURO=ISL;
 /* longer fights shouldn't ruin your grade: the par time grows with the extra life */
 for(const id in LEVELS){const d=LEVELS[id];if(!d.create||/^tutorial/.test(id)||d._duroPar)continue;const b=ISL[d.isl]||ISL[3];d._duroPar=true;
