@@ -1445,7 +1445,7 @@ document.addEventListener('click', e => {
   Sound.click(); const a = go.dataset.go;
   if (a === 'menu') show('menu');
   else if (a === 'quick') openQuick();
-  else if (a === 'career-new') { if (store.get('golazo26_career') && !confirm('Ya tienes una carrera guardada. ¿Empezar una nueva y borrar la anterior?')) return; openPick(); }
+  else if (a === 'career-new') { if (store.get('golazo26_career')) confirmModal('Ya tienes una carrera guardada. Si empiezas una nueva, se borra la anterior.', openPick, 'Empezar nueva'); else openPick(); }
   else if (a === 'career-continue') { if (loadCareer()) { show('dt'); renderDT('inicio'); } }
   else if (a === 'controls') controlsModal();
   else if (a === 'options') optionsModal();
@@ -1458,7 +1458,11 @@ function refreshContinue() {
 function modal(html, onReady) {
   const m = $('#modal'); m.innerHTML = `<div class="ov-box">${html}</div>`; m.classList.add('show');
   m.onclick = e => { if (e.target === m) closeModal(); };
+  $$('[data-close]', m).forEach(b => b.onclick = () => { Sound.click(); closeModal(); });
   if (onReady) onReady(m);
+}
+function confirmModal(msg, yes, yesLbl = 'Sí, continuar') {
+  modal(`<h2 class="h-title">¿Seguro?</h2><p class="mt">${esc(msg)}</p><div class="btns"><button class="btn warn" id="cfYes">${yesLbl}</button><button class="btn" data-close>Cancelar</button></div>`, m => { $('#cfYes', m).onclick = () => { closeModal(); yes(); }; });
 }
 function closeModal() { $('#modal').classList.remove('show'); }
 function controlsModal() {
@@ -1473,7 +1477,7 @@ function controlsModal() {
     <div><kbd>P</kbd><kbd>Esc</kbd></div><div>Pausa</div>
     <div>🎮 Mando</div><div>Stick: mover · A: pase · B: tiro · X: centro · RT/RB: sprint · LB: cambio · Start: pausa</div>
     <div>📱 Táctil</div><div>Joystick a la izquierda y botones a la derecha (en horizontal)</div>
-  </div><div class="btns"><button class="btn go" onclick="closeModal()">Entendido</button></div>`);
+  </div><div class="btns"><button class="btn go" data-close>Entendido</button></div>`);
 }
 function optionsModal() {
   const row = (k, lbl) => `<div class="opt-row"><span>${lbl}</span><button class="sw ${settings[k] ? 'on' : ''}" data-k="${k}" aria-label="${lbl}"></button></div>`;
@@ -1481,7 +1485,7 @@ function optionsModal() {
     ${row('sfx', '🔊 Efectos y ambiente de estadio')}${row('music', '🎵 Música del menú')}${row('voice', '🎙️ Narrador por voz')}
     <div class="opt-row"><span>Volumen general</span><input type="range" min="0" max="1" step="0.05" value="${settings.vol}" id="optVol"></div>
     <p class="muted" style="font-size:13px;margin-top:10px">El narrador usa la voz en español de tu navegador o celular.</p>
-    <div class="btns"><button class="btn go" onclick="closeModal()">Listo</button></div>`, m => {
+    <div class="btns"><button class="btn go" data-close>Listo</button></div>`, m => {
     $$('.sw', m).forEach(b => b.onclick = () => { const k = b.dataset.k; settings[k] = !settings[k]; b.classList.toggle('on', settings[k]); saveSettings(); Sound.applySettings(); if (k === 'music') settings.music ? Sound.startMusic() : Sound.stopMusic(); if (k === 'voice' && settings.voice) Voice.say('¡Narrador activado!', true); });
     $('#optVol', m).oninput = e => { settings.vol = +e.target.value; saveSettings(); Sound.applySettings(); };
   });
@@ -1522,9 +1526,10 @@ $('#pControls').onclick = () => controlsModal();
 $('#pQuit').onclick = () => {
   if (!game) return;
   if (game.o.mode === 'career') {
-    if (!confirm('Si abandonas, el partido se da por perdido 0-3. ¿Seguro?')) return;
-    const hi = game.human; const res = game.result(); res.hg = hi === 0 ? 0 : 3; res.ag = hi === 0 ? 3 : 0; res.events = []; res.forfeit = true;
-    $('#ovPause').classList.remove('show'); endMatch(res);
+    confirmModal('Si abandonas, el partido se da por perdido 0-3.', () => {
+      if (!game) return; const hi = game.human; const res = game.result(); res.hg = hi === 0 ? 0 : 3; res.ag = hi === 0 ? 3 : 0; res.events = []; res.forfeit = true;
+      $('#ovPause').classList.remove('show'); endMatch(res);
+    }, 'Abandonar');
   } else { $('#ovPause').classList.remove('show'); onMatchEnd = null; endMatch(null); show('quick'); }
 };
 
@@ -1740,7 +1745,7 @@ function buyPlayer(id) {
   if (career.budget < x.price) return toast('No te alcanza el presupuesto');
   modal(`<h2 class="h-title">Fichar a ${esc(x.p.name)}</h2><p class="muted">${POS_ES[x.p.pos]} · ${x.p.age} años · Media ${x.p.ovr}</p>
     <p style="margin-top:10px">Costo: <b>${money(x.price)}</b>${x.from ? ` a ${esc(x.from.name)}` : ' (prima de fichaje)'}<br>Te quedarían ${money(career.budget - x.price)}.</p>
-    <div class="btns"><button class="btn go" id="cfBuy">Confirmar fichaje</button><button class="btn" onclick="closeModal()">Cancelar</button></div>`, m => {
+    <div class="btns"><button class="btn go" id="cfBuy">Confirmar fichaje</button><button class="btn" data-close>Cancelar</button></div>`, m => {
     $('#cfBuy', m).onclick = () => {
       if (x.from) { x.from.players = x.from.players.filter(p => p.id !== id); refill(x.from); autoXI(x.from); }
       else career.free = career.free.filter(p => p.id !== id);
@@ -1758,7 +1763,7 @@ function sellPlayer(id) {
   const buyer = pick(career.teams.filter(t => t.id !== me.id && t.players.length < 28)); if (!buyer) return toast('Nadie tiene cupo ahora');
   const offer = Math.round(p.value * rnd(0.82, 1.18) / 5000) * 5000;
   modal(`<h2 class="h-title">Oferta recibida</h2><div style="margin:10px 0">${crestSVG(buyer, 56)}</div><p><b>${esc(buyer.name)}</b> ofrece <b style="color:var(--neon)">${money(offer)}</b> por ${esc(p.name)} (${POS_ES[p.pos]}, ${p.ovr}).</p><p class="muted" style="font-size:13px">Valor de mercado: ${money(p.value)}</p>
-    <div class="btns"><button class="btn go" id="cfSell">Aceptar venta</button><button class="btn" onclick="closeModal()">Rechazar</button></div>`, m => {
+    <div class="btns"><button class="btn go" id="cfSell">Aceptar venta</button><button class="btn" data-close>Rechazar</button></div>`, m => {
     $('#cfSell', m).onclick = () => {
       me.players = me.players.filter(q => q.id !== id); me.xi = me.xi.map(x => x === id ? -1 : x); fixXI(me);
       p.num = nextNumber(buyer, NUM_PREF[p.pos]); buyer.players.push(p); autoXI(buyer); career.budget += offer;
@@ -1812,7 +1817,7 @@ function tabClub(el, me) {
      <p class="muted mt" style="font-size:13px">La partida se guarda sola después de cada fecha en este navegador.</p></div></div>`;
   $('#cSave').onclick = () => { saveCareer(); toast('Partida guardada'); };
   $('#cMenu').onclick = () => { saveCareer(); show('menu'); };
-  $('#cQuit').onclick = () => { if (confirm('¿Seguro? Se borrará tu carrera.')) { store.del('golazo26_career'); career = null; show('menu'); } };
+  $('#cQuit').onclick = () => confirmModal('Se borrará tu carrera para siempre.', () => { store.del('golazo26_career'); career = null; show('menu'); }, 'Borrar carrera');
 }
 
 /* ---- jugar / simular la fecha ---- */
@@ -1867,7 +1872,7 @@ function weekModal(weekRes, me, delta, resTxt) {
   modal(`<h2 class="h-title">${resTxt}</h2><p class="muted">Resultados de la fecha ${career.week}</p>
     <div style="margin:12px 0;text-align:left">${weekRes.map(r => { const H = teamById(r.h), A = teamById(r.a), mine = r.h === me.id || r.a === me.id; return `<div style="display:flex;justify-content:space-between;padding:7px 4px;border-bottom:1px solid var(--line);${mine ? 'color:var(--neon);font-weight:900' : ''}"><span>${H.icon} ${esc(H.name)}</span><b>${r.hg} - ${r.ag}</b><span>${esc(A.name)} ${A.icon}</span></div>`; }).join('')}</div>
     <div class="statgrid" style="grid-template-columns:1fr auto"><div class="l" style="text-align:left">Taquilla + bonos</div><div class="r">+${money(career.lastFin.income + career.lastFin.bonus)}</div><div class="l" style="text-align:left">Planilla</div><div class="r">-${money(career.lastFin.wages)}</div><div class="l" style="text-align:left">Confianza directiva</div><div class="r" style="color:${delta >= 0 ? 'var(--neon)' : 'var(--red)'}">${delta >= 0 ? '+' : ''}${Math.round(delta)}%</div><div class="l" style="text-align:left">Entrenamiento</div><div class="r" style="font-size:13px">${esc(career.lastTrain || '')}</div></div>
-    <div class="btns"><button class="btn go" onclick="closeModal()">Seguir</button></div>`);
+    <div class="btns"><button class="btn go" data-close>Seguir</button></div>`);
 }
 function computeSeasonEnd() {
   const me = myTeam(), tbl = computeTable(), pos = tbl.findIndex(r => r.id === me.id) + 1, champ = teamById(tbl[0].id);
