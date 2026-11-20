@@ -52,14 +52,13 @@ sfxOver('achieve',()=>smp('chipsc',{v:.5}),true);
 sfxOver('shot',(w)=>{if(lim('shotS',.09))return true;smp('pluck',{v:.12,rate:1.8,jit:.2});return false;});
 /* the boxing-bell knockout and the announcer */
 SFX.ko=function(){smp('bell',{v:.8});smp('bell',{v:.75,at:.28});smp('bell',{v:.8,at:.56});nz(1.2,{f:4500,type:'highpass',v:.1});tn(80,.8,{type:'sine',v:.22,slide:-40});
-  smp('v_ko',{v:1,at:.12});if(!SMP.bell)[1568,2093,2637].forEach((f,i)=>tn(f,1.4,{type:'sine',v:.06,at:i*.28}));};
-SFX.announceReady=function(){if(!smp('v_ready',{v:1}))return;smp('v_go',{v:1.05,at:.95});};
-SFX.announceFinal=function(){smp('v_final',{v:1});};
-SFX.announceWin=function(){smp('v_win',{v:.95});};
-SFX.announceLose=function(){smp('v_gameover',{v:.9});};
+  if(!SMP.bell)[1568,2093,2637].forEach((f,i)=>tn(f,1.4,{type:'sine',v:.06,at:i*.28}));};
+SFX.announceReady=function(){};
+SFX.announceFinal=function(){};
+SFX.announceWin=function(){};
+SFX.announceLose=function(){};
 /* everybody down: a sad trombone, then the announcer */
-SFX.gameover=function(){[[311,0,.32],[294,.36,.32],[277,.72,.32],[262,1.08,1.1]].forEach(([f,a,d])=>{tn(f,d,{type:'sawtooth',v:.06,at:a+.5,lp:1300,vib:a>1?7:0});tn(f*1.005,d,{type:'square',v:.025,at:a+.5,lp:900});});
-  smp('v_gameover',{v:.95,at:2.1});};
+SFX.gameover=function(){[[311,0,.32],[294,.36,.32],[277,.72,.32],[262,1.08,1.1]].forEach(([f,a,d])=>{tn(f,d,{type:'sawtooth',v:.06,at:a+.5,lp:1300,vib:a>1?7:0});tn(f*1.005,d,{type:'square',v:.025,at:a+.5,lp:900});});};
 
 /* ---------- cartoon accents (synth): slide whistles, boings, horns, cymbals, woodblocks ---------- */
 function slideW(f0,f1,d,at=0,v=.05){const t=AC.currentTime+at,o=AC.createOscillator(),g=AC.createGain(),lf=AC.createOscillator(),lg=AC.createGain();o.type='sine';o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+d);

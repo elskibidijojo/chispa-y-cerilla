@@ -467,7 +467,7 @@ function drawSlots(){ctx.drawImage(mapBG(1),300,300,W,H,0,0,W,H);ctx.fillStyle='
     else btxt('Vacía · empezar aquí',x+135,250,18,C.ink,'center',700);}
   btxt('← → elegir · Aceptar: jugar · EX: borrar · Esc: volver',W/2,450,16,C.paper,'center',700);}
 const OP={sel:0,back:'title'};
-const OP_ROWS=['players','char','diff','music','pack','sfx','shake','grain','filtro','locutor','quality','mymusic','mmload','mmassign','controls','back'];
+const OP_ROWS=['players','char','diff','music','pack','sfx','shake','grain','filtro','quality','mymusic','mmload','mmassign','controls','back'];
 function openOptions(back){OP.back=back;OP.sel=0;OP.prevScene=scene;scene='options';}
 function closeOptions(){saveCfg();if(OP.back==='level'&&LV){scene='level';}else if(OP.back==='map')scene='map';else scene='title';}
 function updOptions(dt,IN){const I=IN.M,n=OP_ROWS.length;if(I.up){OP.sel=(OP.sel+n-1)%n;sfx('move');}if(I.down){OP.sel=(OP.sel+1)%n;sfx('move');}if(I.no||I.pause){closeOptions();return;}
@@ -519,7 +519,7 @@ function drawCredits(){ctx.fillStyle='#1a120c';ctx.fillRect(0,0,W,H);
     ['MÚSICA',28,C.brass,1],['Kevin MacLeod (incompetech.com)',20,C.gold],['Licencia Creative Commons: Atribución 4.0',16],['creativecommons.org/licenses/by/4.0',16],['Convertidas a mono para que carguen rápido',14],['',16]];
   const all=[...Object.keys(PACK).map(k=>PACK[k]),...Object.values(PACK_FINAL)],seen=new Set();for(const k of all.filter(k=>k[2]!=='pd')){const t=k[1];if(seen.has(t))continue;seen.add(t);L.push(['"'+t+'" · Kevin MacLeod',16]);}
   L.push(['',16],['JEFES: DISCOS DE JAZZ DE 1918 A 1925',22,C.brass,1],['Grabaciones de dominio público (Internet Archive, Great 78 Project)',14],['',12]);for(const k of all.filter(k=>k[2]==='pd')){if(seen.has(k[1]))continue;seen.add(k[1]);L.push([k[1],15]);}
-  L.push(['',20],['Efectos de sonido grabados: Kenney (kenney.nl), CC0',16],['Voz del locutor: Piper TTS, voz "Joe" (CC0)',16],['La música sintetizada alternativa es original del juego',16],['',20],['Gracias por jugar',24,C.gold,1]);
+  L.push(['',20],['Efectos de sonido grabados: Kenney (kenney.nl), CC0',16],['La música sintetizada alternativa es original del juego',16],['',20],['Gracias por jugar',24,C.gold,1]);
   let y=0;const pos=L.map(l=>{const yy=y;y+=l[1]*1.9;return yy;}),tot=y+H+60,off=CR.t*45%tot;
   L.forEach((l,i)=>{const yy=H+40+pos[i]-off;if(yy<-40||yy>H+40||!l[0])return;txt(l[0],W/2,yy,l[1],l[2]||C.paper,l[3]?C.ink:null);});btxt('Aceptar: volver',W/2,H-20,14,C.muted||C.paper,'center');}
 const ST={pages:[],i:0,t:0,kind:'intro'};

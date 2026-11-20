@@ -15,7 +15,7 @@ applyFiltro();
 /* ---------- announcer ---------- */
 let voice=null;function pickVoice(){try{const vs=speechSynthesis.getVoices();voice=vs.find(v=>/es[-_](ES|MX|US|419)/i.test(v.lang)&&/male|hombre|jorge|diego|pablo|juan|carlos/i.test(v.name))||vs.find(v=>/^es/i.test(v.lang))||null;}catch(e){}}
 try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice;}catch(e){}
-window.anunciar=function(text,o={}){if(cfg.locutor===false||typeof speechSynthesis==='undefined'||typeof muted!=='undefined'&&muted)return;try{const u=new SpeechSynthesisUtterance(text);u.lang='es-ES';if(voice)u.voice=voice;u.rate=o.rate||1.02;u.pitch=o.pitch||.72;u.volume=Math.min(1,(cfg.sfx??.9)*1.1);if(!o.queue)speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){}};
+window.anunciar=function(){};/* the announcer was removed */
 function annTick(L){if(!L||!L.boss&&L.kind!=='run')return;const st=L.state;if(L._annS===st)return;const prev=L._annS;L._annS=st;
   if(st==='intro'&&prev===undefined)anunciar(L.kind==='run'?'¿Listos?':'¿Listos?',{rate:.95});
   else if(st==='play'&&(prev==='intro'||prev===undefined))anunciar(L.kind==='run'?'¡A correr!':'¡A pelear!',{rate:1.1,pitch:.8});
