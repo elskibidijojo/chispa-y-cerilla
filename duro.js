@@ -22,5 +22,23 @@ const _mk=mkEnt;mkEnt=function(L,o){const e=_mk(L,o);if(L&&L.kind==='run'&&e&&!e
 if(typeof miniStart==='function'){const _ms=miniStart;miniStart=function(L,g){const e=_ms(L,g),f=k(L);if(e&&f){e.hp*=f.hp;e.max*=f.hp;}return e;};}
 /* bosses hand out fewer parry cards: only 1 of every 3 pink shots stays pink
    (card bosses that you can only beat by parrying, mausoleums and tutorials keep all of theirs) */
-const _sebP=spawnEB;spawnEB=function(L,o){if(L&&L.boss&&o&&o.parry&&o.k!=='pstar'&&!(L.boss.def&&L.boss.def.parryOnly)&&!/^(tutorial|mausoleo)/.test(L.id)){L._pc=(L._pc||0)+1;if(L._pc%3!==0)o=Object.assign({},o,{parry:false});}return _sebP(L,o);};
+const _sebP=spawnEB;spawnEB=function(L,o){if(L&&L.boss&&o&&o.parry&&o.k!=='pstar'&&!o.retBomb&&!o.harmless&&!o.secret&&!o.maus&&o.spr!=='bombav'&&!(L.boss.def&&L.boss.def.parryOnly)&&!/^(tutorial|mausoleo)/.test(L.id)){L._pc=(L._pc||0)+1;if(L._pc%3!==0)o=Object.assign({},o,{parry:false});}return _sebP(L,o);};
+})();
+/* parry-only bosses (cards): never leave the player without something pink for long */
+{const _sebG=spawnEB;spawnEB=function(L,o){if(L&&L.boss&&o&&L.boss.def&&L.boss.def.parryOnly&&!L.boss.dead&&o.spr&&o.k!=='pstar'&&!o.harmless){const t=L.t||0;if(o.parry)L._lastPar=t;else if(t-(L._lastPar??t-1)>2.5&&L.state==='play'){o=Object.assign({},o,{parry:true});L._lastPar=t;}}return _sebG(L,o);};}
+/* inside every island the levels climb in difficulty, like a real campaign:
+   the first boss you meet on an island is the gentlest, the last one is the meanest.
+   rank goes 0 (first on the map) -> 1 (last); life 0.88x -> 1.12x, attack gaps 1.1x -> 0.92x */
+(function(){const RANK={};
+  for(const k in WORLDS){const ids=WORLDS[k].nodes.map(n=>n.id).filter(id=>{const d=LEVELS[id];return d&&d.create&&(d.phases||d.kind==='run')&&!d.parryOnly&&id!=='rascacielos'&&!/^(tutorial|mausoleo)/.test(id);});
+    const bs=ids.filter(id=>LEVELS[id].kind!=='run'),rs=ids.filter(id=>LEVELS[id].kind==='run');
+    for(const g of[bs,rs])g.forEach((id,i)=>RANK[id]=g.length>1?i/(g.length-1):.5);}
+  window.DURO_RANK=RANK;
+  const ease=id=>cfg.diff==='facil'?.5:1;
+  const _mbl=makeBossLevel;makeBossLevel=function(def){const L=_mbl(def),B=L.boss;if(!B||!L.id)return L;const r=RANK[L.id];
+    if(r!==undefined){const e=ease();const hp=1+((.88+.24*r)-1)*e,pc=1+((1.1-.18*r)-1)*e;B.hp*=hp;B.max*=hp;B.pace*=pc;}
+    /* El Rascacielos: a climbing level is hard enough on its own — less life and calmer attacks */
+    if(L.id==='rascacielos'){B.hp*=.78;B.max*=.78;B.pace*=cfg.diff==='facil'?1.3:1.18;}
+    return L;};
+  const _mk=mkEnt;mkEnt=function(L,o){const e=_mk(L,o);if(L&&L.kind==='run'&&e&&!e.boss&&e.ai!=='mini'&&!e._rank){const r=RANK[L.id];if(r!==undefined){e._rank=true;const m=.85+.3*r;e.hp=Math.max(1,Math.round(e.hp*m));if(e.max)e.max=Math.max(1,Math.round(e.max*m));}}return e;};
 })();
