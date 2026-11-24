@@ -1,23 +1,24 @@
-/* armas.js — weapon damage ladder, from best to worst (measured on a boss at each weapon's best range).
+/* armas.js (the top weapons were squeezed closer to the rest so no weapon melts a boss in 20 s)
+   — weapon damage ladder, from best to worst (measured on a boss at each weapon's best range).
    Short range weapons pay for the risk with the highest damage; the Cañón de Carga, fully charged, is the strongest.
    Only the normal shot is scaled; EX moves and Súpers keep their own damage. */
 (function(){
 const TIERS={
-  cometon:[1,'¡El más fuerte de todos! (dispara lento)'],
-  solar:[1,'Altísimo, el 2.º mejor (se recalienta)'],
-  taladro:[1.074,'Altísimo (pegado al jefe)'],
-  lanzallamas:[1.04,'Altísimo (de cerca)'],
-  carga:[1,'Altísimo (hay que cargarlo)'],
-  abanico:[.745,'Muy alto (de cerca)'],
+  cometon:[0.68,'¡El más fuerte de todos! (dispara lento)'],
+  solar:[0.7,'Altísimo, el 2.º mejor (se recalienta)'],
+  taladro:[0.773,'Altísimo (pegado al jefe)'],
+  lanzallamas:[0.868,'Altísimo (de cerca)'],
+  carga:[0.73,'Altísimo (hay que cargarlo)'],
+  abanico:[0.633,'Muy alto (de cerca)'],
   yoyo:[1,'Muy alto (de cerca)'],
-  bastones:[1,'Muy bueno (atraviesan)'],
-  tachuelas:[.935,'Muy bueno'],
-  arco:[.916,'Muy bueno (alcance medio)'],
-  trompetazo:[1.2,'Muy bueno (de cerca)'],
-  bumeran:[.795,'Bueno'],
+  bastones:[0.92,'Muy bueno (atraviesan)'],
+  tachuelas:[0.832,'Muy bueno'],
+  arco:[0.824,'Muy bueno (alcance medio)'],
+  trompetazo:[1.116,'Muy bueno (de cerca)'],
+  bumeran:[0.62,'Bueno'],
   shuriken:[1,'Bueno (atraviesa)'],
   murcielago:[1,'Bueno (persiguen solos)'],
-  agua:[1,'Bueno (moja: +15% de daño)'],
+  agua:[0.89,'Bueno (moja: +15% de daño)'],
   petardo:[1,'Bueno (explota en área)'],
   rebote:[1.158,'Bueno'],
   convergente:[.861,'Bueno'],
