@@ -4834,5 +4834,483 @@ optionsModal = function () {
   row.insertAdjacentHTML('beforebegin', `<div class="opt-row"><span>🖥️ Gráficos</span><div class="seg" id="optGfx"><button data-v="3d" class="${settings.gfx === '3d' ? 'on' : ''}">3D realista</button><button data-v="25d" class="${settings.gfx !== '3d' ? 'on' : ''}">2.5D liviano</button></div></div>`);
   $$('#optGfx button').forEach(b => b.onclick = () => { settings.gfx = b.dataset.v; saveSettings(); $$('#optGfx button').forEach(x => x.classList.toggle('on', x === b)); });
 };
+/* =========================================================
+   DISEÑO "TEMPORADA 26": tema oscuro turquesa, menú con
+   jugador 3D, cartas especiales, caras de jugadores,
+   perfil con atributos detallados, negociación, fichaje
+   cinematográfico, elección de uniformes en 3D, ficha del
+   club y paneles de jugador en el partido.
+   (Inspirado en los juegos de fútbol modernos; diseño original.)
+   ========================================================= */
+(function fcCss() {
+  const css = `
+:root{--neon:#2ff0c0;--neon2:#12b89a;--line:rgba(255,255,255,.09);--panel:rgba(14,22,38,.78);--panel2:rgba(20,30,50,.8)}
+body{background:radial-gradient(1200px 700px at 85% -10%,rgba(47,240,192,.14),transparent 60%),radial-gradient(900px 600px at -10% 110%,rgba(124,58,237,.16),transparent 60%),#060a12}
+.card{background:linear-gradient(160deg,rgba(22,32,54,.82),rgba(10,16,28,.86))!important;border:1px solid rgba(255,255,255,.08)!important;backdrop-filter:blur(10px);box-shadow:0 12px 34px rgba(0,0,0,.35)}
+.btn.go{background:linear-gradient(90deg,#2ff0c0,#19c3e6)!important;color:#03141a!important;border:0!important;box-shadow:0 6px 20px rgba(47,240,192,.25)}
+.ov-box,.modal-box{background:linear-gradient(165deg,rgba(18,28,48,.97),rgba(8,12,22,.98))!important;border:1px solid rgba(47,240,192,.18)!important}
+.tb tr:hover td{background:rgba(47,240,192,.06)}
+.tb th{color:#7dd3c0!important;letter-spacing:1px;font-size:11px;text-transform:uppercase}
+/* ===== menú principal ===== */
+#screen-menu .menu-wrap{display:none!important}
+.fcm{position:absolute;inset:0;display:grid;grid-template-columns:minmax(260px,34%) 1fr;z-index:2;overflow:hidden}
+.fcm-l{display:flex;flex-direction:column;justify-content:center;padding:0 0 0 6vw;gap:4px;position:relative;z-index:3}
+.fcm-logo{position:absolute;top:26px;left:6vw;font-weight:900;font-style:italic;font-size:26px;letter-spacing:1px}.fcm-logo span{color:var(--neon)}
+.fcm-item{background:none;border:0;color:rgba(255,255,255,.42);font-weight:900;font-size:clamp(18px,2.3vw,30px);letter-spacing:1px;text-transform:uppercase;text-align:left;padding:8px 0;cursor:pointer;transition:color .15s,transform .15s;font-family:inherit;display:flex;align-items:center;gap:10px}
+.fcm-item:hover,.fcm-item.on{color:#fff;transform:translateX(8px)}
+.fcm-item.on::before{content:'';width:5px;height:1.1em;background:var(--neon);border-radius:3px}
+.fcm-item small{display:block;font-size:12px;letter-spacing:0;text-transform:none;color:var(--muted);font-weight:700}
+.fcm-r{position:relative}
+#heroCanvas{position:absolute;right:0;bottom:0;width:62%;height:100%}
+.fcm-hero2d{position:absolute;right:6%;bottom:0;width:min(420px,40vw)}
+.fcm-info{position:absolute;left:4%;top:50%;transform:translateY(-50%);width:min(380px,40%);animation:riseIn .35s both}
+.fcm-info .ic{width:84px;height:84px;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;margin-bottom:14px}
+.fcm-info h2{font-size:clamp(20px,2.4vw,30px);font-weight:900;line-height:1.05;margin:0 0 10px}
+.fcm-info p{color:#cbd5e1;font-weight:600;margin:0 0 4px}
+.fcm-info .play{margin-top:16px;display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-weight:800;cursor:pointer;color:#fff;font-family:inherit}
+.fcm-info .play b{display:inline-flex;width:22px;height:22px;border-radius:50%;background:#fff;color:#0b1220;align-items:center;justify-content:center;font-size:12px}
+.fcm-foot{position:absolute;left:6vw;bottom:18px;color:var(--muted);font-size:12px;z-index:3}
+.fcm-glow{position:absolute;inset:0;background:radial-gradient(600px 500px at 72% 60%,rgba(47,240,192,.18),transparent 70%),linear-gradient(90deg,rgba(6,10,18,.95) 0%,rgba(6,10,18,.55) 35%,rgba(6,10,18,0) 60%);z-index:1;pointer-events:none}
+@media(max-height:520px){.fcm-info{display:none}.fcm-hero2d{width:min(250px,30vw)}.fcm-item{font-size:18px;padding:5px 0}.fcm-logo{top:14px}.fcm-foot{display:none}}
+@media(max-width:760px){.fcm{grid-template-columns:1fr}.fcm-r{position:absolute;inset:0;opacity:.45}.fcm-info{display:none}.fcm-l{padding-left:8vw}}
+/* ===== cartas especiales ===== */
+.fut{--a:#f7e7a1;--b:#c99a2e;--c:#7c5b12;--t:#2b1d03;width:190px;height:268px;position:relative;margin:0 auto;color:var(--t);filter:drop-shadow(0 12px 22px rgba(0,0,0,.45));font-family:inherit}
+.fut .bg{position:absolute;inset:0;clip-path:polygon(50% 0,92% 6%,100% 14%,100% 86%,92% 94%,50% 100%,8% 94%,0 86%,0 14%,8% 6%);background:linear-gradient(160deg,var(--a),var(--b) 55%,var(--c))}
+.fut .bg::after{content:'';position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 45%,transparent 60%);animation:futShine 3.5s ease-in-out infinite}
+@keyframes futShine{0%,60%{transform:translateX(-80%)}100%{transform:translateX(80%)}}
+.fut.silver{--a:#f8fafc;--b:#b7c0cd;--c:#6b7585;--t:#111827}.fut.bronze{--a:#f3c9a0;--b:#b27a46;--c:#6a4122;--t:#24140a}
+.fut.totw{--a:#3a3a3a;--b:#141414;--c:#000;--t:#f6d26b}.fut.totw .bg{background:radial-gradient(circle at 70% 25%,rgba(246,210,107,.35),transparent 45%),linear-gradient(160deg,#2a2a2a,#0b0b0b)}.fut.totw .bg::before{content:'';position:absolute;inset:7px;clip-path:inherit;border:2px solid #f6d26b;opacity:.6}
+.fut.icon{--a:#fffbeb;--b:#e7d7a5;--c:#9b8550;--t:#3b2a06}
+.fut .ov{position:absolute;left:20px;top:26px;font-size:40px;font-weight:900;line-height:1}
+.fut .po{position:absolute;left:24px;top:68px;font-size:15px;font-weight:900}
+.fut .fl{position:absolute;left:22px;top:90px;font-size:20px}.fut .cr{position:absolute;left:20px;top:116px}
+.fut .face{position:absolute;right:8px;top:16px;width:120px;height:132px}
+.fut .nm{position:absolute;left:0;right:0;top:152px;text-align:center;font-weight:900;font-size:17px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 14px}
+.fut .ln{position:absolute;left:18%;right:18%;top:176px;height:1px;background:currentColor;opacity:.3}
+.fut .at{position:absolute;left:14px;right:14px;top:184px;display:grid;grid-template-columns:repeat(6,1fr);text-align:center}
+.fut .at div{font-size:10px;font-weight:800;opacity:.85}.fut .at b{display:block;font-size:16px;font-weight:900;opacity:1}
+.fut .sk{position:absolute;left:0;right:0;bottom:24px;text-align:center;font-size:11px;font-weight:900;opacity:.8}
+.fut .lbl{position:absolute;right:16px;top:150px;font-size:8px;font-weight:900;letter-spacing:1.2px;opacity:.85}
+/* ===== perfil ===== */
+.fcp-head{display:flex;gap:16px;align-items:center;margin-bottom:10px}
+.fcp-dia{width:68px;height:68px;transform:rotate(45deg);border:3px solid var(--neon);display:flex;align-items:center;justify-content:center;border-radius:10px;flex:none;background:rgba(47,240,192,.08)}
+.fcp-dia b{transform:rotate(-45deg);font-size:28px;font-weight:900}
+.fcp-attrs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 18px;margin-top:10px}
+.fcp-attrs h4{display:flex;justify-content:space-between;margin:0 0 4px;font-size:13px;color:#e2e8f0;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:3px}
+.fcp-attrs h4 b{font-size:22px;line-height:1}
+.fcp-attrs .r{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;padding:1px 0}.fcp-attrs .r b{color:#fff}
+.fcp-attrs .r b.hi{color:#2ff0c0}.fcp-attrs .r b.lo{color:#f87171}
+@media(max-width:640px){.fcp-attrs{grid-template-columns:repeat(2,1fr)}}
+/* ===== fichaje cinematográfico ===== */
+.tcine{position:fixed;inset:0;z-index:95;background:radial-gradient(circle at 50% 40%,#127a6c,#06261f 55%,#020a08);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;animation:fxFade 1s reverse both}
+.tcine::before{content:'';position:absolute;inset:-50%;background:repeating-linear-gradient(115deg,rgba(255,255,255,.03) 0 40px,transparent 40px 80px);animation:tcStripe 12s linear infinite}
+@keyframes tcStripe{to{transform:translateX(160px)}}
+.tcine .av{position:relative;width:min(400px,62vw);margin-bottom:24vh;animation:tcAv 1.2s cubic-bezier(.2,1,.3,1) both}
+@keyframes tcAv{0%{opacity:0;transform:translateY(60px) scale(.9)}100%{opacity:1;transform:none}}
+.tcine .bot{position:absolute;left:0;right:0;bottom:0;padding:40px 0 7vh;background:linear-gradient(180deg,transparent,rgba(2,10,8,.92) 40%);text-align:center;animation:riseIn .6s .7s both}
+.tcine .crs{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:8px}
+.tcine .crs i{font-style:normal;font-size:28px;color:#2ff0c0}
+.tcine small{letter-spacing:3px;font-weight:900;color:#cbd5e1}
+.tcine .nm{font-size:clamp(28px,5vw,54px);font-weight:900;line-height:1}.tcine .nm span{font-weight:500;opacity:.85;margin-right:12px}
+.tcine .fee{font-size:clamp(24px,4vw,44px);font-weight:900;color:#fff;margin-top:6px;text-shadow:0 0 30px rgba(47,240,192,.6)}
+.tcine .cm{position:absolute;font-weight:700;max-width:220px;animation:riseIn .5s both}.tcine .cm b{display:block;color:#fff;font-size:15px}.tcine .cm{color:#a7f3d0;font-size:13px}
+.tcine .num{position:absolute;right:12vw;top:28vh;text-align:center;animation:riseIn .5s 1s both}.tcine .num b{display:block;font-size:64px;font-weight:300;color:#2ff0c0;line-height:1}
+.tcine .hint{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:rgba(255,255,255,.5);font-size:12px}
+@media(max-width:700px){.tcine .cm,.tcine .num{display:none}}
+/* ===== negociación ===== */
+.nego{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;text-align:left}
+.nego .rowx{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.04);margin-bottom:6px;font-weight:700;gap:10px}
+.nego .rowx.hl{background:linear-gradient(90deg,rgba(47,240,192,.18),rgba(47,240,192,.04));border:1px solid rgba(47,240,192,.35)}
+.nego .rowx span{color:#cbd5e1}.nego .rowx b{font-size:15px}
+.nego .sum{border-top:1px solid rgba(255,255,255,.1);margin-top:8px;padding-top:8px;font-size:13px}.nego .sum div{display:flex;justify-content:space-between;padding:2px 0;color:#94a3b8}.nego .sum b{color:#fff}
+.nego .agent{background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px;text-align:center}
+.nego .agent .call{display:flex;align-items:center;gap:10px;text-align:left;margin-bottom:8px}.nego .agent .call small{display:block;color:#2ff0c0;font-weight:800;font-size:11px}
+.nego .tens{display:inline-block;padding:3px 12px;border-radius:999px;font-weight:900;font-size:12px;margin:6px 0}
+.nego .quote{font-style:italic;color:#e2e8f0;margin:6px 0}
+@media(max-width:640px){.nego{grid-template-columns:1fr}}
+.ov-box:has(.nego),.ov-box:has(.clubx){max-width:900px!important;width:94vw!important}
+/* ===== ficha del club ===== */
+.clubx{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:10px;text-align:left}
+.clubx .bx{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px}
+.clubx .bx small{display:block;color:#94a3b8;font-weight:700;font-size:11px;letter-spacing:.5px}.clubx .bx b{font-size:18px}
+.clubx .lvl{border-radius:12px;padding:10px 12px;font-weight:900;margin-bottom:8px}.clubx .lvl small{color:rgba(255,255,255,.75)}
+@media(max-width:640px){.clubx{grid-template-columns:1fr}}
+/* ===== uniformes ===== */
+#screen-kits{position:fixed;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#0f5f55,#062925 55%,#03100e)}
+#screen-kits .kwrap{position:absolute;inset:0;display:flex;flex-direction:column}
+#screen-kits .ktop{display:flex;align-items:center;gap:14px;padding:16px 22px;font-weight:900}#screen-kits .ktop span{color:#94a3b8;font-weight:700}
+#kitCanvas{position:absolute;inset:0;width:100%;height:100%}
+#screen-kits .side{position:absolute;top:50%;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;font-size:clamp(28px,5vw,60px);font-weight:900;letter-spacing:6px;color:rgba(255,255,255,.85)}
+#screen-kits .side.l{left:10px}#screen-kits .side.r{right:10px;transform:translateY(-50%)}
+#screen-kits .kpick{position:absolute;bottom:90px;display:flex;align-items:center;gap:10px;flex-direction:column}
+#screen-kits .kpick.l{left:16%}#screen-kits .kpick.r{right:16%}
+#screen-kits .kpick .lb{font-weight:900;letter-spacing:2px;font-size:13px}
+#screen-kits .kpick .row{display:flex;align-items:center;gap:8px}
+#screen-kits .kpick .sh{width:58px;height:58px;border-radius:10px;border:2px solid transparent;cursor:pointer;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;transition:transform .15s}
+#screen-kits .kpick .sh.on{border-color:#fff;transform:scale(1.12);background:rgba(255,255,255,.14)}
+#screen-kits .kbot{position:absolute;left:0;right:0;bottom:22px;display:flex;justify-content:center;gap:12px}
+/* ===== partido: paneles de jugador ===== */
+.ppanel{position:absolute;bottom:12px;z-index:6;display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,rgba(8,12,22,.88),rgba(8,12,22,.6));border-radius:8px;padding:5px 12px 5px 6px;min-width:190px;pointer-events:none;border-left:4px solid var(--pc,#2ff0c0)}
+.ppanel.l{left:14px}.ppanel.r{right:14px;flex-direction:row-reverse;border-left:0;border-right:4px solid var(--pc,#2ff0c0);padding:5px 6px 5px 12px;text-align:right}
+.ppanel .num{font-size:20px;font-weight:900;min-width:26px;text-align:center;color:var(--pc2,#fff)}
+.ppanel .nm{font-size:13px;font-weight:900;letter-spacing:.5px;text-transform:uppercase}
+.ppanel .bars{display:flex;gap:2px;margin-top:3px}.ppanel .bars i{width:14px;height:5px;border-radius:1px;background:rgba(255,255,255,.15)}.ppanel .bars i.on{background:#2ff0c0}.ppanel .bars i.mid{background:#facc15}.ppanel .bars i.low{background:#f87171}
+.ppanel.r .bars{justify-content:flex-end}
+.live-badge{position:absolute;top:14px;right:200px;z-index:6;display:flex;align-items:center;gap:6px;font-weight:900;font-size:11px;letter-spacing:1px;pointer-events:none}
+.live-badge b{background:#0b1220;border:1px solid rgba(255,255,255,.25);padding:3px 7px;border-radius:4px}.live-badge span{background:#e11d48;padding:3px 7px;border-radius:4px}
+.fc-hud .hud-ticker{bottom:auto!important;top:112px!important;max-width:min(380px,40vw)!important}
+.fc-hud .hud-btns{bottom:auto!important;top:146px!important}
+.fc-hud #ctrlName{display:none!important}.fc-hud .ctrl-help .k{font-size:11px;padding:3px 8px 3px 3px}.fc-hud .ctrl-help .k b{min-width:20px;height:20px}.fc-hud .ctrl-help{max-width:52vw!important;right:auto!important;left:50%!important;transform:translateX(-50%);bottom:12px!important;max-width:46vw!important;justify-content:center!important}
+@media(pointer:coarse){.ppanel{display:none}.live-badge{display:none}.fc-hud .hud-btns{top:auto!important;bottom:14px!important}}
+`;
+  const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+})();
+
+/* ---------- utilidades ---------- */
+const fcHash = s => { let h = 2166136261; for (const ch of String(s)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
+const fcSkin = p => typeof p.skin === 'number' ? SKINS[p.skin] || SKINS[0] : (p.skin || SKINS[1]);
+const fcHair = p => typeof p.hair === 'number' ? HAIRS[p.hair] || HAIRS[0] : (p.hair || HAIRS[0]);
+
+/* cara del jugador (dibujo vectorial original, no fotos reales) */
+function faceSVG(p, t, size = 120) {
+  const h = fcHash((p.id || p.pid || 0) + (p.name || '')), sk = fcSkin(p), hr = fcHair(p), id = 'f' + (Math.random() * 1e9 | 0);
+  const c1 = t ? (t.c1 || '#334155') : '#334155', c2 = t ? (t.c2 || '#f8fafc') : '#f8fafc', style = h % 7, beard = (h >> 4) % 10, brow = shade(hr, -20);
+  const hair = [
+    `<path d="M29 46 Q28 22 50 20 Q72 22 71 46 Q68 34 50 32 Q33 33 29 46Z" fill="${hr}"/>`,
+    `<path d="M30 42 Q30 22 50 21 Q70 22 70 42 Q66 31 50 30 Q34 31 30 42Z" fill="${hr}" opacity=".85"/>`,
+    `<circle cx="50" cy="34" r="25" fill="${hr}"/><circle cx="34" cy="40" r="13" fill="${hr}"/><circle cx="66" cy="40" r="13" fill="${hr}"/>`,
+    `<path d="M28 60 Q24 22 50 19 Q76 22 72 60 Q70 40 66 34 Q50 40 34 34 Q30 40 28 60Z" fill="${hr}"/>`,
+    Array.from({ length: 11 }, (_, i) => { const a = Math.PI + i * Math.PI / 10; return `<circle cx="${(50 + Math.cos(a) * 19).toFixed(1)}" cy="${(40 + Math.sin(a) * 19).toFixed(1)}" r="6" fill="${hr}"/>`; }).join(''),
+    '',
+    `<path d="M34 40 Q36 18 54 17 Q68 18 70 34 Q62 26 52 28 Q44 26 34 40Z" fill="${hr}"/><path d="M46 18 Q52 8 62 14 Q56 16 52 22Z" fill="${hr}"/>`
+  ][style];
+  const beardP = beard < 3 ? `<path d="M31 56 Q33 80 50 84 Q67 80 69 56 Q66 70 50 72 Q34 70 31 56Z" fill="${hr}" opacity=".9"/>` : beard < 5 ? `<path d="M31 56 Q33 80 50 84 Q67 80 69 56 Q66 70 50 72 Q34 70 31 56Z" fill="${hr}" opacity=".3"/>` : '';
+  return `<svg width="${size}" height="${Math.round(size * 1.1)}" viewBox="0 0 100 110"><defs><radialGradient id="${id}s" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="${shade(sk, 28)}"/><stop offset=".6" stop-color="${sk}"/><stop offset="1" stop-color="${shade(sk, -38)}"/></radialGradient><linearGradient id="${id}j" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(c1, 18)}"/><stop offset="1" stop-color="${shade(c1, -40)}"/></linearGradient></defs>
+  ${style === 2 ? hair : ''}
+  <path d="M6 110 Q10 86 34 80 L66 80 Q90 86 94 110Z" fill="url(#${id}j)"/><path d="M40 80 L50 92 L60 80" fill="none" stroke="${c2}" stroke-width="3.5"/><path d="M14 98 Q18 90 26 86" stroke="${c2}" stroke-width="2.5" fill="none" opacity=".7"/><path d="M86 98 Q82 90 74 86" stroke="${c2}" stroke-width="2.5" fill="none" opacity=".7"/>
+  <path d="M42 66 L42 82 Q50 88 58 82 L58 66Z" fill="${shade(sk, -22)}"/>
+  <ellipse cx="29.5" cy="52" rx="4" ry="6.5" fill="${shade(sk, -15)}"/><ellipse cx="70.5" cy="52" rx="4" ry="6.5" fill="${shade(sk, -15)}"/>
+  <ellipse cx="50" cy="50" rx="20" ry="25" fill="url(#${id}s)"/>
+  <path d="M32 60 Q36 76 50 78 Q64 76 68 60 Q64 72 50 74 Q36 72 32 60Z" fill="${shade(sk, -30)}" opacity=".35"/>
+  ${beardP}
+  <path d="M37 44 Q42 41 46 44" stroke="${brow}" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M54 44 Q58 41 63 44" stroke="${brow}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <ellipse cx="42" cy="49.5" rx="3" ry="2" fill="#fff"/><ellipse cx="58" cy="49.5" rx="3" ry="2" fill="#fff"/><circle cx="42.4" cy="49.6" r="1.6" fill="#1f2937"/><circle cx="58.4" cy="49.6" r="1.6" fill="#1f2937"/>
+  <path d="M50 51 Q48 58 46 60 Q50 62 53 60" fill="none" stroke="${shade(sk, -40)}" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M44 66 Q50 69 56 66" fill="none" stroke="${shade(sk, -55)}" stroke-width="1.8" stroke-linecap="round"/>
+  ${style !== 2 ? hair : ''}</svg>`;
+}
+
+/* carta estilo especial */
+cardHTML = function (p, t) {
+  const tier = p.ovr >= 85 ? 'totw' : p.ovr >= 75 ? 'gold' : p.ovr >= 65 ? 'silver' : 'bronze';
+  const at = p.pos === 'POR' ? [['ARQ', p.gk], ['PAS', p.pas], ['FÍS', p.phy], ['RIT', p.pac], ['REG', p.dri], ['DEF', p.def]] : [['RIT', p.pac], ['TIR', p.sho], ['PAS', p.pas], ['REG', p.dri], ['DEF', p.def], ['FÍS', p.phy]];
+  return `<div class="fut ${tier}"><div class="bg"></div><div class="ov">${p.ovr}</div><div class="po">${p.pos}</div><div class="fl">${flag(p.nat)}</div><div class="cr">${t ? crestSVG(t, 26) : ''}</div><div class="face">${faceSVG(p, t, 120)}</div>${tier === 'totw' ? '<div class="lbl">EQUIPO DE LA SEMANA</div>' : ''}
+    <div class="nm">${esc(shortName(p.name))}</div><div class="ln"></div><div class="at">${at.map(([k, v]) => `<div><b>${v}</b>${k}</div>`).join('')}</div><div class="sk">${'★'.repeat(p.skl || 1)}<span style="opacity:.3">${'★'.repeat(5 - (p.skl || 1))}</span> HAB</div></div>`;
+};
+
+/* atributos detallados */
+const FC_SUBS = {
+  pac: ['Ritmo', [['Aceleración', 0], ['Velocidad', 2]]],
+  sho: ['Tiro', [['Posicionamiento', -2], ['Definición', 1], ['Potencia', 3], ['Lejanos', -3], ['Voleas', -4], ['Penales', -1]]],
+  pas: ['Pase', [['Visión', 1], ['Centros', -3], ['Tiro libre', -6], ['Pase corto', 3], ['Pase largo', -1], ['Efecto', -4]]],
+  dri: ['Regate', [['Agilidad', 2], ['Equilibrio', -1], ['Reacciones', 0], ['Control', 3], ['Regate', 1], ['Compostura', -2]]],
+  def: ['Defensa', [['Intercepción', 0], ['Cabezazo', -3], ['Marcaje', 1], ['Entrada', 2], ['Barrida', -2]]],
+  phy: ['Físico', [['Salto', -2], ['Resistencia', 2], ['Fuerza', 0], ['Agresividad', -1]]]
+};
+function fcAttrGrid(p) {
+  const keys = p.pos === 'POR' ? ['gk', 'pac', 'pas', 'dri', 'def', 'phy'] : ['pac', 'sho', 'pas', 'dri', 'def', 'phy'];
+  return `<div class="fcp-attrs">${keys.map(k => {
+    if (k === 'gk') return `<div><h4>Arquero <b>${p.gk}</b></h4>${[['Estirada', 1], ['Manos', -1], ['Saque', -4], ['Reflejos', 3], ['Colocación', 0]].map(([n, o], i) => { const v = clamp(p.gk + o + (fcHash(p.id + n) % 7) - 3, 10, 99); return `<div class="r">${n}<b class="${v >= 80 ? 'hi' : v < 50 ? 'lo' : ''}">${v}</b></div>`; }).join('')}</div>`;
+    const [nm, subs] = FC_SUBS[k];
+    return `<div><h4>${nm} <b>${p[k]}</b></h4>${subs.map(([n, o]) => { const v = clamp(p[k] + o + (fcHash(p.id + n) % 9) - 4, 10, 99); return `<div class="r">${n}<b class="${v >= 80 ? 'hi' : v < 50 ? 'lo' : ''}">${v}</b></div>`; }).join('')}</div>`;
+  }).join('')}</div>`;
+}
+const _profileFC = profile;
+profile = function (id) {
+  _profileFC(id);
+  try {
+    const info = findPlayer(id); if (!info) return; const { p, c } = info, box = $('#modal .ov-box') || $('#modal');
+    const bars = box.querySelector('.attr-row'); if (bars && bars.parentNode) bars.parentNode.outerHTML = fcAttrGrid(p);
+    const h2 = box.querySelector('.prof-grid h2'); if (h2) { h2.outerHTML = `<div class="fcp-head"><div class="fcp-dia"><b>${p.ovr}</b></div><div><div class="muted" style="font-weight:900;letter-spacing:1px">${p.pos} · ${NATS[p.nat] ? NATS[p.nat].f + ' ' + NATS[p.nat].n : ''}</div><h2 class="h-title" style="font-size:26px;margin:0">${esc(p.name)}</h2></div></div>`; }
+  } catch (e) { console.warn(e); }
+};
+
+/* ---------- fichaje cinematográfico ---------- */
+const TC_COMMENTS = [['Analista', 'Ese monto se va a ver barato en nada.'], ['Director deportivo', 'Llega para hacer la diferencia.'], ['Capitán', 'Bienvenido, hermano. A ganar todo.'], ['Prensa', 'El fichaje del verano.'], ['Hinchada', '¡Ya es nuestro!'], ['Entrenador de arqueros', 'Se nota la calidad desde el primer día.']];
+function transferCine(p, from, to, fee, done) {
+  const parts = p.name.split(' '), first = parts.length > 1 ? parts.slice(0, -1).join(' ') : '', last = parts[parts.length - 1];
+  const cm = TC_COMMENTS.slice().sort(() => Math.random() - 0.5).slice(0, 3), pos = [['8vw', '24vh'], ['6vw', '52vh'], ['auto', '58vh']];
+  const d = document.createElement('div'); d.className = 'tcine';
+  d.innerHTML = `<div class="av">${faceSVG(p, to, 420)}</div>
+    ${cm.map(([who, txt], i) => `<div class="cm" style="left:${pos[i][0]};${i === 2 ? 'right:8vw;' : ''}top:${pos[i][1]};animation-delay:${1 + i * 0.35}s"><b>${who}</b>${txt}</div>`).join('')}
+    <div class="num"><b>${p.num || rint(2, 30)}</b>Dorsal</div>
+    <div class="bot"><div class="crs">${from ? crestSVG(from, 46) : '<span style="font-size:34px">🆓</span>'}<i>▶</i>${crestSVG(to, 46)}</div><small>FICHAJE</small><div class="nm"><span>${esc(first)}</span>${esc(last.toUpperCase())}</div><div class="fee">${fee ? money(fee) : 'AGENTE LIBRE'}</div></div>
+    <div class="hint">Toca para continuar</div>`;
+  document.body.appendChild(d); Sound.roar(); Sound.horn && Sound.horn(); FX.confetti(90);
+  d.onclick = () => { d.remove(); done && done(); };
+}
+const _completeSigning = completeSigning;
+completeSigning = function (p, c, fee, wage, yrs, role, loan) {
+  const r = _completeSigning.apply(this, arguments);
+  try {
+    if (!loan) { const extra = Math.round((fee ? fee * 0.05 : wage * 10) / 1000) * 1000 + wage * 4; career.money -= extra; addNews(`💼 Prima de fichaje y comisión del agente de ${p.name}: ${money(extra)}`, '💼'); }
+    const to = myClub(); setTimeout(() => { if ($('#modal .h-title') && $('#modal .h-title').textContent.includes('Fichaje cerrado')) closeModal(); transferCine(p, c && c.id !== to.id ? c : null, to, fee, () => renderDT()); }, 30);
+  } catch (e) { }
+  return r;
+};
+
+/* ---------- negociación: diseño nuevo ---------- */
+function fcNegoDecorate() {
+  const box = $('#modal .ov-box') || $('#modal'); if (!box || !box.querySelector('#ctOk') || box.querySelector('.nego')) return;
+  const title = box.querySelector('.h-title'), w = box.querySelector('#ctW'), rS = box.querySelector('#ctR'), yS = box.querySelector('#ctY');
+  const nm = title ? title.textContent.split(':').slice(1).join(':').trim() : '', info = career && (findPlayerByName(nm));
+  const p = info && info.p, c = info && info.c, msgs = [...box.querySelectorAll('p')], feeTxt = msgs[0] ? msgs[0].textContent : '', ask = msgs[1] ? msgs[1].innerHTML : '';
+  const tries = (fcNegoDecorate.t = (fcNegoDecorate.last === nm ? (fcNegoDecorate.t || 0) + (ask.includes('No acepta') ? 1 : 0) : 0)); fcNegoDecorate.last = nm;
+  const tens = tries >= 2 ? ['ALTA', '#ef4444'] : tries === 1 ? ['MEDIA', '#f59e0b'] : ['BAJA', '#10b981'];
+  const wageRow = w.closest('.slider-row'), btnOk = box.querySelector('#ctOk'), btnC = box.querySelector('[data-close]');
+  const wrap = document.createElement('div'); wrap.className = 'nego';
+  const L = document.createElement('div'), R = document.createElement('div');
+  L.innerHTML = `<div class="rep-head">NEGOCIACIÓN DEL JUGADOR</div><h2 class="h-title" style="margin:2px 0 10px">${esc(nm)}</h2>`;
+  const mkRow = (label, el, hl) => { const d = document.createElement('div'); d.className = 'rowx' + (hl ? ' hl' : ''); d.innerHTML = `<span>${label}</span>`; d.appendChild(el); return d; };
+  L.appendChild(mkRow('Sueldo semanal', wageRow, true)); wageRow.querySelector('.muted') && wageRow.querySelector('.muted').remove(); wageRow.style.margin = '0';
+  L.appendChild(mkRow('Duración del contrato', yS)); L.appendChild(mkRow('Rol en la plantilla', rS));
+  const fee = (feeTxt.match(/[\d.,]+\s*[MK]?/) || [''])[0];
+  const sum = document.createElement('div'); sum.className = 'sum'; L.appendChild(sum);
+  const upd = () => { const wg = +w.value || 0, tf = p && p.value ? 0 : 0; const agent = feeTxt.includes('Traspaso') ? '5% del traspaso' : money(Math.round(wg * 10 / 1000) * 1000); sum.innerHTML = `<div>Prima de fichaje <b>${money(wg * 4)}</b></div><div>Comisión del agente <b>${agent}</b></div><div>${esc(feeTxt)}</div><div>${msgs.find(x => x.textContent.includes('Espacio')) ? esc(msgs.find(x => x.textContent.includes('Espacio')).textContent) : ''}</div>`; };
+  w.addEventListener('input', upd); box.querySelectorAll('#ctM,#ctP').forEach(b => b.addEventListener('click', () => setTimeout(upd, 0))); upd();
+  const bts = document.createElement('div'); bts.className = 'btns'; btnOk.textContent = 'Hacer oferta'; bts.appendChild(btnOk); if (btnC) bts.appendChild(btnC); L.appendChild(bts);
+  R.innerHTML = `<div class="agent"><div class="call">${p ? faceSVG(p, c, 54) : '📞'}<div><small>EN LLAMADA CON EL REPRESENTANTE</small><b>${esc(nm)}</b></div></div>
+    <div class="tens" style="background:${tens[1]}22;color:${tens[1]};border:1px solid ${tens[1]}">TENSIÓN ${tens[0]}</div>
+    <div class="quote">"${ask.includes('No acepta') ? 'Así no hay trato. Mejoren la oferta.' : 'Buenas. Este es el trato que queremos.'}"</div>
+    <div class="muted" style="font-size:13px">${ask}</div>
+    ${p ? `<div class="mt-s" style="display:flex;justify-content:center">${cardHTML(p, c)}</div>` : ''}</div>`;
+  [...box.children].forEach(ch => { if (!ch.classList.contains('close')) ch.remove(); });
+  wrap.appendChild(L); wrap.appendChild(R); box.appendChild(wrap);
+}
+function findPlayerByName(nm) {
+  if (!career || !nm) return null; const all = [];
+  for (const c of career.clubs) for (const p of c.players) if (p.name === nm) return { p, c };
+  for (const p of (career.free || [])) if (p.name === nm) return { p, c: null };
+  for (const p of (career.ext || [])) if (p.name === nm) return { p, c: null };
+  return null;
+}
+new MutationObserver(() => { try { fcNegoDecorate(); } catch (e) { } }).observe(document.body, { childList: true, subtree: true });
+
+/* ---------- ficha del club al elegir equipo ---------- */
+const _renderPickFC = renderPick;
+renderPick = function () {
+  _renderPickFC();
+  $$('#pTeams .tcard').forEach(b => { const orig = b.onclick; b.onclick = () => { Sound.click(); clubSheet(b.dataset.t, orig); }; });
+};
+function clubSheet(id, go) {
+  const t = (pickWorld || []).find(x => x.id === id) || club(id); if (!t) return go();
+  const C = crestOf(t), str = t.str || 70, lvl = (v, n) => v >= 85 ? ['MUY ALTA', '#16a34a'] : v >= 76 ? ['ALTA', '#0d9488'] : v >= 68 ? ['MEDIA', '#ca8a04'] : ['BAJA', '#dc2626'];
+  const fans = lvl(str + 3), youth = lvl(60 + (fcHash(t.id) % 35)), fin = lvl(str - 2 + (fcHash(t.id + 'f') % 12));
+  const best = [...t.players].sort((a, b) => b.ovr - a.ovr).slice(0, 3);
+  modal(`<div class="rep-head">ELIGE TU CLUB</div><div class="clubx">
+    <div class="bx" style="text-align:center">${crestSVG(t, 110)}<h2 class="h-title" style="margin:6px 0 2px">${esc(t.name)}</h2><div>${starsHTML(t.rep)}</div><small class="muted">${esc(WORLDS[pickW] ? WORLDS[pickW].n : '')}</small></div>
+    <div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="bx"><small>FUNDACIÓN</small><b>${C.year}</b></div><div class="bx"><small>ESTADIO</small><b style="font-size:14px">${esc(t.stadium || '—')}</b></div>
+      <div class="bx"><small>MEDIA DEL EQUIPO</small><b>${squadOvr(t)}</b></div><div class="bx"><small>PRESUPUESTO DE FICHAJES</small><b>${money(startBudget(t))}</b></div></div>
+      <div class="bx mt-s"><small>FIGURAS DEL PLANTEL</small>${best.map(p => `<div style="display:flex;align-items:center;gap:8px;margin-top:4px">${faceSVG(p, t, 34)}<b style="font-size:14px">${esc(p.name)}</b><span class="muted" style="margin-left:auto">${p.pos} · ${p.ovr}</span></div>`).join('')}</div></div>
+    <div>${[['Fervor de la hinchada', fans], ['Instalaciones juveniles', youth], ['Estabilidad financiera', fin]].map(([n, [v, col]]) => `<div class="lvl" style="background:linear-gradient(90deg,${col},${col}99)"><small>${n}</small><div>${v}</div></div>`).join('')}</div></div>
+    <div class="btns"><button class="btn go" id="clubGo">Dirigir a ${esc(t.name)}</button><button class="btn" data-close>Ver otro club</button></div>`, m => { $('#clubGo', m).onclick = () => { closeModal(); go(); }; });
+}
+
+/* ---------- menú principal ---------- */
+const FC_MODES = [
+  { go: 'quick', t: 'Jugar ahora', ic: '⚽', h: 'Saltá a la cancha', d: ['Elige clubes, selecciones y uniformes', 'Gráficos 3D, clima y estadio lleno', 'Penales, prórroga y finales'] },
+  { go: 'career-new', t: 'Modo Manager', ic: 'MC', h: 'El camino para convertirte en leyenda del banco', d: ['Ficha, negocia y vende', 'Charla técnica y prensa', 'Construye un legado'] },
+  { go: 'career-continue', t: 'Continuar', ic: '▶', h: 'Sigue tu carrera', d: [], cont: true },
+  { go: 'controls', t: 'Controles', ic: '🎮', h: 'Aprende a jugar', d: ['Pases, tiros, centros y fintas', 'Teclado, mando o pantalla táctil'] },
+  { go: 'options', t: 'Opciones', ic: '⚙', h: 'Ajustes', d: ['Gráficos 3D o livianos', 'Sonido, cámara y clima'] }
+];
+function fcMenuBuild() {
+  const scr = $('#screen-menu'); if (!scr || scr.querySelector('.fcm')) return;
+  const oldBtns = scr.querySelector('.menu-btns'); oldBtns.style.display = 'none';
+  const wrap = document.createElement('div'); wrap.className = 'fcm';
+  wrap.innerHTML = `<div class="fcm-glow"></div><div class="fcm-l"><div class="fcm-logo">GOLAZO<span>26</span></div>${FC_MODES.map((x, i) => `<button class="fcm-item ${i === 0 ? 'on' : ''}" data-i="${i}">${x.t}</button>`).join('')}</div>
+    <div class="fcm-r"><div class="fcm-info" id="fcmInfo"></div><canvas id="heroCanvas"></canvas></div><div class="fcm-foot">Clubes, jugadores y escudos con nombres y diseños originales · Teclado, mando o táctil</div>`;
+  scr.appendChild(wrap);
+  const info = $('#fcmInfo', wrap), sel = i => {
+    const x = FC_MODES[i]; $$('.fcm-item', wrap).forEach(b => b.classList.toggle('on', +b.dataset.i === i));
+    const cont = x.cont ? ($('#contInfo') ? $('#contInfo').textContent : '') : '';
+    info.style.animation = 'none'; void info.offsetWidth; info.style.animation = '';
+    info.innerHTML = `<div class="ic">${x.ic}</div><h2>${x.h}</h2>${x.d.map(l => `<p>${l}</p>`).join('')}${cont ? `<p>${esc(cont)}</p>` : ''}<button class="play"><b>▶</b>${x.t}</button>`;
+    info.querySelector('.play').onclick = () => go(i);
+  };
+  const go = i => { const b = oldBtns.querySelector(`[data-go="${FC_MODES[i].go}"]`); if (b) b.click(); };
+  $$('.fcm-item', wrap).forEach(b => { b.onmouseenter = () => { sel(+b.dataset.i); Sound.click && 0; }; b.onclick = () => { sel(+b.dataset.i); go(+b.dataset.i); }; b.onfocus = () => sel(+b.dataset.i); });
+  sel(0); fcHero();
+}
+/* jugador 3D en el menú */
+const HERO = { r: null, sc: null, cam: null, rig: null, raf: 0 };
+function fcHero() {
+  const cv = $('#heroCanvas'); if (!cv) return;
+  if (!(window.THREE && settings.gfx === '3d' && gl3Available() && gl3Init())) { cv.insertAdjacentHTML('afterend', `<div class="fcm-hero2d">${faceSVG({ id: 10, name: 'Hero', skin: 2, hair: 0 }, { c1: '#0f766e', c2: '#f8fafc' }, 420)}</div>`); cv.remove(); return; }
+  try {
+    const T3 = THREE, r = new T3.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); r.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5)); r.toneMapping = T3.ACESFilmicToneMapping; r.outputColorSpace = T3.SRGBColorSpace; r.shadowMap.enabled = true;
+    const sc = new T3.Scene(), cam = new T3.PerspectiveCamera(26, 1, 1, 400); HERO.r = r; HERO.sc = sc; HERO.cam = cam;
+    sc.add(new T3.HemisphereLight(0xcffff4, 0x0b2a24, 1.1)); const key = new T3.DirectionalLight(0xffffff, 2.6); key.position.set(30, 40, 20); key.castShadow = true; sc.add(key);
+    const rim = new T3.DirectionalLight(0x2ff0c0, 2.2); rim.position.set(-30, 20, -30); sc.add(rim);
+    const fl = new T3.Mesh(new T3.CircleGeometry(16, 40), new T3.MeshStandardMaterial({ color: 0x0b3b33, roughness: 0.6, transparent: true, opacity: 0.85 })); fl.rotation.x = -Math.PI / 2; fl.receiveShadow = true; sc.add(fl);
+    fcHeroDress();
+    const loop = () => {
+      HERO.raf = requestAnimationFrame(loop); if (current !== 'menu' || !HERO.rig) return;
+      const w = cv.clientWidth, h = cv.clientHeight; if (!w || !h) return; if (cv.width !== Math.round(w * r.getPixelRatio())) r.setSize(w, h, false);
+      cam.aspect = w / h; cam.updateProjectionMatrix(); cam.position.set(66, 13, 16); cam.lookAt(0, 10.8, 0);
+      const t = performance.now() / 1000, R = HERO.rig;
+      HERO.m.players = []; gl3Pose(HERO.m, HERO.p, R, t);
+      R.yaw.rotation.y = 0.35 + Math.sin(t * 0.4) * 0.25;
+      R.arms.forEach((a, i) => { a.sh.rotation.z = 0.55; a.sh.rotation.x = (i ? 1 : -1) * 0.42; a.el.rotation.z = 1.95; a.el.rotation.x = (i ? 1 : -1) * 0.6; });
+      R.spine.rotation.z = 0.04; R.head.rotation.z = Math.sin(t * 0.7) * 0.05;
+      r.render(sc, cam);
+    };
+    loop();
+  } catch (e) { console.warn(e); }
+}
+function fcHeroDress() {
+  if (!HERO.sc) return; const pool = ALL_DEFS ? ALL_DEFS().filter(d => d.str >= 82) : []; const def = pick(pool.length ? pool : [{ c1: '#0f766e', c2: '#fff' }]);
+  const t = { c1: def.c1, c2: def.c2, c3: def.c3, pat: def.pat, id: def.id };
+  const [hk] = kitsFor(t, { c1: '#000001', c2: '#000001' });
+  HERO.m = { state: 'menu', ball: { owner: null, x: 0, y: 0, shot: false }, players: [], teams: [{ main: hk.main, trim: hk.trim, alt: hk.alt, pat: hk.pat, gkc: '#22c55e', t }] };
+  HERO.p = { pid: rint(1, 99), num: String(pick([7, 9, 10, 11])), team: 0, skin: pick(SKINS), hair: pick(HAIRS), vx: 0, vy: 0, en: 1, anim: 0, face: 0 };
+  if (HERO.rig) { HERO.sc.remove(HERO.rig.root); gl3Dispose(HERO.rig.root); }
+  const keep = GL3.scene; GL3.scene = HERO.sc; HERO.rig = gl3MakeRig(HERO.m, HERO.p); GL3.scene = keep;
+  HERO.rig.root.traverse(o => { if (o.isMesh) o.castShadow = true; });
+}
+
+/* ---------- elección de uniformes (partido rápido) ---------- */
+function kitSet(t) {
+  const c1 = t.c1, c2 = t.c2, h = fcHash(t.id || t.name);
+  const third = ['#111827', '#0f766e', '#7c3aed', '#f97316', '#e11d48', '#0ea5e9', '#a3e635'][h % 7];
+  return [
+    { n: 'Local', main: c1, trim: c2, alt: t.c3 || null, pat: t.pat || null },
+    { n: 'Visitante', main: colorDist(c2, c1) < 80 ? '#f8fafc' : c2, trim: c1, alt: null, pat: null },
+    { n: 'Alternativo', main: colorDist(third, c1) < 90 ? '#111827' : third, trim: colorDist(third, '#ffffff') < 120 ? c1 : '#ffffff', alt: null, pat: h % 3 === 0 ? 'band' : null }
+  ];
+}
+function shirtSVG(k, s = 46) { return `<svg width="${s}" height="${s}" viewBox="0 0 60 60"><path d="M18 8 L8 14 L4 26 L13 29 L14 54 L46 54 L47 29 L56 26 L52 14 L42 8 Q30 16 18 8Z" fill="${k.main}" stroke="rgba(0,0,0,.35)"/>${k.pat === 'v' && k.alt ? [18, 26, 34, 42].map(x => `<rect x="${x}" y="12" width="4" height="42" fill="${k.alt}"/>`).join('') : ''}${k.pat === 'band' ? `<rect x="14" y="26" width="33" height="8" fill="${k.alt || k.trim}"/>` : ''}<path d="M24 9 Q30 14 36 9" stroke="${k.trim}" stroke-width="3" fill="none"/><path d="M4 26 L13 29 M56 26 L47 29" stroke="${k.trim}" stroke-width="3"/></svg>`; }
+const _kitsForFC = kitsFor;
+kitsFor = function (home, away) {
+  const kp = window._kitPick; if (!kp || kp.h !== (home.id || home.name) || kp.a !== (away.id || away.name)) return _kitsForFC(home, away);
+  const H = kitSet(home)[kp.hi], A0 = kitSet(away)[kp.ai];
+  let A = A0; if (colorDist(H.main, A.main) < 110) A = kitSet(away).find(k => colorDist(k.main, H.main) >= 110) || A0;
+  return [H, A];
+};
+const KITS3 = { r: null, sc: null, cam: null, rigs: [null, null], raf: 0 };
+function openKits(A, B, play) {
+  let scr = $('#screen-kits');
+  if (!scr) { scr = document.createElement('div'); scr.id = 'screen-kits'; scr.className = 'screen'; document.body.appendChild(scr); }
+  const sel = [0, 1]; const sets = [kitSet(A), kitSet(B)];
+  if (colorDist(sets[0][0].main, sets[1][1].main) < 110) sel[1] = 2;
+  scr.innerHTML = `<canvas id="kitCanvas"></canvas><div class="kwrap"><div class="ktop">⚽ Partido clásico <span>· Elige uniformes</span></div></div>
+    <div class="side l">LOCAL</div><div class="side r">VISITA</div>
+    ${[0, 1].map(i => `<div class="kpick ${i ? 'r' : 'l'}"><div style="display:flex;align-items:center;gap:8px">${crestSVG(i ? B : A, 30)}<b>${esc((i ? B : A).name)}</b></div><div class="row">${sets[i].map((k, j) => `<div class="sh ${sel[i] === j ? 'on' : ''}" data-s="${i}" data-k="${j}" title="${k.n}">${shirtSVG(k)}</div>`).join('')}</div><div class="lb" id="kl${i}">${sets[i][sel[i]].n.toUpperCase()}</div></div>`).join('')}
+    <div class="kbot"><button class="btn" id="kitBack">← Volver</button><button class="btn go" id="kitGo">▶ ¡A jugar!</button></div>`;
+  show('kits');
+  const fallback = !(window.THREE && settings.gfx === '3d' && gl3Available() && gl3Init());
+  const dress = i => {
+    if (fallback) return; const k = sets[i][sel[i]], tm = { main: k.main, trim: k.trim, alt: k.alt, pat: k.pat, gkc: '#22c55e' };
+    const m = { state: 'menu', ball: { owner: null, x: 0, y: 0 }, players: [], teams: [tm] }, p = { pid: (i ? B : A).players ? ([...(i ? B : A).players].sort((a, b) => b.ovr - a.ovr)[0] || {}).id || i : i, num: i ? '10' : '9', team: 0, skin: pick(SKINS), hair: pick(HAIRS), vx: 0, vy: 0, en: 1 };
+    if (KITS3.rigs[i]) { KITS3.sc.remove(KITS3.rigs[i].root); gl3Dispose(KITS3.rigs[i].root); }
+    const keep = GL3.scene; GL3.scene = KITS3.sc; const R = gl3MakeRig(m, p); GL3.scene = keep; R.m = m; R.p = p; R.root.position.set(0, 0, i ? -13 : 13); R.root.traverse(o => { if (o.isMesh) o.castShadow = true; }); KITS3.rigs[i] = R;
+  };
+  if (!fallback) {
+    try {
+      cancelAnimationFrame(KITS3.raf); if (KITS3.r) KITS3.r.dispose();
+      const T3 = THREE, r = new T3.WebGLRenderer({ canvas: $('#kitCanvas'), antialias: true, alpha: true }); r.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5)); r.toneMapping = T3.ACESFilmicToneMapping; r.outputColorSpace = T3.SRGBColorSpace; r.shadowMap.enabled = true;
+      const sc = new T3.Scene(), cam = new T3.PerspectiveCamera(28, 1, 1, 500); Object.assign(KITS3, { r, sc, cam, rigs: [null, null] });
+      sc.add(new T3.HemisphereLight(0xd8fff6, 0x072a24, 1.0)); const key = new T3.DirectionalLight(0xffffff, 2.5); key.position.set(40, 50, 10); key.castShadow = true; Object.assign(key.shadow.camera, { left: -40, right: 40, top: 40, bottom: -40 }); sc.add(key);
+      const rim = new T3.DirectionalLight(0x2ff0c0, 1.6); rim.position.set(-40, 20, 0); sc.add(rim);
+      const fl = new T3.Mesh(new T3.CircleGeometry(60, 48), new T3.MeshStandardMaterial({ color: 0x0a3d35, roughness: 0.4, metalness: 0.2 })); fl.rotation.x = -Math.PI / 2; fl.receiveShadow = true; sc.add(fl);
+      dress(0); dress(1);
+      const loop = () => {
+        KITS3.raf = requestAnimationFrame(loop); if (current !== 'kits') return; const cv = $('#kitCanvas'); if (!cv) return;
+        const w = cv.clientWidth, h = cv.clientHeight; if (cv.width !== Math.round(w * r.getPixelRatio())) r.setSize(w, h, false);
+        cam.aspect = w / h; cam.updateProjectionMatrix(); cam.position.set(90, 16, 0); cam.lookAt(0, 10, 0);
+        const t = performance.now() / 1000;
+        KITS3.rigs.forEach((R, i) => { if (!R) return; gl3Pose(R.m, R.p, R, t + i); R.yaw.rotation.y = (i ? -0.35 : 0.35) + Math.sin(t * 0.5 + i) * 0.12; R.arms.forEach((a, j) => { a.sh.rotation.z = 0.05; a.sh.rotation.x = (j ? -1 : 1) * 0.16; a.el.rotation.z = 0.25; }); });
+        r.render(sc, cam);
+      };
+      loop();
+    } catch (e) { console.warn(e); }
+  }
+  $$('#screen-kits .sh').forEach(b => b.onclick = () => { const i = +b.dataset.s, j = +b.dataset.k; sel[i] = j; Sound.click(); $$(`#screen-kits .sh[data-s="${i}"]`).forEach(x => x.classList.toggle('on', +x.dataset.k === j)); $('#kl' + i).textContent = sets[i][j].n.toUpperCase(); dress(i); });
+  $('#kitBack').onclick = () => { cancelAnimationFrame(KITS3.raf); show('quick'); };
+  $('#kitGo').onclick = () => { cancelAnimationFrame(KITS3.raf); window._kitPick = { h: A.id || A.name, a: B.id || B.name, hi: sel[0], ai: sel[1] }; play(); setTimeout(() => { window._kitPick = null; }, 0); };
+}
+(function hookQuick() {
+  const b = $('#qStart'); if (!b) return; const orig = b.onclick;
+  b.onclick = () => { const A = quickWorld.find(t => t.id === qSel[0]), B = quickWorld.find(t => t.id === qSel[1]); if (!A || !B) return orig(); openKits(A, B, orig); };
+})();
+
+/* ---------- partido: paneles de jugador y sello EN VIVO ---------- */
+(function () {
+  const _upd = Match.prototype.update;
+  Match.prototype.update = function (dt, inp) {
+    _upd.call(this, dt, inp);
+    this._pp = (this._pp || 0) + 1; if (this._pp % 8) return;
+    const sm = $('#screen-match'); if (!sm) return; sm.classList.add('fc-hud');
+    let L = sm.querySelector('.ppanel.l'), R = sm.querySelector('.ppanel.r'), lv = sm.querySelector('.live-badge');
+    if (!L) { L = document.createElement('div'); L.className = 'ppanel l'; R = document.createElement('div'); R.className = 'ppanel r'; lv = document.createElement('div'); lv.className = 'live-badge'; lv.innerHTML = '<b>G26 TV</b><span>● EN VIVO</span>'; sm.append(L, R, lv); }
+    const hide = this.state === 'replay' || this.state === 'foulcs' || this.state === 'intro';
+    L.style.opacity = R.style.opacity = hide ? 0 : 1;
+    const me = this.human >= 0 ? this.human : 0, b = this.ball;
+    const lp = (this.human >= 0 && this.ctrl) || (b.owner && b.owner.team === me ? b.owner : this.players.filter(p => p.team === me).sort((a, c) => dist(a, b) - dist(c, b))[0]);
+    const rp = b.owner && b.owner.team !== me ? b.owner : this.players.filter(p => p.team !== me).sort((a, c) => dist(a, b) - dist(c, b))[0];
+    const fill = (el, p) => { if (!p) return; const T = this.teams[p.team], k = p.pid + ':' + Math.round((p.sta || 1) * 10) + Math.round((p.en || 1) * 10); if (el.dataset.k === k) return; el.dataset.k = k; el.style.setProperty('--pc', T.main); const e = p.en == null ? 1 : p.en, n = Math.round(e * 8);
+      el.innerHTML = `${crestSVG(T.t, 22)}<span class="num">${p.num}</span><div><div class="nm">${esc(p.sname || p.name)}</div><div class="bars">${Array.from({ length: 8 }, (_, i) => `<i class="${i < n ? (e > 0.6 ? 'on' : e > 0.35 ? 'mid' : 'low') : ''}"></i>`).join('')}</div></div>`; };
+    fill(L, lp); fill(R, rp);
+  };
+  const _end = endMatch; endMatch = function (res) { $$('#screen-match .ppanel,#screen-match .live-badge').forEach(e => e.remove()); return _end(res); };
+})();
+
+/* ---------- más sonido: abucheos, aplausos y canción de gol ---------- */
+Sound.boo = function () { if (!this.ctx) return; for (let v = 0; v < 8; v++) { const c = this.ctx, t = c.currentTime + Math.random() * 0.3, o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; const f0 = 1800 + Math.random() * 1400; o.frequency.setValueAtTime(f0, t); o.frequency.linearRampToValueAtTime(f0 * (0.7 + Math.random() * 0.2), t + 1.3); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.012, t + 0.15); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.4); o.connect(g); g.connect(this.sfx); o.start(t); o.stop(t + 1.5); } this.noise(1.2, 'bandpass', 300, 0.8, 0.12, 0.2); };
+Sound.goalSong = function () { if (!this.ctx) return; const c = this.ctx, notes = [523, 659, 784, 1047, 784, 1047], t0 = c.currentTime + 1.2; notes.forEach((f, i) => { const o = c.createOscillator(), g = c.createGain(); o.type = 'square'; o.frequency.value = f; const t = t0 + i * 0.16; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.035, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3); o.connect(g); g.connect(this.sfx); o.start(t); o.stop(t + 0.32); }); };
+(function () {
+  const _w = FX.word; FX.word = function (text, cls) { _w.call(FX, text, cls); if (cls === 'save') Sound.clap && Sound.clap(12); };
+  const _g = FX.goal; FX.goal = function (m, ti) { _g.call(FX, m, ti); Sound.goalSong(); };
+  const _c = FX.card; FX.card = function (col) { const r = _c.apply(FX, arguments); if (!(game && game._defer)) Sound.boo(); return r; };
+})();
+
+/* ---------- público 3D en las tribunas ---------- */
+(function () {
+  const _build = gl3Build;
+  gl3Build = function (m) {
+    const had = GL3.scene && GL3.key === m.teams[0].t.id + m.teams[1].t.id + (m.weather || 'noche');
+    _build(m); if (had) return;
+    try {
+      const T3 = THREE, mob = gl3Mobile(), body = new T3.CapsuleGeometry(1.7, 2.6, 2, 6), head = new T3.SphereGeometry(1.25, 6, 5);
+      const spots = [], add = (x, y, z) => spots.push([x, y, z]);
+      const step = mob ? 11 : 8, rows = mob ? 9 : 13;
+      for (let x = C3.X0 + 20; x < C3.X1 - 20; x += step) for (let r = 0; r < rows; r++) { const f = (r + 0.5) / rows; add(x + (r % 2) * step / 2, STAND.z0 + STAND.h * f, STAND.y0 - STAND.depth * f); }
+      [[-95, -1], [W + 95, 1]].forEach(([x0, s]) => { for (let z = -150; z < H + 150; z += step) for (let r = 0; r < rows - 2; r++) { const f = (r + 0.5) / (rows - 2); add(x0 + s * 230 * f, 8 + 150 * f, z + (r % 2) * step / 2); } });
+      const n = spots.length, mb = new T3.InstancedMesh(body, new T3.MeshLambertMaterial(), n), mh = new T3.InstancedMesh(head, new T3.MeshLambertMaterial(), n);
+      const cols = [m.teams[0].main, m.teams[0].trim, m.teams[1].main, '#f8fafc', '#1f2937', '#64748b'].map(c => new T3.Color(c)), skins = SKINS.map(c => new T3.Color(c));
+      const M = new T3.Matrix4(), base = [];
+      spots.forEach(([x, y, z], i) => { const sit = Math.random() < 0.25; const yy = y + (sit ? 2.2 : 3.6); base.push([x, yy, z, Math.random() * 6]); M.makeTranslation(x, yy, z); mb.setMatrixAt(i, M); M.makeTranslation(x, yy + 3.4, z); mh.setMatrixAt(i, M); const r = Math.random(); mb.setColorAt(i, cols[r < 0.5 ? 0 : r < 0.62 ? 1 : r < 0.8 ? 2 : 3 + (i % 3)]); mh.setColorAt(i, skins[i % skins.length]); });
+      mb.instanceMatrix.needsUpdate = mh.instanceMatrix.needsUpdate = true; GL3.scene.add(mb); GL3.scene.add(mh);
+      GL3.crowd = { mb, mh, base, M, hot: 0 };
+    } catch (e) { console.warn(e); }
+  };
+  const _render = gl3Render;
+  gl3Render = function (m, ctx, cw, ch, dpr) {
+    const C = GL3.crowd;
+    if (C && GL3.scene) {
+      const hot = m.state === 'goal' ? 1 : clamp((m.danger || 0) * 1.3, 0, 1); C.hot += (hot - C.hot) * 0.08;
+      if (C.hot > 0.05 || C.was) { C.was = C.hot > 0.05; const t = performance.now() / 1000, M = C.M, n = C.base.length, stepI = gl3Mobile() ? 2 : 1, off = (C.f = (C.f || 0) + 1) % stepI;
+        for (let i = off; i < n; i += stepI) { const [x, y, z, ph] = C.base[i], j = Math.max(0, Math.sin(t * 11 + ph)) * 2.6 * C.hot; M.makeTranslation(x, y + j, z); C.mb.setMatrixAt(i, M); M.makeTranslation(x, y + j + 3.4, z); C.mh.setMatrixAt(i, M); }
+        C.mb.instanceMatrix.needsUpdate = C.mh.instanceMatrix.needsUpdate = true; }
+    }
+    return _render(m, ctx, cw, ch, dpr);
+  };
+})();
+
+/* arrancar el menú nuevo */
+fcMenuBuild();
+const _showFC = show;
+show = function (name) { _showFC(name); if (name === 'menu') { fcMenuBuild(); const ci = $('#fcmInfo'); if (ci && $('.fcm-item.on')) $('.fcm-item.on').onmouseenter(); } };
 </script>
 </body></html>
