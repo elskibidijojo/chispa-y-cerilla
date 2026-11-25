@@ -62,7 +62,7 @@ function costumeFront(c,bb,t,B){const cx=bb.cx,top=bb.y,w=Math.min(bb.w,240);ctx
 function torn(x0,x1,y,seed){ctx.save();ctx.beginPath();ctx.moveTo(x0,y);let i=0;for(let x=x0;x<=x1;x+=14,i++)ctx.lineTo(x,y+(i%2?8:-4)+hs(seed+i)*4);ctx.lineWidth=4;ctx.strokeStyle=C.ink;ctx.stroke();ctx.restore();}
 function drawStyled(st,B,L,od){const plane=B.def.kind==='plane',sh=B.def._os0?B.def._os0(B):B.shapes(),bb=bbox(sh);if(!bb){od(B,L);return;}
   const t=B.t,p=P(st,B,bb,plane),cos=st.cos,fl=!low()&&(FILT[cos]||(st.sil==='fantasma'?FILT.fantasma:''));
-  const runOD=()=>{ctx.save();if(fl)ctx.filter=fl;try{od(B,L);}finally{ctx.restore();}};
+  const runOD=()=>{ctx.save();if(fl&&!window.NOFILT)ctx.filter=fl;try{od(B,L);}finally{ctx.restore();}};
   ctx.save();
   if(!st.sil){costumeBehind(cos,bb,t);runOD();costumeFront(cos,bb,t,B);}
   else if(st.sil==='cabeza'){const bb2=Object.assign({},bb,{y:bb.y-p.lift,h:p.cut-bb.y,cy:(bb.y+p.cut)/2-p.lift});if(!plane)shadowE(bb.cx,GROUND+3,bb.w*.35,.22);
