@@ -246,6 +246,49 @@ select{background:var(--panel2);color:var(--text);border:1px solid var(--line);b
 .mt-s{margin-top:8px}
 .fluo{color:var(--neon);font-weight:900}
 .warnc{color:var(--gold);font-weight:800}
+
+/* ===== botones táctiles por contexto ===== */
+.tbtns{width:260px!important;height:230px!important}
+.tb-b{position:absolute;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-weight:900;color:#fff;pointer-events:auto;user-select:none;-webkit-user-select:none;
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),rgba(255,255,255,.08) 60%);border:2px solid rgba(255,255,255,.45);box-shadow:0 4px 14px rgba(0,0,0,.4);transition:transform .08s}
+.tb-b i{font-style:normal;font-size:20px;line-height:1}.tb-b span{font-size:10px;letter-spacing:.5px;text-shadow:0 1px 2px #000}
+.tb-b.act{transform:scale(.92);filter:brightness(1.4)}
+.tb-b.hide{display:none}
+.tb-b[data-s=s1]{right:0;bottom:34px;width:94px;height:94px;background:radial-gradient(circle at 35% 30%,#ff8a8a,#d4253a 70%)}
+.tb-b[data-s=s1] i{font-size:30px}.tb-b[data-s=s1] span{font-size:13px}
+.tb-b[data-s=s2]{right:104px;bottom:0;width:76px;height:76px;background:radial-gradient(circle at 35% 30%,#7dffb6,#16a34a 70%)}
+.tb-b[data-s=s3]{right:98px;bottom:90px;width:66px;height:66px;background:radial-gradient(circle at 35% 30%,#93c5fd,#2563eb 70%)}
+.tb-b[data-s=s4]{right:186px;bottom:58px;width:62px;height:62px;background:radial-gradient(circle at 35% 30%,#fde68a,#d97706 70%)}
+.tb-b[data-s=s5]{right:24px;bottom:140px;width:56px;height:56px;background:radial-gradient(circle at 35% 30%,#e9d5ff,#9333ea 70%)}
+.tb-b[data-s=s6]{right:186px;bottom:138px;width:58px;height:58px;background:radial-gradient(circle at 35% 30%,#a5f3fc,#0891b2 70%)}
+.touch.def .tb-b[data-s=s1]{background:radial-gradient(circle at 35% 30%,#fdba74,#c2410c 70%)}
+.tmode{position:absolute;right:20px;bottom:258px;font-weight:900;font-size:12px;letter-spacing:1px;padding:4px 10px;border-radius:999px;background:rgba(220,38,38,.85);pointer-events:none}
+.touch.def .tmode{background:rgba(37,99,235,.9)}
+.ctrl-help{position:absolute;right:96px;bottom:10px;justify-content:flex-end!important;z-index:5;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:62vw;pointer-events:none}
+.ctrl-help .k{display:flex;align-items:center;gap:6px;background:rgba(8,12,22,.78);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:4px 10px 4px 4px;font-size:12px;font-weight:800}
+.ctrl-help .k b{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:50%;font-size:11px;color:#fff}
+.ctrl-help .mode{padding:4px 12px;border-radius:999px;font-size:12px;font-weight:900;letter-spacing:1px}
+/* ===== presentación ===== */
+.intro-card{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:9;width:min(860px,94vw);display:none;background:linear-gradient(180deg,rgba(8,12,24,.93),rgba(8,12,24,.97));border:1px solid rgba(255,255,255,.12);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:tin .5s}
+.intro-card.show{display:block}
+.intro-card .top{display:flex;align-items:center;justify-content:center;gap:18px;padding:12px;background:linear-gradient(90deg,var(--a),#0b1220 45%,#0b1220 55%,var(--b))}
+.intro-card .top .nm{font-size:22px;font-weight:900;font-style:italic;text-transform:uppercase}
+.intro-card .vs{font-size:16px;font-weight:900;color:var(--gold)}
+.intro-card .xi{display:grid;grid-template-columns:1fr 1fr;gap:0 26px;padding:10px 18px 6px;font-size:13px}
+.intro-card .xi div{display:flex;gap:8px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.intro-card .xi b{min-width:22px;color:var(--gold)}.intro-card .xi i{font-style:normal;color:var(--muted);min-width:34px;font-size:11px}
+.intro-card .ft{text-align:center;padding:6px 10px 10px;color:var(--muted);font-size:12px}
+@media(max-height:500px){.intro-card .xi{font-size:11px}.intro-card .top .nm{font-size:16px}}
+/* ===== menú tipo mosaicos ===== */
+.menu-btns{display:grid!important;grid-template-columns:1.25fr 1fr;grid-auto-rows:minmax(92px,auto);gap:12px!important;width:min(760px,94vw)!important}
+.mbtn{flex-direction:column;align-items:flex-start!important;justify-content:flex-end;padding:16px 18px!important;border-radius:16px!important;min-height:92px;overflow:hidden;position:relative}
+.mbtn .ic{font-size:30px!important;width:auto!important;position:absolute;right:14px;top:12px;opacity:.9}
+.mbtn.primary{grid-row:span 2;font-size:26px!important;background:linear-gradient(135deg,#16c96a,#0b6b3a 60%,#063d22)!important;color:#fff!important}
+.mbtn.primary .ic{font-size:64px!important;opacity:.35}
+.mbtn.mgr{grid-row:span 2;font-size:22px!important;background:linear-gradient(135deg,#2563eb,#1e3a8a 60%,#0b1638)!important}
+.mbtn.mgr .ic{font-size:56px!important;opacity:.35}
+.mbtn:hover{transform:translateY(-3px)!important}
+@media(max-width:560px){.menu-btns{grid-template-columns:1fr 1fr}.mbtn.primary,.mbtn.mgr{grid-row:span 1;font-size:18px!important}}
 </style>
 </head>
 <body>
@@ -259,11 +302,11 @@ select{background:var(--panel2);color:var(--text);border:1px solid var(--line);b
       <div class="tag">Fútbol arcade · Modo Manager · Liga Andina</div>
     </div>
     <div class="menu-btns">
-      <button class="mbtn primary" data-go="quick"><span class="ic">⚽</span><div>Partido rápido<small>Elige equipos y juega tú</small></div></button>
-      <button class="mbtn" data-go="career-new"><span class="ic">📋</span><div>Modo Manager · Nueva carrera<small>Liga, copas, fichajes, ojeadores, cantera y más</small></div></button>
+      <button class="mbtn primary" data-go="quick"><span class="ic">⚽</span><div>Jugar ahora<small>Barselona, Real Madriz, Arsonal, selecciones y más</small></div></button>
+      <button class="mbtn mgr" data-go="career-new"><span class="ic">📋</span><div>Modo Manager · Nueva carrera<small>Liga, copas, fichajes, ojeadores, cantera y más</small></div></button>
       <button class="mbtn" id="btnContinue" data-go="career-continue"><span class="ic">▶️</span><div>Continuar carrera<small id="contInfo">No hay partida guardada</small></div></button>
       <button class="mbtn" data-go="controls"><span class="ic">🎮</span><div>Controles</div></button>
-      <button class="mbtn" data-go="options"><span class="ic">⚙️</span><div>Opciones de sonido</div></button>
+      <button class="mbtn" data-go="options"><span class="ic">⚙️</span><div>Opciones<small>Sonido y cámara</small></div></button>
     </div>
     <div class="foot">Clubes, jugadores, escudos y sonidos son originales y generados por el juego. Funciona con teclado, mando o pantalla táctil.</div>
   </div>
@@ -296,7 +339,7 @@ select{background:var(--panel2);color:var(--text);border:1px solid var(--line);b
     <div class="topbar"><button class="back" data-go="menu">← Menú</button><div class="ptitle h-title">Elige tu club</div></div>
     <div class="card mb"><h3>Tu nombre de entrenador</h3><input class="txt-in" id="mgrName" maxlength="24" placeholder="Ej.: Profe Ricardo"></div>
     <div class="nav2" id="pickTabs"></div>
-    <p class="muted mb" id="pickHint">Los clubes grandes tienen más plata y exigencia; los chicos, más reto. Puedes empezar en Segunda y buscar el ascenso.</p>
+    <p class="muted mb" id="pickHint">Elige mundo: la Liga Andina (con la U, Alianza y Cristal) o la Superliga Europea (Barselona, Real Madriz, Arsonal…). Los grandes tienen más plata y más exigencia.</p>
     <div class="grid-teams" id="pTeams"></div>
   </div>
 </div>
@@ -340,18 +383,21 @@ select{background:var(--panel2);color:var(--text);border:1px solid var(--line);b
   <canvas id="miniMap" width="170" height="109"></canvas>
   <div class="hud-ticker" id="ticker"></div>
   <div class="hud-btns"><button id="btnPause">⏸ Pausa</button></div>
+  <div class="ctrl-help" id="ctrlHelp"></div>
+  <div class="intro-card" id="introCard"></div>
   <div class="goal-banner" id="goalBanner"><div><div class="g">¡GOOOL!</div><span class="s" id="goalWho"></span></div></div>
   <div class="touch" id="touch">
     <div class="joy" id="joy"><i id="joyKnob"></i></div>
     <div class="tbtns">
-      <div class="tb-b" data-b="shoot" style="right:0;bottom:40px;width:86px;height:86px;font-size:14px">TIRO</div>
-      <div class="tb-b" data-b="pass" style="right:96px;bottom:0;width:74px;height:74px">PASE</div>
-      <div class="tb-b" data-b="lob" style="right:100px;bottom:90px;width:62px;height:62px;font-size:10px">CENTRO<br>BARRIDA</div>
-      <div class="tb-b" data-b="sprint" style="right:10px;bottom:136px;width:62px;height:62px">SPRINT</div>
-      <div class="tb-b" data-b="switch" style="right:176px;bottom:84px;width:52px;height:52px">CAMBIO</div>
-      <div class="tb-b" data-b="thru" style="right:170px;bottom:6px;width:56px;height:56px">HUECO</div>
-      <div class="tb-b" data-b="finta" style="right:80px;bottom:160px;width:50px;height:50px">FINTA</div>
+      <div class="tb-b big" data-s="s1"><i></i><span></span></div>
+      <div class="tb-b" data-s="s2"><i></i><span></span></div>
+      <div class="tb-b" data-s="s3"><i></i><span></span></div>
+      <div class="tb-b" data-s="s4"><i></i><span></span></div>
+      <div class="tb-b" data-s="s5"><i></i><span></span></div>
+      <div class="tb-b" data-s="s6"><i></i><span></span></div>
     </div>
+    <div class="tmode" id="tmode">⚔️ ATAQUE</div>
+
   </div>
   <div class="overlay" id="ovPause"><div class="ov-box">
     <h2 class="h-title">Pausa</h2>
@@ -554,7 +600,7 @@ function genName(nat) {
   if (nat === 'ESP') return pick(['Pablo', 'Álvaro', 'Jorge', 'Iker', 'Unai', 'Marcos', 'Hugo', 'Javier', 'Raúl', 'Adrián', 'Sergio', 'Rubén']) + ' ' + pick(LAST_ES);
   return pick(FIRST_ES) + ' ' + pick(Math.random() < 0.85 ? LAST_ES : LAST_PE);
 }
-const shortName = n => { const p = String(n).split(' '); return p[p.length - 1]; };
+const shortName = n => { const p = String(n).split(' ').filter(Boolean); if (p.length < 2) return p[0] || ''; const l = p[p.length - 1], q = p[p.length - 2]; if (/^(jr\.?|junior|filho|neto)$/i.test(l) || /^(de|da|do|dos|van|von|ter|der|di|del|la|le|mac)$/i.test(q)) return q + ' ' + l; return l; };
 
 /* ---- posiciones ---- */
 const POSL = ['POR', 'LD', 'DFC', 'LI', 'MCD', 'MC', 'MCO', 'MD', 'MI', 'ED', 'EI', 'DC'];
@@ -759,9 +805,11 @@ function shade(hex, amt) {
 }
 function colorDist(a, b) { const x = parseInt(a.slice(1), 16), y = parseInt(b.slice(1), 16); return Math.hypot((x >> 16) - (y >> 16), ((x >> 8) & 255) - ((y >> 8) & 255), (x & 255) - (y & 255)); }
 function kitsFor(home, away) {
-  const awayKit = colorDist(home.c1, away.c1) < 140 ? { main: away.c2, trim: away.c1 } : { main: away.c1, trim: away.c2 };
-  if (colorDist(home.c1, awayKit.main) < 120) { awayKit.main = '#f8fafc'; awayKit.trim = '#111827'; }
-  return [{ main: home.c1, trim: home.c2 }, awayKit];
+  const hk = { main: home.c1, trim: home.c2, alt: home.c3 || null, pat: home.pat || null };
+  const clash = colorDist(home.c1, away.c1) < 140 || (home.c3 && colorDist(home.c3, away.c1) < 90);
+  let ak = clash ? { main: away.c2, trim: away.c1, alt: null, pat: null } : { main: away.c1, trim: away.c2, alt: away.c3 || null, pat: away.pat || null };
+  if (colorDist(home.c1, ak.main) < 120) ak = { main: colorDist(home.c1, '#f8fafc') < 150 ? '#111827' : '#f8fafc', trim: colorDist(home.c1, '#f8fafc') < 150 ? '#facc15' : '#111827', alt: null, pat: null };
+  return [hk, ak];
 }
 
 /* ---- fuerza de un once (para el simulador) ---- */
@@ -782,6 +830,110 @@ function lineRatings(on, style, press, talk) {
   const miss = 11 - n; if (miss > 0) { M *= 1 - miss * 0.07; D *= 1 - miss * 0.05; A *= 1 - miss * 0.04; }
   return { A, D, M };
 }
+/* =========================================================
+   EQUIPOS "REALES" CON NOMBRES PARECIDOS (estilo juego sin licencia)
+   Plantillas aproximadas a la temporada 2025-26. Escudos inventados.
+   Formato: Nombre|POS|media|edad|NAC
+   ========================================================= */
+Object.assign(NATS, {
+  BEL: { n: 'Bélgica', f: '🇧🇪' }, FRA: { n: 'Francia', f: '🇫🇷' }, ENG: { n: 'Inglaterra', f: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' }, GER: { n: 'Alemania', f: '🇩🇪' }, ITA: { n: 'Italia', f: '🇮🇹' },
+  POR: { n: 'Portugal', f: '🇵🇹' }, NED: { n: 'Países Bajos', f: '🇳🇱' }, CRO: { n: 'Croacia', f: '🇭🇷' }, NOR: { n: 'Noruega', f: '🇳🇴' }, EGY: { n: 'Egipto', f: '🇪🇬' },
+  POL: { n: 'Polonia', f: '🇵🇱' }, MAR: { n: 'Marruecos', f: '🇲🇦' }, JPN: { n: 'Japón', f: '🇯🇵' }, KOR: { n: 'Corea del Sur', f: '🇰🇷' }, TUR: { n: 'Turquía', f: '🇹🇷' },
+  SUI: { n: 'Suiza', f: '🇨🇭' }, AUT: { n: 'Austria', f: '🇦🇹' }, DEN: { n: 'Dinamarca', f: '🇩🇰' }, SWE: { n: 'Suecia', f: '🇸🇪' }, SCO: { n: 'Escocia', f: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' },
+  USA: { n: 'Estados Unidos', f: '🇺🇸' }, MEX: { n: 'México', f: '🇲🇽' }, CAN: { n: 'Canadá', f: '🇨🇦' }, GHA: { n: 'Ghana', f: '🇬🇭' }, SEN: { n: 'Senegal', f: '🇸🇳' },
+  CIV: { n: 'Costa de Marfil', f: '🇨🇮' }, ALG: { n: 'Argelia', f: '🇩🇿' }, GEO: { n: 'Georgia', f: '🇬🇪' }, UKR: { n: 'Ucrania', f: '🇺🇦' }, SRB: { n: 'Serbia', f: '🇷🇸' },
+  SVK: { n: 'Eslovaquia', f: '🇸🇰' }, SVN: { n: 'Eslovenia', f: '🇸🇮' }, HUN: { n: 'Hungría', f: '🇭🇺' }, CZE: { n: 'Chequia', f: '🇨🇿' }, ARM: { n: 'Armenia', f: '🇦🇲' },
+  KOS: { n: 'Kosovo', f: '🇽🇰' }, CMR: { n: 'Camerún', f: '🇨🇲' }, GUI: { n: 'Guinea', f: '🇬🇳' }, MLI: { n: 'Malí', f: '🇲🇱' }, WAL: { n: 'Gales', f: '🏴󠁧󠁢󠁷󠁬󠁳󠁿' },
+  GRE: { n: 'Grecia', f: '🇬🇷' }, LUX: { n: 'Luxemburgo', f: '🇱🇺' }, MOZ: { n: 'Mozambique', f: '🇲🇿' }, BFA: { n: 'Burkina Faso', f: '🇧🇫' }, BOL: { n: 'Bolivia', f: '🇧🇴' }
+});
+const NAME_POOLS = {
+  ENG: [['Jack', 'Harry', 'George', 'Oliver', 'Charlie', 'James', 'Alfie', 'Callum', 'Tyler', 'Jordan'], ['Smith', 'Taylor', 'Walker', 'Hughes', 'Clarke', 'Bennett', 'Cooper', 'Ward', 'Morris', 'Price']],
+  GER: [['Lukas', 'Jonas', 'Felix', 'Leon', 'Paul', 'Niklas', 'Tim', 'Jan', 'Maximilian', 'Finn'], ['Müller', 'Schmidt', 'Weber', 'Wagner', 'Becker', 'Hoffmann', 'Koch', 'Richter', 'Krause', 'Lang']],
+  FRA: [['Lucas', 'Hugo', 'Théo', 'Mathis', 'Nathan', 'Enzo', 'Louis', 'Yanis', 'Rayan', 'Maxime'], ['Martin', 'Bernard', 'Dubois', 'Moreau', 'Laurent', 'Girard', 'Fontaine', 'Mercier', 'Blanc', 'Faure']],
+  ITA: [['Lorenzo', 'Matteo', 'Andrea', 'Davide', 'Riccardo', 'Simone', 'Federico', 'Tommaso', 'Gabriele', 'Pietro'], ['Rossi', 'Russo', 'Ferrari', 'Esposito', 'Bianchi', 'Romano', 'Colombo', 'Ricci', 'Marino', 'Greco']],
+  POR: [['João', 'Diogo', 'Tiago', 'Rafael', 'Gonçalo', 'Rodrigo', 'Duarte', 'Afonso', 'Martim', 'Tomás'], ['Silva', 'Santos', 'Ferreira', 'Pereira', 'Oliveira', 'Costa', 'Rodrigues', 'Martins', 'Sousa', 'Fernandes']],
+  NED: [['Daan', 'Sem', 'Bram', 'Thijs', 'Jesse', 'Lars', 'Milan', 'Luuk', 'Stijn', 'Ruben'], ['de Vries', 'Jansen', 'Bakker', 'Visser', 'Smit', 'Meijer', 'de Boer', 'Mulder', 'Bos', 'Vos']],
+};
+const _genName0 = genName;
+genName = function (nat) { const pl = NAME_POOLS[nat]; if (pl) return pick(pl[0]) + ' ' + pick(pl[1]); return _genName0(nat); };
+const POSMAP = { POR: 'POR', DFC: 'DFC', LD: 'LD', LI: 'LI', MCD: 'MCD', MC: 'MC', MCO: 'MCO', MD: 'MD', MI: 'MI', ED: 'ED', EI: 'EI', DC: 'DC' };
+
+const EURO_CLUBS = [
+  { id: 'RMA', name: 'Real Madriz', short: 'RMA', c1: '#f8fafc', c2: '#c9a227', icon: '👑', str: 86, stadium: 'Estadio Bernabéu Norte', cap: 83000, div: 1, nat: 'ESP', form: '4-3-3', roster: 'Curtuá|POR|89|34|BEL;Lunín|POR|80|27|UKR;Carbajal|LD|83|34|ESP;Trent Alexandr|LD|85|27|ENG;Militon|DFC|84|27|BRA;Huijssen|DFC|81|20|ESP;Rudigger|DFC|84|33|GER;Assencio|DFC|77|22|ESP;Carrerras|LI|81|22|ESP;Ferlan Mendi|LI|80|31|FRA;Chuameni|MCD|84|26|FRA;Fede Valverdé|MC|88|28|URU;Kamavinga|MC|82|23|FRA;Seballos|MC|78|29|ESP;Belingam|MCO|88|23|ENG;Arda Gúler|MCO|83|21|TUR;Vinizius Jr|EI|89|26|BRA;Rodrygho|ED|84|25|BRA;Mastantuano|ED|77|19|ARG;Mbapé|DC|91|27|FRA;Endrik|DC|77|20|BRA' },
+  { id: 'BAR', name: 'Barselona', short: 'BAR', c1: '#a50044', c2: '#fbbf24', c3: '#004d98', pat: 'v', icon: '🔷', str: 86, stadium: 'Camp Nau', cap: 99000, div: 1, nat: 'ESP', form: '4-2-3-1', roster: 'Joan Garsía|POR|83|25|ESP;Ter Steguen|POR|84|34|GER;Kundé|LD|85|27|FRA;Pau Cubarsy|DFC|84|19|ESP;Araúho|DFC|83|27|URU;Eric Garsia|DFC|80|25|ESP;Kristensen|DFC|79|30|DEN;Baldé|LI|83|22|ESP;Gerard Martí|LI|76|23|ESP;Marc Kasadó|MCD|78|22|ESP;Frenki de Jong|MC|86|29|NED;Pedry|MC|89|23|ESP;Gavy|MC|82|21|ESP;Fermín Lópes|MCO|82|22|ESP;Dani Olmos|MCO|83|28|ESP;Lamin Yamall|ED|91|19|ESP;Raphina|EI|89|29|BRA;Rashfor|EI|81|29|ENG;Lewandosky|DC|86|38|POL;Ferran Torrez|DC|81|26|ESP' },
+  { id: 'MCI', name: 'Manchester Sity', short: 'MCI', c1: '#6cabdd', c2: '#1c2c5b', icon: '⛵', str: 85, stadium: 'Estadio Etijad', cap: 53000, div: 1, nat: 'ENG', form: '4-2-3-1', roster: 'Donaruma|POR|88|27|ITA;Trafford|POR|76|23|ENG;Riko Lewis|LD|79|21|ENG;Mateus Nunes|LD|79|27|POR;Ruben Días|DFC|87|29|POR;Gvardiolh|DFC|85|24|CRO;Stons|DFC|82|32|ENG;Akeh|DFC|80|31|NED;O\'Reily|LI|77|20|ENG;Rodry|MCD|90|30|ESP;Kovasic|MC|82|32|CRO;Reinders|MC|85|28|NED;Bernardo Silba|MC|85|31|POR;Phoden|MCO|85|26|ENG;Cherky|MCO|82|22|FRA;Dokú|EI|83|24|BEL;Sabinho|ED|80|22|BRA;Marmush|DC|83|27|EGY;Haland|DC|91|26|NOR' },
+  { id: 'LIV', name: 'Liverpul', short: 'LIV', c1: '#c8102e', c2: '#f6eb61', icon: '🐦', str: 86, stadium: 'Anfil Road', cap: 61000, div: 1, nat: 'ENG', form: '4-2-3-1', roster: 'Alison|POR|89|34|BRA;Mamardashvily|POR|80|25|GEO;Frimpon|LD|82|25|NED;Bradli|LD|77|22|NIR;Van Dyke|DFC|89|35|NED;Konatè|DFC|84|27|FRA;Leoni|DFC|74|19|ITA;Robertsen|LI|81|32|SCO;Kerkes|LI|80|23|HUN;Gravenberg|MCD|85|24|NED;Mac Alister|MC|86|27|ARG;Szobozlai|MC|85|26|HUN;Kurtis Jones|MC|80|25|ENG;Wirtzz|MCO|88|23|GER;Mo Sala|ED|89|34|EGY;Chiessa|ED|78|29|ITA;Gakpó|EI|84|27|NED;Isac|DC|87|27|SWE;Equitiké|DC|83|24|FRA' },
+  { id: 'ARS', name: 'Arsonal', short: 'ARS', c1: '#ef0107', c2: '#ffffff', icon: '💥', str: 86, stadium: 'Estadio Emiretes', cap: 60000, div: 1, nat: 'ENG', form: '4-3-3', roster: 'Raia|POR|87|31|ESP;Kepa|POR|79|31|ESP;Timbre|LD|83|25|NED;Ben Whyte|LD|81|28|ENG;Salibá|DFC|88|25|FRA;Gabriel Magallanes|DFC|87|28|BRA;Mosquerra|DFC|77|21|ESP;Calafiory|LI|80|24|ITA;Inkapié|LI|81|24|ECU;Subimendi|MCD|85|27|ESP;Rais|MC|87|27|ENG;Merinho|MC|82|29|ESP;Odegard|MCO|87|27|NOR;Ezé|MCO|84|28|ENG;Sakah|ED|88|25|ENG;Madueque|ED|80|24|ENG;Martineli|EI|82|25|BRA;Trosard|EI|81|31|BEL;Gyokeres|DC|86|28|SWE;Habertz|DC|83|27|GER' },
+  { id: 'BAY', name: 'Bayern Munik', short: 'BAY', c1: '#dc052d', c2: '#ffffff', icon: '🥨', str: 86, stadium: 'Alianz Arena', cap: 75000, div: 1, nat: 'GER', form: '4-2-3-1', roster: 'Noier|POR|86|40|GER;Urbig|POR|74|22|GER;Leimer|LD|81|29|AUT;Stanicic|LD|79|26|CRO;Upamekano|DFC|84|28|FRA;Jonatan Tah|DFC|85|30|GER;Kim Min-jé|DFC|83|29|KOR;Alfonso Davis|LI|83|25|CAN;Ito Hiroki|LI|78|27|JPN;Kimich|MCD|88|31|GER;Goretska|MC|83|31|GER;Pavlovik|MC|81|22|GER;Musialla|MCO|88|23|GER;Olisé|ED|87|24|FRA;Gnabri|ED|80|31|GER;Lucho Días|EI|86|29|COL;Harry Kein|DC|90|33|ENG;Nicolás Jakson|DC|79|25|SEN' },
+  { id: 'PSG', name: 'Paris San Germán', short: 'PSG', c1: '#004170', c2: '#da291c', icon: '🗼', str: 87, stadium: 'Parque de los Príncipes', cap: 48000, div: 1, nat: 'FRA', form: '4-3-3', roster: 'Chebalier|POR|83|24|FRA;Safonof|POR|78|26|RUS;Hakimy|LD|88|28|MAR;Zaire-Emeri|MC|81|20|FRA;Marquiños|DFC|86|32|BRA;Pachó|DFC|84|24|ECU;Beraldó|DFC|77|22|BRA;Zabarnyi|DFC|80|23|UKR;Nuno Méndez|LI|86|24|POR;Vitiña|MC|88|26|POR;Joao Nebes|MC|86|22|POR;Fabián Ruís|MC|84|30|ESP;Lee Kang-ín|MCO|79|25|KOR;Dembelè|ED|90|29|FRA;Dué|ED|85|21|FRA;Kvaratsjelia|EI|88|25|GEO;Barkola|EI|83|24|FRA;Gonzalo Ramos|DC|80|25|POR' },
+  { id: 'INT', name: 'Inter Nerazzurri', short: 'INT', c1: '#0068a8', c2: '#f8fafc', c3: '#111827', pat: 'v', icon: '🐍', str: 85, stadium: 'San Siro Azul', cap: 75000, div: 1, nat: 'ITA', form: '3-5-2', roster: 'Somer|POR|85|37|SUI;Martines Pepo|POR|76|30|ESP;Bastony|DFC|86|27|ITA;Acerby|DFC|80|38|ITA;Akanyi|DFC|83|31|SUI;Biseck|DFC|80|25|GER;De Vrij|DFC|79|34|NED;Dumfris|MD|83|30|NED;Di Marco|MI|85|28|ITA;Barela|MC|87|29|ITA;Chalanoglu|MCD|85|32|TUR;Mkitarian|MC|81|37|ARM;Zielinsky|MC|80|32|POL;Fratessi|MC|80|26|ITA;Sucic|MC|78|23|CRO;Lautaro Martines|DC|88|29|ARG;Turam|DC|85|29|FRA;Boni|DC|78|23|FRA;Pío Espósito|DC|74|21|ITA' },
+  { id: 'ATM', name: 'Atlético Madrí', short: 'ATM', c1: '#cb3524', c2: '#ffffff', c3: '#f8fafc', pat: 'v', icon: '🐻', str: 84, stadium: 'Estadio Metropolitan', cap: 70000, div: 1, nat: 'ESP', form: '4-4-2', roster: 'Oblack|POR|87|33|SVN;Musso|POR|77|31|ARG;Marcos Yorente|LD|83|31|ESP;Nahuel Molinna|LD|80|28|ARG;Le Normán|DFC|81|29|ESP;Josema Jiménez|DFC|81|31|URU;Lenglé|DFC|78|31|FRA;Hanko|LI|82|28|SVK;Rugeri|LI|78|23|ITA;Koque|MC|80|34|ESP;Pablo Barios|MC|83|22|ESP;Galager|MC|82|26|ENG;Álex Bayena|MI|83|25|ESP;Giuliano Simeoni|MD|80|23|ARG;Tiago Almadá|MCO|81|25|ARG;Nico Gonsález|MI|80|28|ARG;Griezman|DC|84|35|FRA;Julián Albarez|DC|88|26|ARG;Sorlot|DC|82|30|NOR' },
+  { id: 'CHE', name: 'Chelsi', short: 'CHE', c1: '#034694', c2: '#ffffff', icon: '🦁', str: 84, stadium: 'Stamford Brich', cap: 40000, div: 1, nat: 'ENG', form: '4-2-3-1', roster: 'Robert Sanches|POR|80|28|ESP;Jorgensen|POR|75|23|DEN;Rees James|LD|83|26|ENG;Malo Gustó|LD|80|23|FRA;Colwil|DFC|81|23|ENG;Chalova|DFC|80|26|ENG;Fofanna|DFC|80|25|FRA;Tosin|DFC|78|27|ENG;Cucurela|LI|83|28|ESP;Caisedo|MCD|87|24|ECU;Lavía|MCD|79|22|BEL;Enzo Fernándes|MC|85|25|ARG;Kole Palmer|MCO|88|24|ENG;Pedro Netto|ED|82|26|POR;Estebao|ED|80|19|BRA;Garnaccio|EI|80|22|ARG;Joao Pedrro|DC|83|25|BRA;Delapp|DC|79|23|ENG' },
+  { id: 'MUN', name: 'Manchester Unido', short: 'MUN', c1: '#da291c', c2: '#fbe122', icon: '🔱', str: 81, stadium: 'Old Traford', cap: 74000, div: 2, nat: 'ENG', form: '3-4-3', roster: 'Lamens|POR|78|24|BEL;Bayindir|POR|76|28|TUR;Dalóth|MD|80|27|POR;De Licht|DFC|81|27|NED;Magüire|DFC|79|33|ENG;Yoró|DFC|78|20|FRA;Licha Martines|DFC|83|28|ARG;Heaven|DFC|72|19|ENG;Shau|LI|78|31|ENG;Dorgú|MI|77|22|DEN;Bruno Fernándes|MC|87|32|POR;Kasemiro|MCD|80|34|BRA;Mainú|MC|80|21|ENG;Ugartte|MCD|78|25|URU;Maunt|MC|77|27|ENG;Mbeumó|ED|84|27|CMR;Kunha|EI|83|27|BRA;Amad Dialo|ED|80|24|CIV;Sesko|DC|82|23|SVN;Zirksi|DC|77|24|NED' },
+  { id: 'BVB', name: 'Borusia Dortmun', short: 'BVB', c1: '#fde100', c2: '#111111', icon: '🐝', str: 81, stadium: 'Muro Amarillo', cap: 81000, div: 2, nat: 'GER', form: '3-4-3', roster: 'Kobell|POR|86|28|SUI;Meyerr|POR|72|31|GER;Ryersson|MD|78|28|NOR;Schloterbeck|DFC|84|26|GER;Waldemar Antón|DFC|80|29|GER;Sule|DFC|78|30|GER;Benzebaini|LI|77|31|ALG;Svenson|MI|76|24|SWE;Emre Kan|MCD|78|32|GER;Gross|MC|80|35|GER;Nmeccha|MC|79|25|GER;Sabitser|MC|79|32|AUT;Jobe Belingam|MC|77|20|ENG;Brant|MCO|80|30|GER;Chukuemeka|MCO|76|22|ENG;Adeyemí|EI|79|24|GER;Baier|DC|79|23|GER;Guirasy|DC|85|30|GUI' },
+  { id: 'JUV', name: 'Juventos', short: 'JUV', c1: '#111827', c2: '#f8fafc', c3: '#f8fafc', pat: 'v', icon: '🦓', str: 82, stadium: 'Estadio Alianz Turín', cap: 41000, div: 2, nat: 'ITA', form: '4-2-3-1', roster: 'Di Gregório|POR|81|29|ITA;Perín|POR|76|33|ITA;Kalulú|LD|79|25|FRA;Brémer|DFC|84|29|BRA;Gati|DFC|79|28|ITA;Lloyd Keli|DFC|77|27|ENG;Kambiasso|LI|82|26|ITA;Kabal|LI|76|24|COL;Locateli|MCD|82|28|ITA;Kefren Turam|MC|81|25|FRA;Kopmeiners|MC|81|28|NED;McKeni|MC|78|28|USA;Kenan Yildís|EI|84|21|TUR;Francisco Konseisao|ED|81|23|POR;Zegrova|ED|80|26|KOS;Vlahovik|DC|83|26|SRB;Jonatan David|DC|83|26|CAN;Openna|DC|80|26|BEL' },
+  { id: 'MIL', name: 'Milán Rossoneri', short: 'MIL', c1: '#fb090b', c2: '#f8fafc', c3: '#111111', pat: 'v', icon: '😈', str: 82, stadium: 'San Siro Rojo', cap: 75000, div: 2, nat: 'ITA', form: '3-5-2', roster: 'Maignán|POR|87|31|FRA;Terraciano|POR|73|32|ITA;Tomory|DFC|80|28|ENG;Gabia|DFC|79|27|ITA;Strahinja Pavlovik|DFC|79|25|SRB;De Vinter|DFC|77|23|BEL;Saelemakers|MD|80|27|BEL;Estupiñam|MI|79|28|ECU;Lukita Modrik|MC|84|41|CRO;Rabiót|MC|82|31|FRA;Yusuf Fofana|MCD|80|27|FRA;Rici|MC|78|24|ITA;Loftus-Chik|MC|78|30|ENG;Pulisik|DC|84|28|USA;Rafa Lehao|DC|85|27|POR;Santi Jiménez|DC|80|25|MEX;Nkunkú|DC|81|28|FRA' },
+  { id: 'NAP', name: 'Napoles', short: 'NAP', c1: '#12a0d7', c2: '#ffffff', icon: '🍕', str: 83, stadium: 'Estadio Diego A.', cap: 54000, div: 2, nat: 'ITA', form: '4-3-3', roster: 'Milinkovik-Savik|POR|81|29|SRB;Merett|POR|80|29|ITA;Di Lorenso|LD|82|33|ITA;Rahmani|DFC|81|32|KOS;Buonjorno|DFC|82|26|ITA;Beukemma|DFC|79|27|NED;Olivéra|LI|78|28|URU;Spinasola|LI|77|33|ITA;Lobotca|MCD|84|31|SVK;McTominei|MC|86|29|SCO;Anguisa|MC|83|30|CMR;De Bruine|MCO|86|35|BEL;Gilmor|MC|78|25|SCO;Politanno|ED|80|33|ITA;David Nerés|EI|80|29|BRA;Noah Lan|EI|79|27|NED;Lukakú|DC|82|33|BEL;Hojlund|DC|81|23|DEN' },
+  { id: 'B04', name: 'Bayer Leberkusen', short: 'B04', c1: '#e32221', c2: '#111111', icon: '⚡', str: 81, stadium: 'Bai Arena', cap: 30000, div: 2, nat: 'GER', form: '3-4-3', roster: 'Fleken|POR|80|33|NED;Lomb|POR|70|25|GER;Artur|MD|76|22|BRA;Tapsobá|DFC|82|27|BFA;Kuansah|DFC|78|23|ENG;Mukielé|DFC|78|28|FRA;Badé|DFC|77|25|FRA;Grimaldó|MI|83|30|ESP;Andrik|MCD|79|31|GER;Equi Palasios|MC|80|28|ARG;Aleix Garsía|MC|80|28|ESP;Tilman|MCO|79|24|USA;Hoffman|MCO|78|33|GER;Echeberri|MCO|76|20|ARG;Poqu|ED|77|21|NED;Shick|DC|81|30|CZE;Kofanne|DC|74|19|CMR' },
+  { id: 'BEN', name: 'Benfika', short: 'BEN', c1: '#e30613', c2: '#ffffff', icon: '🦅', str: 80, stadium: 'Estadio de la Luz', cap: 64000, div: 2, nat: 'POR', form: '4-2-3-1', roster: 'Trubín|POR|83|25|UKR;Samuel Soares|POR|72|23|POR;Ba|LD|76|28|DEN;Otamendy|DFC|81|38|ARG;Antonio Silba|DFC|80|22|POR;Araúho Tomás|DFC|77|23|POR;Dal|LI|76|22|SWE;Aursness|MC|80|30|NOR;Barreyro|MC|78|26|LUX;Richard Ríoz|MCD|79|25|COL;Sudacov|MCO|80|23|UKR;Lukevakio|ED|80|28|BEL;Prestiani|ED|74|20|ARG;Sjelderup|EI|77|22|NOR;Pavlídis|DC|81|27|GRE;Ivanovik|DC|74|22|CRO' },
+  { id: 'OPO', name: 'Oporto', short: 'OPO', c1: '#003893', c2: '#ffffff', c3: '#f8fafc', pat: 'v', icon: '🐉', str: 80, stadium: 'Estadio del Dragón', cap: 50000, div: 2, nat: 'POR', form: '4-3-3', roster: 'Diogo Kosta|POR|85|27|POR;Cláudio Ramos|POR|72|34|POR;Alberto Kosta|LD|76|22|POR;Bednarec|DFC|78|30|POL;Kiwiór|DFC|79|26|POL;Nehuén Peres|DFC|77|26|ARG;Francisco Mora|LI|77|27|POR;Alan Barela|MCD|80|25|ARG;Froholt|MC|77|20|DEN;Gabri Beiga|MC|79|24|ESP;Rodrigo Morah|MCO|77|19|POR;Pepé|ED|79|29|BRA;William Gómez|ED|76|20|BRA;Borja Sains|EI|78|25|ESP;Samu Agegowa|DC|81|22|ESP;Deniz Gul|DC|74|21|SWE' },
+  { id: 'SCP', name: 'Esporting Lisboa', short: 'SCP', c1: '#00824a', c2: '#ffffff', c3: '#f8fafc', pat: 'h', icon: '🦁', str: 80, stadium: 'Estadio José A.', cap: 50000, div: 2, nat: 'POR', form: '3-4-3', roster: 'Rui Silba|POR|80|32|POR;Kovacevik|POR|72|32|CAN;Kenda|MD|78|19|POR;Diomandé|DFC|81|22|CIV;Debastt|DFC|78|22|BEL;Gonzalo Inásio|DFC|80|24|POR;Kiaga|DFC|73|20|POR;Maxi Araúho|MI|79|26|URU;Julmand|MCD|82|27|DEN;Moríta|MC|79|30|JPN;Kochorashvili|MC|76|26|GEO;Pothe|MCO|81|27|POR;Trinkão|ED|82|26|POR;Katamo|EI|76|25|MOZ;Luis Javier Suáres|DC|81|28|COL;Ioanidis|DC|78|25|GRE' },
+  { id: 'TOT', name: 'Totenham', short: 'TOT', c1: '#f8fafc', c2: '#132257', icon: '🐓', str: 81, stadium: 'Estadio Totenham', cap: 62000, div: 2, nat: 'ENG', form: '4-3-3', roster: 'Vikario|POR|83|29|ITA;Kinski|POR|74|22|CZE;Porró|LD|81|26|ESP;Spens|LD|76|25|ENG;Cuti Romeró|DFC|85|28|ARG;Van der Ben|DFC|84|25|NED;Dragusín|DFC|78|24|ROU;Udoyie|LI|79|23|ITA;Bisouma|MCD|79|29|MLI;Bentancour|MC|79|29|URU;Pape Sar|MC|79|23|SEN;Palhinia|MCD|81|31|POR;Madison|MCO|81|29|ENG;Xavi Simmons|MCO|83|23|NED;Kudús|ED|82|26|GHA;Brenan Johnson|ED|79|25|WAL;Odobér|EI|76|21|FRA;Solanqué|DC|80|29|ENG;Richarlisson|DC|78|29|BRA' },
+];
+const SUDAM_CLUBS = [
+  { id: 'BOC', name: 'Boca Juniores', short: 'BOC', c1: '#0033a0', c2: '#ffd100', c3: '#ffd100', pat: 'band', icon: '⚓', str: 76, stadium: 'La Bombonerita', cap: 54000, nat: 'ARG', form: '4-4-2', roster: 'Marchezín|POR|77|38|ARG;Brey|POR|72|23|ARG;Adbíncula|LD|76|36|PER;Weigandt Marcelo|LD|72|25|ARG;Figall|DFC|74|31|ARG;Di Lolo|DFC|74|26|ARG;Airton Costa|DFC|74|27|ARG;Lautaro Blanko|LI|74|27|ARG;Leandro Parédes|MCD|80|32|ARG;Ander Errera|MC|74|36|ESP;Milton Delgadó|MC|73|20|ARG;Batalia|MC|73|25|ARG;Kevin Senón|MI|76|24|ARG;Carlos Palasios|MD|76|25|CHI;Exequiel Seballos|MI|75|24|ARG;Miguel Merentiél|DC|77|29|URU;Kavani|DC|76|39|URU' },
+  { id: 'RIV', name: 'River Plata', short: 'RIV', c1: '#f8fafc', c2: '#e4002b', c3: '#e4002b', pat: 'diag', icon: '⚪', str: 77, stadium: 'El Monumentál', cap: 85000, nat: 'ARG', form: '4-3-3', roster: 'Franco Armanni|POR|77|39|ARG;Santiago Beltrán|POR|70|21|ARG;Gonzalo Montiél|LD|77|29|ARG;Pezela|DFC|77|35|ARG;Martines Cuarta|DFC|78|29|ARG;Paulo Díass|DFC|74|25|PAR;Marcos Akuña|LI|77|35|ARG;Enzo Peres|MCD|74|40|ARG;Kevin Kastaño|MC|76|26|COL;Juanfer Kintero|MCO|78|33|COL;Galopo|MC|75|26|ARG;Maxi Mesa|MC|75|33|ARG;Ian Subiabre|ED|72|19|ARG;Kolidio|EI|76|26|ARG;Driusi|DC|76|30|ARG;Miguel Borjha|DC|77|33|COL;Maxi Salaz|DC|76|28|ARG' },
+  { id: 'FLA', name: 'Flamenco', short: 'FLA', c1: '#c4122e', c2: '#111111', c3: '#111111', pat: 'h', icon: '🔥', str: 79, stadium: 'Estadio Maracaná Sur', cap: 78000, nat: 'BRA', form: '4-3-3', roster: 'Agustín Rosi|POR|79|30|ARG;Matheus Cunha G|POR|72|24|BRA;Guillermo Barela|LD|76|33|URU;Emersón Royal|LD|76|27|BRA;Leo Ortís|DFC|78|29|BRA;Leo Pereyra|DFC|76|30|BRA;Danilo Luís|DFC|76|34|BRA;Alex Sandrro|LI|77|35|BRA;Airton Lucas|LI|76|28|BRA;Jorjinho|MCD|79|34|ITA;Erick Pulgár|MC|76|32|CHI;Nico de la Krus|MC|80|29|URU;Saúl Ñigues|MC|78|31|ESP;Arraskaeta|MCO|83|32|URU;Jorge Karrascal|ED|78|27|COL;Gonzalo Plato|ED|78|25|ECU;Samuel Linno|EI|78|26|BRA;Bruno Enrique|EI|76|35|BRA;Pedrro|DC|80|29|BRA' },
+  { id: 'PAL', name: 'Palmeras', short: 'PAL', c1: '#006437', c2: '#ffffff', icon: '🌴', str: 79, stadium: 'Arena Palmera', cap: 43000, nat: 'BRA', form: '4-2-3-1', roster: 'Carlos Migel|POR|77|27|BRA;Weberton|POR|78|38|BRA;Agustín Giai|LD|76|22|ARG;Khellven|LD|74|25|BRA;Gustabo Gómes|DFC|80|33|PAR;Murillo|DFC|78|29|BRA;Bruno Fucks|DFC|74|28|BRA;Piqueres|LI|78|27|URU;Aníbal Morenno|MCD|77|27|ARG;Andreas Pereyra|MC|78|30|BRA;Lucas Evanjelista|MC|76|31|BRA;Rafael Beiga|MCO|78|31|BRA;Maurisio|MCO|76|24|BRA;Facundo Torrez|ED|78|26|URU;Pauliño|EI|76|25|BRA;Bitor Roque|DC|79|21|BRA;Flaco Lópes|DC|78|25|ARG' },
+  { id: 'UNI', name: 'Universitarios', short: 'UNI', c1: '#f3ead2', c2: '#8b0000', icon: '🎓', str: 72, stadium: 'Monumental de Ate Norte', cap: 80000, nat: 'PER', form: '3-5-2', roster: 'Sebastián Brittos|POR|72|37|URU;Diego Romeró|POR|65|25|PER;Aldo Korzo|MD|69|37|PER;Matías Di Benedeto|DFC|71|32|ARG;Williams Ribeiros|DFC|72|33|PAR;Anderson Santa María|DFC|69|33|PER;José Karabalí|MI|69|28|ECU;Martín Peres Guedes|MCD|71|34|ARG;Jairo Koncha|MC|71|26|PER;Rodrigo Ureñña|MC|70|32|CHI;Horacio Kalcaterra|MCO|69|36|PER;Edyson Flores|MCO|72|32|PER;Andi Polo|MD|70|31|PER;Gabriel Kosta|MI|69|35|PER;Alex Balera|DC|73|29|PER;José Ribera|DC|69|28|PER;Diego Churrín|DC|70|35|ARG' },
+  { id: 'ALI', name: 'Alianza Limeña', short: 'ALI', c1: '#001a57', c2: '#f8fafc', c3: '#f8fafc', pat: 'v', icon: '💙', str: 72, stadium: 'Estadio Matute Nuevo', cap: 35000, nat: 'PER', form: '4-2-3-1', roster: 'Guillermo Biscarra|POR|72|32|BOL;Ángelo Kampos|POR|67|32|PER;Ricardo Lagoz|LD|69|23|PER;Carlos Sambrano|DFC|71|37|PER;Renzo Garsés|DFC|69|30|PER;Marco Huamán|DFC|68|31|PER;Miguel Trauko|LI|69|34|PER;Erick Norriega|MCD|71|25|PER;Jesús Kastillo|MC|70|25|PER;Sergio Peñña|MC|71|31|PER;Fernando Gaivor|MC|71|34|ECU;Pablo Cepelini|MCO|72|35|URU;Kevin Kevedo|ED|70|29|PER;Alan Kantero|ED|70|27|ARG;Eryk Castillo|EI|71|31|ECU;Paolo Guerero|DC|72|42|PER;Hernán Barkos|DC|71|42|ARG' },
+  { id: 'SCR', name: 'Sporting Cristall', short: 'SCR', c1: '#7cc7ea', c2: '#f8fafc', icon: '🔷', str: 72, stadium: 'Estadio del Rímac Celeste', cap: 22000, nat: 'PER', form: '4-3-3', roster: 'Diego Enrríquez|POR|71|28|PER;Renato Solís|POR|64|28|PER;Jilmar Lora|LD|69|25|PER;Gianfranco Cháves|DFC|70|28|PER;Rafael Lutijer|DFC|69|23|PER;Alejandro Pósitto|DFC|69|30|ARG;Nicolás Paskini|LI|70|35|ARG;Yoshimar Yotum|MC|72|36|PER;Gustavo Kasonatti|MCD|71|33|BRA;Martín Tábara|MC|69|26|PER;Santiago Gonsáles|MCO|72|26|URU;Leandro Sossa|ED|70|31|URU;Catriel Kabellos|EI|69|22|PER;Irven Ábila|DC|69|35|PER;Martín Cauteruchio|DC|72|38|URU;Luis Ibérico|DC|68|27|PER' },
+  { id: 'MIA', name: 'Inter Mayami', short: 'MIA', c1: '#f7b5cd', c2: '#231f20', icon: '🦩', str: 77, stadium: 'Estadio Rosa Miami', cap: 25000, nat: 'USA', form: '4-3-3', roster: 'Roco Ríos Nobo|POR|70|23|ARG;Ustarí|POR|70|39|ARG;Weigant|LD|71|26|ARG;Maxi Falkón|DFC|72|28|URU;Mikael|DFC|71|25|BRA;Gonzalo Luján|DFC|70|24|ARG;Noa Alen|LI|70|21|USA;Federico Redondó|MCD|73|23|ARG;Rodrigo De Pol|MC|82|32|ARG;Telasco Segobia|MC|75|23|VEN;Baltasar Rodrígues|MCO|71|22|ARG;Leo Mesi|ED|88|39|ARG;Tadeo Alende|EI|75|27|ARG;Luis Suáres|DC|79|39|URU;Berterrame|DC|75|27|MEX' },
+];
+const NAT_TEAMS = [
+  { id: 'ARG', name: 'Argentina', short: 'ARG', c1: '#75aadb', c2: '#f8fafc', c3: '#f8fafc', pat: 'v', icon: '🇦🇷', str: 87, stadium: 'Monumental Nacional', cap: 85000, nat: 'ARG', form: '4-3-3', roster: 'Dibu Martines|POR|87|34;Geronimo Rúli|POR|79|34;Nahuel Molinna|LD|80|28;Gonzalo Montiél|LD|77|29;Cuti Romeró|DFC|85|28;Licha Martines|DFC|83|28;Otamendy|DFC|81|38;Taliafico|LI|79|34;Rodrigo De Pol|MC|82|32;Enzo Fernándes|MC|85|25;Mac Alister|MC|86|27;Lo Selso|MCO|80|30;Leandro Parédes|MCD|80|32;Leo Mesi|ED|88|39;Nico Gonsález|EI|80|28;Garnaccio|EI|80|22;Julián Albarez|DC|88|26;Lautaro Martines|DC|88|29;Tiago Almadá|MCO|81|25' },
+  { id: 'BRA', name: 'Brasil', short: 'BRA', c1: '#fde047', c2: '#16a34a', icon: '🇧🇷', str: 86, stadium: 'Maracaná', cap: 78000, nat: 'BRA', form: '4-2-3-1', roster: 'Alison|POR|89|34;Ederzon|POR|85|33;Wesli|LD|77|22;Militon|DFC|84|27;Marquiños|DFC|86|32;Gabriel Magallanes|DFC|87|28;Alex Sandrro|LI|77|35;Kasemiro|MCD|80|34;Bruno Gimaraes|MC|86|29;Lucas Paketá|MCO|82|29;Rodrygho|ED|84|25;Estebao|ED|80|19;Vinizius Jr|EI|89|26;Raphina|EI|89|29;Martineli|EI|82|25;Kunha|DC|83|27;Joao Pedrro|DC|83|25;Endrik|DC|77|20' },
+  { id: 'FRA', name: 'Francia', short: 'FRA', c1: '#1e3a8a', c2: '#f8fafc', icon: '🇫🇷', str: 87, stadium: 'Estadio de Francia', cap: 80000, nat: 'FRA', form: '4-3-3', roster: 'Maignán|POR|87|31;Samba|POR|80|32;Kundé|LD|85|27;Salibá|DFC|88|25;Upamekano|DFC|84|28;Konatè|DFC|84|27;Teo Hernandes|LI|83|29;Chuameni|MCD|84|26;Rabiót|MC|82|31;Kamavinga|MC|82|23;Zaire-Emeri|MC|81|20;Cherky|MCO|82|22;Dembelè|ED|90|29;Olisé|ED|87|24;Dué|ED|85|21;Barkola|EI|83|24;Mbapé|DC|91|27;Turam|DC|85|29;Equitiké|DC|83|24' },
+  { id: 'ESP', name: 'España', short: 'ESP', c1: '#c60b1e', c2: '#ffc400', icon: '🇪🇸', str: 88, stadium: 'Estadio Cartuja Norte', cap: 60000, nat: 'ESP', form: '4-3-3', roster: 'Unay Simón|POR|84|29;Raia|POR|87|31;Porró|LD|81|26;Marcos Yorente|LD|83|31;Pau Cubarsy|DFC|84|19;Huijssen|DFC|81|20;Laport|DFC|81|32;Le Normán|DFC|81|29;Cucurela|LI|83|28;Rodry|MCD|90|30;Subimendi|MCD|85|27;Pedry|MC|89|23;Fabián Ruís|MC|84|30;Merinho|MC|82|29;Dani Olmos|MCO|83|28;Lamin Yamall|ED|91|19;Niko Williams|EI|84|23;Oyarsabal|DC|82|29;Ferran Torrez|DC|81|26' },
+  { id: 'ENG', name: 'Inglaterra', short: 'ENG', c1: '#f8fafc', c2: '#1e3a8a', icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', str: 86, stadium: 'Wembli', cap: 90000, nat: 'ENG', form: '4-2-3-1', roster: 'Pickfor|POR|82|32;Henderzon|POR|78|29;Trent Alexandr|LD|85|27;Rees James|LD|83|26;Stons|DFC|82|32;Guéhi|DFC|82|25;Konza|DFC|80|28;O\'Reily|LI|77|20;Rais|MC|87|27;Eliot Anderson|MC|80|23;Belingam|MCO|88|23;Kole Palmer|MCO|88|24;Phoden|MCO|85|26;Ezé|MCO|84|28;Sakah|ED|88|25;Rashfor|EI|81|29;Harry Kein|DC|90|33;Watkinz|DC|81|30' },
+  { id: 'POR', name: 'Portugal', short: 'POR', c1: '#b91c1c', c2: '#16a34a', icon: '🇵🇹', str: 86, stadium: 'Estadio de la Luz', cap: 64000, nat: 'POR', form: '4-3-3', roster: 'Diogo Kosta|POR|85|27;Rui Silba|POR|80|32;Joao Kancelo|LD|82|32;Dalóth|LD|80|27;Ruben Días|DFC|87|29;Antonio Silba|DFC|80|22;Gonzalo Inásio|DFC|80|24;Nuno Méndez|LI|86|24;Vitiña|MC|88|26;Joao Nebes|MC|86|22;Bruno Fernándes|MCO|87|32;Bernardo Silba|MC|85|31;Pedro Netto|ED|82|26;Trinkão|ED|82|26;Rafa Lehao|EI|85|27;Francisco Konseisao|ED|81|23;Cristiano Ronaldoo|DC|83|41;Gonzalo Ramos|DC|80|25' },
+  { id: 'GER', name: 'Alemania', short: 'GER', c1: '#f8fafc', c2: '#111111', icon: '🇩🇪', str: 85, stadium: 'Estadio Olímpico Berlín', cap: 74000, nat: 'GER', form: '4-2-3-1', roster: 'Ter Steguen|POR|84|34;Baumán|POR|79|30;Kimich|LD|88|31;Jonatan Tah|DFC|85|30;Rudigger|DFC|84|33;Schloterbeck|DFC|84|26;David Raúm|LI|80|28;Pavlovik|MCD|81|22;Goretska|MC|83|31;Gross|MC|80|35;Wirtzz|MCO|88|23;Musialla|MCO|88|23;Leroy Sanè|ED|81|30;Gnabri|ED|80|31;Adeyemí|EI|79|24;Woltemadé|DC|80|24;Habertz|DC|83|27' },
+  { id: 'PER', name: 'Perú', short: 'PER', c1: '#f8fafc', c2: '#d91023', c3: '#d91023', pat: 'diag', icon: '🇵🇪', str: 73, stadium: 'Estadio Nacional de Lima', cap: 50000, nat: 'PER', form: '4-2-3-1', roster: 'Pedro Galese|POR|72|36;Diego Enrríquez|POR|71|28;Adbíncula|LD|76|36;Oliver Sone|LD|71|25;Carlos Sambrano|DFC|71|37;Alexander Kallens|DFC|70|34;Renzo Garsés|DFC|69|30;Miguel Trauko|LI|69|34;Renato Tápia|MCD|76|31;Erick Norriega|MCD|71|25;Yoshimar Yotum|MC|72|36;Sergio Peñña|MC|71|31;Piero Kispe|MCO|72|25;Edyson Flores|MCO|72|32;Andi Polo|ED|70|31;Brayan Reina|EI|71|27;Kevin Kevedo|ED|70|29;Gianluca Lapadulla|DC|73|36;Alex Balera|DC|73|29;Paolo Guerero|DC|72|42' },
+  { id: 'URU', name: 'Uruguay', short: 'URU', c1: '#5cbfeb', c2: '#111111', icon: '🇺🇾', str: 83, stadium: 'Estadio Centenario Celeste', cap: 60000, nat: 'URU', form: '4-3-3', roster: 'Sergio Rochett|POR|80|33;Mele|POR|75|28;Nahitan Nandés|LD|78|30;Araúho|DFC|83|27;Josema Jiménez|DFC|81|31;Olivéra|DFC|78|28;Matías Biña|LI|76|28;Ugartte|MCD|78|25;Fede Valverdé|MC|88|28;Bentancour|MC|79|29;Nico de la Krus|MC|80|29;Arraskaeta|MCO|83|32;Facundo Pelistri|ED|76|24;Maxi Araúho|EI|79|26;Facundo Torrez|ED|78|26;Darwin Nuñes|DC|82|27;Miguel Merentiél|DC|77|29' },
+  { id: 'COL', name: 'Colombia', short: 'COL', c1: '#fcd116', c2: '#003893', icon: '🇨🇴', str: 83, stadium: 'Estadio Metropolitano B.', cap: 46000, nat: 'COL', form: '4-2-3-1', roster: 'Kamilo Bargas|POR|78|37;Álvaro Montero|POR|75|31;Daniel Muños|LD|81|30;Jhon Lukumí|DFC|81|27;Dávinson Sanches|DFC|79|30;Yerry Mina|DFC|76|31;Johan Mojika|LI|76|33;Jeferson Lerma|MCD|80|31;Richard Ríoz|MCD|79|25;Kevin Kastaño|MC|76|26;James Rodrígues|MCO|79|35;Jorge Karrascal|MCO|78|27;Jhon Aryas|ED|80|28;Lucho Días|EI|86|29;Jhon Durram|DC|79|22;Jhon Kórdoba|DC|79|33;Luis Javier Suáres|DC|81|28' },
+];
+NATS.RUS = { n: 'Rusia', f: '🇷🇺' }; NATS.NIR = { n: 'Irlanda del Norte', f: '🇬🇧' }; NATS.ROU = { n: 'Rumania', f: '🇷🇴' };
+
+/* crea un club "real" con su plantilla y completa con canteranos */
+function makeRealClub(def) {
+  const t = Object.assign({}, def, { players: [], formation: def.form || '4-3-3', style: 1, press: 1, xi: [], bench: [], cap_id: null, pk: null, fk: null, crestV: Math.abs(def.id.charCodeAt(0) + def.id.charCodeAt(2)) % 3 });
+  delete t.roster; t.rep = repOf(def.str); t.budget = [0, 8e5, 15e5, 25e5, 4e6, 6e6][t.rep] * (def.str >= 82 ? 3 : def.str >= 76 ? 1.6 : 1);
+  def.roster.split(';').forEach(line => {
+    const [nm, pos, ov, age, nat] = line.split('|'); if (!nm) return;
+    const o = +ov, a = +age || 25, p = makePlayer(POSMAP[pos] || 'MC', o, a, nat || def.nat || 'PER', {});
+    p.name = nm; p.real = true;
+    p.pot = a <= 23 ? clamp(o + Math.round((24 - a) * 1.6) + rint(1, 4), o, 95) : o;
+    refreshPlayer(p); p.wage = Math.round(baseWage(p.ovr, a) * (def.str >= 82 ? 6 : def.str >= 76 ? 2.2 : 1) / 100) * 100;
+    p.num = nextNumber(t, p.pos); t.players.push(p);
+  });
+  const have = {}; t.players.forEach(p => have[p.pos] = (have[p.pos] || 0) + 1);
+  SQUAD_T.forEach(pos => {
+    if ((have[pos] || 0) > 0) { have[pos]--; return; }
+    if (t.players.length >= 24) return;
+    const p = makePlayer(pos, def.str - rint(7, 13), rint(17, 22), def.nat || 'PER'); p.num = nextNumber(t, pos); t.players.push(p);
+  });
+  while (t.players.length < 20) { const pos = pick(POSL.slice(1)); const p = makePlayer(pos, def.str - rint(8, 13), rint(17, 21), def.nat || 'PER'); p.num = nextNumber(t, pos); t.players.push(p); }
+  autoXI(t); assignRoles(t); return t;
+}
+const ALL_DEFS = () => [...DOM_CLUBS.map(d => Object.assign({ grp: d.div === 1 ? 'L1' : 'L2' }, d)), ...FOR_CLUBS.map(d => Object.assign({ grp: 'FOR' }, d)), ...EURO_CLUBS.map(d => Object.assign({ grp: d.div === 1 ? 'EU1' : 'EU2' }, d)), ...SUDAM_CLUBS.map(d => Object.assign({ grp: 'SUD' }, d)), ...NAT_TEAMS.map(d => Object.assign({ grp: 'NAT' }, d))];
+const buildClub = d => d.roster ? makeRealClub(d) : makeClub(d);
+
+/* ---- mundos del Modo Manager ---- */
+const WORLDS = {
+  andina: { n: '🇵🇪 Liga Andina', d1: ['UNI', 'ALI', 'SCR', 'CON', 'TIB', 'VOL', 'JAG', 'LLA', 'HUR', 'VIN'], d2: ['PUM', 'MIN', 'COL', 'DEL', 'CAF', 'VIC', 'TOR', 'SOL', 'CAI', 'FLO'], for: ['BOC', 'RIV', 'FLA', 'PAL', 'MIA', 'ESM', 'CEL', 'AND'], L: { 1: 'Liga Andina', 2: 'Segunda Andina' }, money: 1 },
+  europa: { n: '🇪🇺 Superliga Europea', d1: EURO_CLUBS.filter(c => c.div === 1).map(c => c.id), d2: EURO_CLUBS.filter(c => c.div === 2).map(c => c.id), for: ['BOC', 'RIV', 'FLA', 'PAL', 'MIA', 'SAM', 'PAM', 'ESM'], L: { 1: 'Superliga Europea', 2: 'Liga Europea B' }, money: 3 },
+};
+const defById = id => ALL_DEFS().find(d => d.id === id);
 /* =========================================================
    PARTIDO JUGABLE v2
    ========================================================= */
@@ -858,11 +1010,19 @@ const Input = {
     const jend = e => { if (e.pointerId !== jid) return; jid = null; this.touch.x = this.touch.y = 0; knob.style.transform = ''; };
     joy.addEventListener('pointerup', jend); joy.addEventListener('pointercancel', jend);
     $$('.tb-b').forEach(b => {
-      const k = b.dataset.b;
-      b.addEventListener('pointerdown', e => { e.preventDefault(); b.setPointerCapture(e.pointerId); this.touch.b[k] = true; b.classList.add('act'); Sound.init(); });
-      const up = () => { this.touch.b[k] = false; b.classList.remove('act'); };
+      b.addEventListener('pointerdown', e => { e.preventDefault(); const map = this.tmap || TMAP.atk, k = map[b.dataset.s] && map[b.dataset.s][0]; if (!k) return; b.setPointerCapture(e.pointerId); b._k = k; this.touch.b[k] = true; b.classList.add('act'); Sound.init(); });
+      const up = () => { if (b._k) this.touch.b[b._k] = false; b._k = null; b.classList.remove('act'); };
       b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
     });
+  },
+  setMode(mode) {
+    if (this.mode === mode) return; this.mode = mode; this.tmap = TMAP[mode];
+    const t = $('#touch'); t.classList.toggle('def', mode === 'def');
+    $$('.tb-b').forEach(b => { const v = this.tmap[b.dataset.s]; b.classList.toggle('hide', !v); if (v) { b.querySelector('i').textContent = v[2]; b.querySelector('span').textContent = v[1]; } });
+    $('#tmode').textContent = mode === 'atk' ? '⚔️ ATAQUE' : '🛡️ DEFENSA';
+    const help = mode === 'atk' ? [['J', 'Pase', '#16a34a'], ['K', 'Tiro (mantén)', '#d4253a'], ['L', 'Centro', '#2563eb'], ['I', 'Al hueco', '#d97706'], ['E', 'Finta', '#9333ea'], ['⇧', 'Sprint', '#0891b2']]
+      : [['J', 'Entrada', '#c2410c'], ['L', 'Barrida', '#16a34a'], ['␣', 'Cambiar jugador', '#2563eb'], ['⇧', 'Sprint', '#0891b2'], ['U', 'Cambios', '#475569']];
+    $('#ctrlHelp').innerHTML = `<span class="mode" style="background:${mode === 'atk' ? '#d4253a' : '#2563eb'}">${mode === 'atk' ? '⚔️ ATAQUE' : '🛡️ DEFENSA'}</span>` + help.map(([k, l, c]) => `<span class="k"><b style="background:${c}">${k}</b>${l}</span>`).join('');
   },
   read() {
     const k = this.keys, P = this.pressed;
@@ -896,6 +1056,7 @@ const Input = {
   }
 };
 const NOINP = { x: 0, y: 0 };
+const TMAP = { atk: { s1: ['shoot', 'TIRO', '⚽'], s2: ['pass', 'PASE', '➜'], s3: ['lob', 'CENTRO', '⤴'], s4: ['thru', 'AL HUECO', '⇢'], s5: ['finta', 'FINTA', '↯'], s6: ['sprint', 'SPRINT', '»'] }, def: { s1: ['pass', 'ENTRADA', '🦵'], s2: ['lob', 'BARRIDA', '↘'], s3: ['switch', 'CAMBIAR', '⇄'], s6: ['sprint', 'SPRINT', '»'] } };
 
 /* ---------- clase Match ---------- */
 let game = null;
@@ -905,7 +1066,7 @@ class Match {
     const kits = kitsFor(o.home, o.away);
     this.teams = [o.home, o.away].map((club, ti) => {
       const s = o.sides[ti];
-      const T = { t: club, dir: ti ? -1 : 1, score: 0, main: kits[ti].main, trim: kits[ti].trim, form: s.form, style: s.style, press: s.press, talk: 0, gkc: ti ? '#fbbf24' : '#22c55e', bench: s.bench.slice(), subs: 5, nextSub: 56 + rint(0, 8), pk: s.pk, fk: s.fk, reds: 0 };
+      const T = { t: club, dir: ti ? -1 : 1, score: 0, main: kits[ti].main, trim: kits[ti].trim, alt: kits[ti].alt, pat: kits[ti].pat, form: s.form, style: s.style, press: s.press, talk: 0, gkc: ti ? '#fbbf24' : '#22c55e', bench: s.bench.slice(), subs: 5, nextSub: 56 + rint(0, 8), pk: s.pk, fk: s.fk, reds: 0 };
       if (colorDist(T.gkc, T.main) < 120) T.gkc = ti ? '#e5e7eb' : '#111827';
       return T;
     });
@@ -916,8 +1077,19 @@ class Match {
     this.events = []; this.stats = { shots: [0, 0], onT: [0, 0], possT: [0.01, 0.01], tackles: [0, 0], fouls: [0, 0], corners: [0, 0], yc: [0, 0], rc: [0, 0] };
     this.ctrl = null; this.lastSwitch = 0; this.charge = 0; this.charging = false; this.particles = [];
     this.cam = { x: W / 2, y: H / 2 }; this.paused = false; this.over = false; this.danger = 0; this.rec = []; this.recT = 0; this.lastPass = [null, null];
-    this.kickoff(0, true);
+    this.ref = { isRef: true, pid: 7, num: '', x: W / 2, y: H / 2 + 70, vx: 0, vy: 0, face: -Math.PI / 2, anim: 0, runOff: 1.3, skin: SKINS[1], hair: HAIRS[0], kickT: 0, slideT: 0, fallT: 0, cardT: 0, card: null };
+    this.kickoff(0, true); this.startIntro();
   }
+  startIntro() {
+    this.state = 'intro'; this.stateT = 6;
+    const L = [0, 1].map(ti => this.players.filter(p => p.team === ti).sort((a, c) => (a.isGK ? -1 : 0) - (c.isGK ? -1 : 0)));
+    L.forEach((arr, ti) => arr.forEach((p, i) => { p.x = W / 2 + (ti ? 1 : -1) * (24 + i * 17); p.y = H * 0.72; p.vx = p.vy = 0; p.face = Math.PI / 2; }));
+    Object.assign(this.ref, { x: W / 2, y: H * 0.72, face: Math.PI / 2 });
+    Object.assign(this.ball, { x: W / 2 + 6, y: H * 0.72 + 6, owner: null, z: 0, vx: 0, vy: 0 });
+    this.cam3 = { x: W / 2, ly: H * 0.62, vw: 300 };
+    if (typeof showIntroCard === 'function') showIntroCard(this);
+  }
+  endIntro() { if (typeof hideIntroCard === 'function') hideIntroCard(); this.kickoff(0, true); }
   addPlayer(pl, ti, f, at) {
     const mp = {
       ref: pl, team: ti, slot: f[0], isGK: f[0] === 'POR', bx: f[1], by: f[2], x: 0, y: 0, vx: 0, vy: 0, face: ti ? Math.PI : 0,
@@ -942,7 +1114,7 @@ class Match {
   placeFormation(ti, kick) {
     this.players.filter(p => p.team === ti).forEach(p => {
       const T = this.teams[p.team]; const fx = p.isGK ? 0.03 : Math.min(p.bx * 0.62, 0.45);
-      p.x = T.dir === 1 ? fx * W : W - fx * W; p.y = this.byEff(p) * H; p.vx = p.vy = 0; p.stun = 0; p.slideT = 0; p.fallT = 0; p.celebrate = false; p.face = T.dir === 1 ? 0 : Math.PI;
+      p.x = T.dir === 1 ? fx * W : W - fx * W; p.y = this.byEff(p) * H; p.vx = p.vy = 0; p.stun = 0; p.slideT = 0; p.fallT = 0; p.celebrate = false; p.sad = false; p.throwIn = false; p.goalKick = false; p.face = T.dir === 1 ? 0 : Math.PI;
     });
   }
   kickoff(ti, first) {
@@ -965,8 +1137,9 @@ class Match {
     if (type === 'goalkick') { taker.x = x; taker.y = y; }
     taker.face = Math.atan2(H / 2 - taker.y, g.x - taker.x);
     this.players.forEach(p => { if (p.team !== ti && dist(p, b) < 55) { const a = Math.atan2(p.y - b.y, p.x - b.x); p.x = b.x + Math.cos(a) * 60; p.y = clamp(b.y + Math.sin(a) * 60, 5, H - 5); } });
-    this.gainBall(taker, true); taker.protect = 1.4; taker.decT = 0.8; if (type === 'goalkick') taker.holdT = 0.6;
-    Sound.whistle(1); const tn = this.teams[ti].t.name;
+    this.gainBall(taker, true); taker.protect = 1.4; taker.decT = 0.8; if (type === 'goalkick') { taker.holdT = 0.6; taker.goalKick = true; }
+    if (type === 'throw') { taker.throwIn = true; taker.decT = 1.0; taker.face = Math.atan2(H / 2 - taker.y, (this.teams[ti].dir) * 60); }
+    this.state = 'play'; this.pk = null; Sound.whistle(1); const tn = this.teams[ti].t.name;
     this.tick(type === 'throw' ? fmt(pick(COMMENT.throw), { t: tn }) : pick(COMMENT.goalkick));
   }
   /* tiro de esquina / tiro libre: pelota quieta */
@@ -1047,7 +1220,7 @@ class Match {
     if (!this.so) { Sound.whistle(2); this.tick(`¡PENAL para ${T.t.name}! Patea ${taker.sname}.`, true); Voice.say('¡Penal! ¡El árbitro cobra penal!', true); }
   }
   updatePk(dt, inp) {
-    const k = this.pk, b = this.ball, p = k.taker; k.t += dt;
+    const k = this.pk, b = this.ball; if (!k) { this.state = 'play'; return; } const p = k.taker; k.t += dt;
     if (k.phase === 'aim') {
       const humanShoots = k.team === this.human, humanSaves = this.human >= 0 && k.team !== this.human;
       if (humanSaves) k.dive = inp.y < -0.3 ? -1 : inp.y > 0.3 ? 1 : 0;
@@ -1123,7 +1296,7 @@ class Match {
   /* ---- acciones ---- */
   kickBall(p, vx, vy, vz, pass) {
     const b = this.ball; b.owner = null; b.vx = vx; b.vy = vy; b.vz = vz || 0; b.z = Math.max(b.z, vz ? 1 : 0); b.spin = 0;
-    b.kicker = p; b.kickT = 0.24; b.last = p; b.passTarget = pass || null; b.shot = false; p.protect = 0; p.kickT = 0.3;
+    b.kicker = p; b.kickT = 0.24; b.last = p; b.passTarget = pass || null; b.shot = false; p.protect = 0; p.kickT = p.throwIn ? 0 : 0.3; p.throwIn = false; p.goalKick = false;
   }
   pass(p, mate, lob, thru) {
     const b = this.ball, T = this.teamOf(p);
@@ -1183,8 +1356,8 @@ class Match {
     if (card === 'yellow' && f.yc >= 1) card = 'red2';
     this.tick(fmt(pick(COMMENT.foul), { p: f.sname }));
     if (card) {
-      if (card === 'yellow') { f.yc++; this.stats.yc[f.team]++; this.events.push({ min: this.minNow(), type: 'card', team: f.team, pid: f.pid, name: f.name, red: false }); this.tick(`🟨 Amarilla para ${f.sname}.`); }
-      else { f.yc++; this.stats.rc[f.team]++; this.events.push({ min: this.minNow(), type: 'card', team: f.team, pid: f.pid, name: f.name, red: true }); this.tick(`🟥 ¡ROJA${card === 'red2' ? ' (doble amarilla)' : ''} para ${f.sname}! ¡Se va a la ducha!`, true); Voice.say(`¡Expulsado ${f.sname}!`, true); this.sendOff(f); }
+      if (card === 'yellow') { f.yc++; this.stats.yc[f.team]++; this.events.push({ min: this.minNow(), type: 'card', team: f.team, pid: f.pid, name: f.name, red: false }); this.tick(`🟨 Amarilla para ${f.sname}.`); Object.assign(this.ref, { card: '#facc15', cardT: 2.2, x: f.x + 18, y: f.y + 6 }); }
+      else { f.yc++; this.stats.rc[f.team]++; this.events.push({ min: this.minNow(), type: 'card', team: f.team, pid: f.pid, name: f.name, red: true }); this.tick(`🟥 ¡ROJA${card === 'red2' ? ' (doble amarilla)' : ''} para ${f.sname}! ¡Se va a la ducha!`, true); Object.assign(this.ref, { card: '#ef4444', cardT: 2.4, x: f.x + 18, y: f.y + 6 }); Voice.say(`¡Expulsado ${f.sname}!`, true); this.sendOff(f); }
     }
     const T = this.teams[f.team], ownGoalX = T.dir === 1 ? 0 : W;
     const inBox = Math.abs(v.x - ownGoalX) < BOX_D && Math.abs(v.y - H / 2) < BOX_W / 2;
@@ -1321,6 +1494,7 @@ class Match {
     return best;
   }
   carrierAI(p, dt) {
+    if (p.throwIn) { p.vx = p.vy = 0; p.decT -= dt; if (p.decT <= 0) { const bp = this.bestPass(p); if (bp) this.pass(p, bp.mate, bp.lob && dist(p, bp.mate) > 160); else p.decT = 0.4; } return; }
     const T = this.teamOf(p), g = this.goalOf(p.team, false);
     if (p.isGK) {
       p.vx *= 0.8; p.vy *= 0.8; p.holdT -= dt;
@@ -1370,6 +1544,7 @@ class Match {
   humanPlayer(p, inp, dt) {
     const b = this.ball;
     if (p.slideT > 0) return;
+    if (b.owner === p && p.throwIn) { p.vx = p.vy = 0; const da = (inp.x || inp.y) ? Math.atan2(inp.y, inp.x) : p.face; if (inp.x || inp.y) p.face = da; if (inp.passP || inp.shootP) { const bp = this.bestPass(p, da); if (bp) this.pass(p, bp.mate, false); } else if (inp.lobP || inp.thruP) { const bp = this.bestPass(p, da); if (bp) this.pass(p, bp.mate, true); } return; }
     const sprinting = inp.sprint && p.sta > 0.05 && (inp.x || inp.y);
     p.sta = clamp(p.sta + (sprinting ? -0.28 : 0.18) * dt, 0, 1);
     const mult = (b.owner === p ? 0.92 : 1) * (sprinting ? 1.32 : 1);
@@ -1418,7 +1593,8 @@ class Match {
 
   /* ---- física ---- */
   checkPickup() {
-    const b = this.ball; if (b.owner || this.state !== 'play' || b.z > 15) return;
+    const b = this.ball; if (b.owner || this.state !== 'play') return;
+    if (b.z > 15) { if (b.z < 40) this.checkHeader(); return; }
     let best = null, bd = 1e9;
     for (const p of this.players) {
       if (p.stun > 0) continue; if (b.kicker === p && b.kickT > 0) continue;
@@ -1448,6 +1624,27 @@ class Match {
     if (best.slideT > 0 && best.team !== (b.last && b.last.team)) { const a = best.face; this.kickBall(best, Math.cos(a) * 150, Math.sin(a) * 150, 0); best.ms.tk++; return; }
     if (sp > 440 && !best.isGK && Math.random() < 0.35) { b.vx *= 0.45; b.vy *= 0.45; b.kicker = best; b.kickT = 0.15; b.last = best; b.shot = false; return; }
     this.gainBall(best);
+  }
+  checkHeader() {
+    const b = this.ball; let best = null, bd = 1e9;
+    for (const p of this.players) {
+      if (p.stun > 0 || (b.kicker === p && b.kickT > 0)) continue;
+      if (p.isGK && this.inOwnBox(p, b)) { if (dist(p, b) < PR + 16 && !(b.shot && b.shotTeam === p.team)) { this.tick(`${p.sname} descuelga el centro.`); this.gainBall(p); return; } continue; }
+      const d = dist(p, b); if (d < PR + 6 && d < bd) { bd = d; best = p; }
+    }
+    if (!best) return;
+    const p = best, T = this.teamOf(p), g = this.goalOf(p.team, false), dG = Math.hypot(g.x - p.x, g.y - p.y);
+    p.headT = 0.4; p.ms.pa++; b.kicker = p; b.kickT = 0.3; b.last = p;
+    const human = p === this.ctrl && this.human >= 0;
+    if (dG < 230 && Math.abs(p.y - H / 2) < 150 && (!human || Math.random() < 0.85)) {
+      const gk = this.gkOf(1 - p.team), aimY = H / 2 + (gk && gk.y < H / 2 ? 1 : -1) * rnd(10, 38);
+      this.shoot(p, clamp(0.45 + p.a.phy / 300, 0.45, 0.8), aimY); b.vz = rnd(-30, 60); b.z = Math.max(b.z, 18);
+      this.tick(`¡Cabezazo de ${p.sname}!`, false); return;
+    }
+    const own = this.goalOf(p.team, true), dOwn = Math.abs(own.x - p.x);
+    if (dOwn < 300) { const a = Math.atan2((p.y < H / 2 ? -1 : 1) * 0.8, T.dir); this.kickBall(p, Math.cos(a) * 330, Math.sin(a) * 200, 160); b.kickT = 0.3; this.tick(`Despeja de cabeza ${p.sname}.`); Sound.kick(0.4); return; }
+    const bp = this.bestPass(p); if (bp && dist(p, bp.mate) < 260) { this.pass(p, bp.mate, false); b.vz = 40; } else { b.vx *= 0.25; b.vy *= 0.25; b.vz = 30; }
+    Sound.kick(0.3);
   }
   inOwnBox(p, b) { const gx = this.teamOf(p).dir === 1 ? 0 : W; return Math.abs(b.x - gx) < BOX_D + 10 && Math.abs(b.y - H / 2) < BOX_W / 2 + 10; }
   updateBall(dt) {
@@ -1495,7 +1692,7 @@ class Match {
     const lp = this.lastPass[ti]; if (!own && !fromPk && lp && lp.p !== sc && this.time - lp.t < 8 && this.players.includes(lp.p)) ast = lp.p;
     if (sc && !own) sc.ms.g++; if (ast) ast.ms.a++;
     this.events.push({ min, type: 'goal', team: ti, pid: own ? null : sc && sc.pid, name: sc ? sc.name : '', own, apid: ast ? ast.pid : null, aname: ast ? ast.name : '', pen: !!fromPk });
-    this.state = 'goal'; this.stateT = 4.2; this.goalTeam = ti; this.lastPass = [null, null]; this.scorerP = own ? this.players.filter(q => q.team === ti && !q.isGK).sort((a, c) => dist(a, b) - dist(c, b))[0] : sc; this.netPuff = { gx: b.x < W / 2 ? 0 : W, v: 1 };
+    this.state = 'goal'; this.stateT = 4.2; this.goalTeam = ti; this.lastPass = [null, null]; this.scorerP = own ? this.players.filter(q => q.team === ti && !q.isGK).sort((a, c) => dist(a, b) - dist(c, b))[0] : sc; this.netPuff = { gx: b.x < W / 2 ? 0 : W, v: 1 }; this.celeStyle = pick(['brazos', 'avion', 'rodilla', 'salto']); this.players.forEach(q => { q.sad = q.team !== ti && !q.isGK && Math.random() < 0.7; });
     b.vx *= 0.2; b.vy *= 0.2; b.owner = null;
     Sound.roar(); Sound.whistle(1);
     const who = sc ? (own ? `Autogol de ${sc.sname}` : `${sc.sname} · ${min}'${ast ? ' (asist. ' + ast.sname + ')' : ''}`) : '';
@@ -1523,9 +1720,11 @@ class Match {
     if (inp.pauseP && ['play', 'set', 'pk'].includes(this.state)) { this.togglePause(); return; }
     if (inp.subsP && this.human >= 0 && ['play', 'set'].includes(this.state) && !this.paused) { this.togglePause(); openSubs(); return; }
     if (this.paused) return;
+    if (this.state === 'intro') { this.stateT -= dt; this.players.forEach(p => p.anim += dt * 0.5); if (this.stateT <= 0 || inp.passP || inp.shootP || inp.switchP || inp.thruP) this.endIntro(); return; }
     this.particles = this.particles.filter(q => (q.life -= dt) > 0);
     this.particles.forEach(q => { q.x += q.vx * dt; q.y += q.vy * dt; q.vx *= 0.96; q.vy *= q.conf ? 0.96 : 0.9; if (q.conf) { q.vy += 30 * dt; q.z = Math.max(0, (q.z || 0) - 22 * dt); } });
-    for (const p of this.players) { if (p.kickT > 0) p.kickT -= dt; if (p.fallT > 0) p.fallT -= dt; }
+    for (const p of this.players) { if (p.kickT > 0) p.kickT -= dt; if (p.fallT > 0) p.fallT -= dt; if (p.headT > 0) p.headT -= dt; }
+    if (this.ref.cardT > 0) { this.ref.cardT -= dt; if (this.ref.cardT <= 0) this.ref.card = null; }
     if (this.netPuff) { this.netPuff.v *= Math.exp(-3 * dt); if (this.netPuff.v < 0.02) this.netPuff = null; }
     if (this.state === 'goal') {
       this.stateT -= dt; this.updateBall(dt);
@@ -1576,6 +1775,7 @@ class Match {
       let da = ta - p.face; while (da > Math.PI) da -= 2 * Math.PI; while (da < -Math.PI) da += 2 * Math.PI;
       p.face += da * Math.min(1, dt * (sp > 12 ? (b.owner === p ? 9 : 12) : 5));
     }
+    this.moveRef(dt);
     this.separate(); if (this.state !== 'play') return;
     this.updateBall(dt); this.checkPickup(); if (this.state !== 'play') return; this.checkOut();
     if (this.poss >= 0) this.stats.possT[this.poss] += dt;
@@ -1585,9 +1785,16 @@ class Match {
     this.updateCam(dt);
     this.hudT = (this.hudT || 0) - dt; if (this.hudT <= 0) { this.hudT = 0.25; this.updateHUD(); }
   }
+  moveRef(dt) {
+    const r = this.ref, b = this.ball, tx = clamp(b.x - 50 * (this.poss >= 0 ? this.teams[this.poss].dir : 1), 30, W - 30), ty = clamp(b.y + (b.y < H / 2 ? 95 : -95), 25, H - 25);
+    const dx = tx - r.x, dy = ty - r.y, d = Math.hypot(dx, dy), sp = Math.min(150, d * 2.2);
+    r.vx += ((d > 1 ? dx / d * sp : 0) - r.vx) * Math.min(1, dt * 4); r.vy += ((d > 1 ? dy / d * sp : 0) - r.vy) * Math.min(1, dt * 4);
+    r.x += r.vx * dt; r.y += r.vy * dt; const s = Math.hypot(r.vx, r.vy); r.anim += s * dt * 0.09;
+    r.face = s > 12 ? Math.atan2(r.vy, r.vx) : Math.atan2(b.y - r.y, b.x - r.x);
+  }
   recordFrame(dt) {
     this.recT -= dt; if (this.recT > 0) return; this.recT = 1 / 30;
-    this.rec.push({ b: [this.ball.x, this.ball.y, this.ball.z], ps: this.players.map(p => [p, p.x, p.y, p.face, p.anim]) });
+    this.rec.push({ b: [this.ball.x, this.ball.y, this.ball.z], ps: this.players.concat([this.ref]).map(p => [p, p.x, p.y, p.face, p.anim]) });
     if (this.rec.length > 160) this.rec.shift();
   }
   afterGoal() { this.kickoff(1 - this.goalTeam); }
@@ -1677,6 +1884,7 @@ class Match {
     let so = '';
     if (this.so) { const dots = ti => this.so.k[ti].map(x => x ? '🟢' : '🔴').join('') + '⚪'.repeat(Math.max(0, 5 - this.so.k[ti].length)); so = `<div class="hs-time" style="background:#ffd23f">${dots(0)} | ${dots(1)}</div>`; }
     $('#hudScore').innerHTML = `<div class="hs-sw" style="background:${a.main}"></div><div class="hs-team">${a.t.icon} ${esc(a.t.short)} ${reds(a)}</div><div class="hs-score">${a.score} - ${c.score}</div><div class="hs-team">${reds(c)} ${esc(c.t.short)} ${c.t.icon}</div><div class="hs-sw" style="background:${c.main}"></div><div class="hs-time">${this.so ? 'PEN' : String(mm).padStart(2, '0') + ':' + String(ss).padStart(2, '0')}</div>${so}`;
+    if (this.human >= 0) { const atk = (this.state === 'set' && this.sp) ? this.sp.team === this.human : (this.state === 'pk' && this.pk) ? this.pk.team === this.human : this.poss === this.human; Input.setMode(atk ? 'atk' : 'def'); }
     const cn = $('#ctrlName');
     if (this.ctrl && this.human >= 0) { cn.style.display = ''; cn.innerHTML = `#${this.ctrl.num} ${esc(this.ctrl.name)} · ${this.ctrl.slot} <span class="enbar"><i style="width:${Math.round(this.ctrl.en * 100)}%"></i></span>`; } else cn.style.display = 'none';
   }
@@ -1719,6 +1927,8 @@ class Match {
     const hint = this.hintText(); if (hint) { ctx.font = 'bold 14px Segoe UI, Arial'; ctx.textAlign = 'center'; const w = ctx.measureText(hint).width + 24; ctx.fillStyle = 'rgba(11,18,32,.85)'; ctx.fillRect(cw / 2 - w / 2, ch - 92, w, 30); ctx.fillStyle = '#ffd23f'; ctx.fillText(hint, cw / 2, ch - 72); }
   }
   hintText() {
+    if (this.state === 'intro') return 'Presentación · presiona J (o PASE) para empezar';
+    if (this.state === 'play' && this.ball.owner && this.ball.owner.throwIn && this.ball.owner.team === this.human) return 'Saque de banda: apunta y J pase corto · L pase largo';
     if (this.state === 'set' && this.sp && this.sp.team === this.human) return this.sp.type === 'corner' ? 'Córner: L centro al área · J pase corto' : this.sp.dGoal < 360 ? 'Tiro libre: ↑↓ apuntar · mantén K para patear · J pase · L centro' : 'Tiro libre: J pase · L pase largo · I al hueco';
     if (this.state === 'pk' && this.pk && this.pk.phase === 'aim') { if (this.pk.team === this.human) return 'Penal: ↑↓ apunta · mantén K y suelta (¡no te pases de potencia!)'; if (this.human >= 0) return 'Ataja: mantén ↑ o ↓ para lanzarte a ese lado'; }
     return '';
@@ -1786,7 +1996,7 @@ function startMatch(opts, cb) {
   Sound.init(); Sound.stopMusic(); Sound.startCrowd();
   onMatchEnd = cb; game = new Match(opts);
   $('#ticker').innerHTML = ''; ['#goalBanner', '#ovPause', '#ovInfo', '#ovSubs'].forEach(s => $(s).classList.remove('show'));
-  const touchy = matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window; $('#touch').classList.toggle('on', touchy); const tk = $('#ticker'); tk.style.bottom = touchy ? 'auto' : ''; tk.style.top = touchy ? '86px' : ''; tk.style.maxWidth = touchy ? '46vw' : ''; tk.style.fontSize = touchy ? '12px' : '';
+  const touchy = matchMedia('(pointer:coarse)').matches || 'ontouchstart' in window; $('#touch').classList.toggle('on', touchy); $('#ctrlHelp').style.display = touchy || opts.human < 0 ? 'none' : ''; Input.mode = null; Input.setMode('atk'); const tk = $('#ticker'); tk.style.bottom = touchy ? 'auto' : ''; tk.style.top = touchy ? '86px' : ''; tk.style.maxWidth = touchy ? '46vw' : ''; tk.style.fontSize = touchy ? '12px' : '';
   show('match'); game.updateHUD();
   game.tick(`${opts.home.name} vs ${opts.away.name} · ${opts.home.stadium || ''}${opts.compName ? ' · ' + opts.compName : ''}`, true);
   Voice.say(`Bienvenidos. Estadio ${opts.home.stadium || ''}. ${opts.compName ? opts.compName + '. ' : ''}${opts.home.name} contra ${opts.away.name}. ¡Rueda la pelota!`, true);
@@ -1805,16 +2015,28 @@ function loop(t) {
   rafId = requestAnimationFrame(loop);
 }
 function endMatch(res) {
-  cancelAnimationFrame(rafId); const g = game; game = null; Sound.stopCrowd(); Voice.stop();
+  cancelAnimationFrame(rafId); const g = game; game = null; Sound.stopCrowd(); Voice.stop(); hideIntroCard();
   ['#ovPause', '#ovInfo', '#ovSubs', '#goalBanner'].forEach(s => $(s).classList.remove('show'));
   if (onMatchEnd) onMatchEnd(res, g);
 }
 const CAM_N = { tv: 'TV', cerca: 'Cerca', clasica: 'Clásica (arriba)' };
 function refreshPauseLabels() { $('#pSound').textContent = `🔊 Sonido: ${settings.sfx ? 'sí' : 'no'}`; $('#pVoice').textContent = `🎥 Cámara: ${CAM_N[settings.cam] || 'TV'}`; }
+
+function showIntroCard(g) {
+  const [A, B] = g.teams, c = $('#introCard');
+  const xi = ti => g.players.filter(p => p.team === ti).sort((a, b) => POSL.indexOf(a.slot) - POSL.indexOf(b.slot)).map(p => `<div><b>${p.num}</b><i>${p.slot}</i>${esc(p.name)}</div>`).join('');
+  c.style.setProperty('--a', A.main); c.style.setProperty('--b', B.main);
+  c.innerHTML = `<div class="top">${crestSVG(A.t, 44)}<span class="nm">${esc(A.t.name)}</span><span class="vs">VS</span><span class="nm">${esc(B.t.name)}</span>${crestSVG(B.t, 44)}</div>
+    <div class="xi"><div style="display:block;border:0;color:var(--muted);font-size:11px">${A.form} · ${STYLE_N[A.style]}</div><div style="display:block;border:0;color:var(--muted);font-size:11px;text-align:right">${B.form} · ${STYLE_N[B.style]}</div></div>
+    <div class="xi"><section>${xi(0)}</section><section>${xi(1)}</section></div>
+    <div class="ft">🏟️ ${esc(A.t.stadium || '')}${g.o.compName ? ' · ' + esc(g.o.compName) : ''} · Presiona J o PASE para empezar</div>`;
+  c.classList.add('show'); Sound.roar();
+}
+function hideIntroCard() { const c = $('#introCard'); if (c) c.classList.remove('show'); }
 /* =========================================================
    CÁMARA DE TV (perspectiva) + JUGADORES ANIMADOS
    ========================================================= */
-const CAMS = { tv: { D: 430, Hc: 290, viewW: 490 }, cerca: { D: 300, Hc: 190, viewW: 380 } };
+const CAMS = { tv: { D: 430, Hc: 280, viewW: 455 }, cerca: { D: 300, Hc: 185, viewW: 360 } };
 const G3 = { GX0: -450, GX1: W + 450, GY0: -80, GY1: H + 160, S: 1.4 };
 const C3 = { X0: -650, X1: W + 650, rows: 260 };
 const STAND = { y0: -72, depth: 250, z0: 7, h: 190 }, AD_Y = -58, AD_H = 9;
@@ -1828,7 +2050,8 @@ function buildTextures3D(home, away) {
   c.fillStyle = '#16422a'; c.fillRect(G3.GX0, G3.GY0, G3.GX1 - G3.GX0, G3.GY1 - G3.GY0);
   c.fillStyle = '#1b4f31'; c.fillRect(-60, -60, W + 120, H + 120);
   for (let i = 0; i < 18; i++) { c.fillStyle = i % 2 ? '#2e8a45' : '#277b3d'; c.fillRect(-40 + i * (W + 80) / 18, -40, (W + 80) / 18 + 1, H + 80); }
-  for (let i = 0; i < 9; i++) { c.fillStyle = 'rgba(255,255,255,.025)'; c.fillRect(-40, -40 + i * (H + 80) / 9, W + 80, (H + 80) / 18); }
+  for (let i = 0; i < 18; i++) for (let j = 0; j < 10; j++) if ((i + j) % 2) { c.fillStyle = 'rgba(255,255,255,.035)'; c.fillRect(-40 + i * (W + 80) / 18, -40 + j * (H + 80) / 10, (W + 80) / 18 + 1, (H + 80) / 10 + 1); }
+  for (let k = 0; k < 140; k++) { const x = rnd(-30, W + 30), y = rnd(-30, H + 30), gr = c.createRadialGradient(x, y, 1, x, y, rnd(20, 60)); gr.addColorStop(0, `rgba(${Math.random() < .5 ? '0,30,0' : '200,255,200'},.05)`); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(x - 60, y - 60, 120, 120); }
   for (let i = 0; i < 26000; i++) { c.fillStyle = Math.random() < 0.5 ? 'rgba(0,0,0,.06)' : 'rgba(255,255,255,.04)'; c.fillRect(rnd(-60, W + 60), rnd(-60, H + 60), 1.2, 1.2); }
   // desgaste en las áreas
   [0, W].forEach(x => { const gr = c.createRadialGradient(x, H / 2, 5, x, H / 2, 90); gr.addColorStop(0, 'rgba(120,90,40,.25)'); gr.addColorStop(1, 'rgba(120,90,40,0)'); c.fillStyle = gr; c.fillRect(x - 100, H / 2 - 100, 200, 200); });
@@ -1909,21 +2132,28 @@ function render3D(ctx, cw, ch, dpr) {
     const s = i / N, Y = STAND.y0 - s * STAND.depth, Z = STAND.z0 + s * STAND.h, P = V.p(V.camX, Y, Z);
     if (prev) {
       const X0 = V.camX - V.cx0 / P.k, Xw = cw / P.k, top = P.y, hgt = prev.y - P.y;
-      if (hgt > 0 && top < ch) ctx.drawImage(tex3.crowd, X0 - C3.X0, clamp((s * C3.rows) + Math.sin(t * 16 + i) * bounce, 0, C3.rows - 2), Xw, C3.rows / N, 0, top, cw, hgt + 1);
+      if (s > 0.47 && s <= 0.53) { if (hgt > 0) { ctx.fillStyle = s < 0.5 ? '#0d1322' : '#1c2436'; ctx.fillRect(0, top, cw, hgt + 1); } }
+      else if (hgt > 0 && top < ch) ctx.drawImage(tex3.crowd, X0 - C3.X0, clamp((s * C3.rows) + Math.sin(t * 16 + i) * bounce, 0, C3.rows - 2), Xw, C3.rows / N, 0, top, cw, hgt + 1);
     }
     prev = P;
   }
   const roof = V.p(V.camX, STAND.y0 - STAND.depth, STAND.z0 + STAND.h);
-  ctx.fillStyle = '#0b1220'; ctx.fillRect(0, roof.y - 26 * roof.k, cw, 26 * roof.k);
+  { const rh = 30 * roof.k; const rg = ctx.createLinearGradient(0, roof.y - rh, 0, roof.y); rg.addColorStop(0, '#05080f'); rg.addColorStop(1, '#1a2233'); ctx.fillStyle = rg; ctx.fillRect(0, roof.y - rh, cw, rh); ctx.fillStyle = '#fffbe6'; for (let x = (-(V.camX * roof.k) % (26 * roof.k)); x < cw; x += 26 * roof.k) ctx.fillRect(x, roof.y - 4 * roof.k, 9 * roof.k, 2.2 * roof.k); }
   [[-120, 1], [W * 0.33, 0.7], [W * 0.66, 0.7], [W + 120, 1]].forEach(([x, s]) => { const L = V.p(x, STAND.y0 - STAND.depth - 20, STAND.z0 + STAND.h + 40); if (L.x < -200 || L.x > cw + 200) return; const r = 90 * L.k * s; const gl = ctx.createRadialGradient(L.x, L.y, 1, L.x, L.y, r); gl.addColorStop(0, 'rgba(255,255,235,.95)'); gl.addColorStop(0.15, 'rgba(255,250,210,.45)'); gl.addColorStop(1, 'rgba(255,250,210,0)'); ctx.fillStyle = gl; ctx.fillRect(L.x - r, L.y - r, r * 2, r * 2); ctx.fillStyle = '#fffbe0'; ctx.fillRect(L.x - 10 * L.k, L.y - 3 * L.k, 20 * L.k, 6 * L.k); });
   // vallas LED
   const a0 = V.p(V.camX, AD_Y, 0), a1 = V.p(V.camX, AD_Y, AD_H), aX0 = V.camX - V.cx0 / a0.k, aXw = cw / a0.k, scroll = (t * 40) % 260;
   ctx.drawImage(tex3.ads, (aX0 - C3.X0) * 1 + scroll, 0, aXw, 36, 0, a1.y, cw, a0.y - a1.y);
   ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(0, a0.y, cw, Math.max(1, 2 * a0.k));
+  // bruma de luz sobre el césped
+  { const hz = V.p(V.camX, -40, 0).y, hg = ctx.createLinearGradient(0, hz, 0, hz + ch * 0.35); hg.addColorStop(0, 'rgba(210,230,255,.10)'); hg.addColorStop(1, 'rgba(210,230,255,0)'); ctx.fillStyle = hg; ctx.fillRect(0, hz, cw, ch * 0.35); }
   // sombras
   const b = this.ball, sq = (x, y, r) => { const P = V.p(x, y, 0), Q = V.p(x, y + r, 0), R = V.p(x, y - r, 0); return { x: P.x, y: P.y, rx: r * P.k, ry: Math.max(1, (Q.y - R.y) / 2) }; };
   ctx.fillStyle = 'rgba(0,0,0,.32)';
-  for (const p of this.players) { const s = sq(p.x + 2, p.y + 2, 6.5); ctx.beginPath(); ctx.ellipse(s.x, s.y, s.rx, s.ry, 0, 0, 7); ctx.fill(); }
+  const allP = this.ref ? this.players.concat([this.ref]) : this.players;
+  for (const p of allP) { const s = sq(p.x + 1, p.y + 1, 6.2); ctx.beginPath(); ctx.ellipse(s.x, s.y, s.rx, s.ry, 0, 0, 7); ctx.fill(); }
+  ctx.fillStyle = 'rgba(0,0,0,.11)';
+  for (const p of allP) for (const [ox, oy] of [[-11, -7], [11, -7], [-9, 8], [9, 8]]) { const s = sq(p.x + ox, p.y + oy, 7); ctx.beginPath(); ctx.ellipse(s.x, s.y, s.rx * 1.25, s.ry * 0.8, Math.atan2(oy, ox) * 0.15, 0, 7); ctx.fill(); }
+  ctx.fillStyle = 'rgba(0,0,0,.32)';
   { const s = sq(b.x + b.z * 0.3, b.y + b.z * 0.2, BR * (1 - Math.min(b.z, 80) / 160)); ctx.beginPath(); ctx.ellipse(s.x, s.y, s.rx, s.ry, 0, 0, 7); ctx.fill(); }
   // anillo del jugador controlado
   if (this.ctrl && this.human >= 0 && this.state !== 'replay' && this.players.includes(this.ctrl)) { const s = sq(this.ctrl.x, this.ctrl.y, 9); ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = Math.max(1.5, 1.4 * s.rx / 9); ctx.beginPath(); ctx.ellipse(s.x, s.y, s.rx, s.ry, 0, 0, 7); ctx.stroke(); }
@@ -1933,7 +2163,7 @@ function render3D(ctx, cw, ch, dpr) {
   // objetos ordenados por profundidad
   const items = [];
   [0, W].forEach(gx => { items.push({ y: GY1 - 1, f: () => drawGoalPart(ctx, V, gx, 'far', this.netPuff && this.netPuff.gx === gx ? this.netPuff.v : 0) }); items.push({ y: GY2 + 0.5, f: () => drawGoalPart(ctx, V, gx, 'near', 0) }); });
-  for (const p of this.players) items.push({ y: p.y, f: () => drawPlayer3D(ctx, V, this, p) });
+  for (const p of allP) items.push({ y: p.y, f: () => drawPlayer3D(ctx, V, this, p) });
   items.push({ y: b.y + 0.2, f: () => drawBall3D(ctx, V, this) });
   items.sort((a, c) => a.y - c.y).forEach(o => o.f());
   for (const q of this.particles) { const P = V.p(q.x, q.y, q.z || 1); ctx.globalAlpha = Math.min(1, q.life * 2); ctx.fillStyle = q.c; ctx.fillRect(P.x, P.y, q.s * P.k * 0.8, q.s * P.k * (q.conf ? 0.5 : 0.8)); }
@@ -1967,62 +2197,95 @@ function drawGoalPart(ctx, V, gx, part, puff) {
     line(P(gx, GY2, 0), P(gx, GY2, Hh), Math.max(2.2, 1.7 * k), '#ffffff'); line(P(gx, GY1, Hh), P(gx, GY2, Hh), Math.max(2.2, 1.7 * k), '#ffffff'); line(P(gx, GY2, Hh), P(bx, GY2, Hb), 1, 'rgba(255,255,255,.6)');
   }
 }
-const BOOTS = ['#111827', '#f8fafc', '#ef4444', '#22d3ee', '#facc15', '#a3e635'];
+const BOOTS = ['#111827', '#f8fafc', '#ef4444', '#22d3ee', '#facc15', '#a3e635', '#f97316', '#e879f9'];
 function drawPlayer3D(ctx, V, m, p) {
-  const T = m.teams[p.team], P = V.p(p.x, p.y, 0), k = P.k; if (P.x < -60 || P.x > V.cw + 60) return;
-  const gk = p.isGK, main = gk ? T.gkc : T.main, trim = gk ? '#111827' : T.trim, shorts = gk ? '#111827' : (colorDist(T.trim, '#ffffff') < 60 ? '#f8fafc' : T.trim);
+  const P = V.p(p.x, p.y, 0), k = P.k * 1.14; if (P.x < -60 || P.x > V.cw + 60) return;
+  const ref = p.isRef, T = ref ? null : m.teams[p.team], gk = p.isGK && !ref;
+  const main = ref ? '#111827' : gk ? T.gkc : T.main, trim = ref ? '#facc15' : gk ? '#111827' : T.trim;
+  const alt = ref ? null : gk ? null : T.alt, pat = ref || gk ? null : T.pat;
+  const shorts = ref ? '#111827' : gk ? '#111827' : (T.shorts || (colorDist(T.trim, '#ffffff') < 60 ? '#f8fafc' : T.trim)), socks = ref ? '#111827' : gk ? T.gkc : (T.socks || main);
   const fx = Math.cos(p.face), fz = Math.sin(p.face), side = Math.abs(fx) > 0.45, dir = fx >= 0 ? 1 : -1, back = !side && fz < 0;
-  const spd = Math.hypot(p.vx, p.vy), run = clamp(spd / 90, 0, 1.25), ph = p.anim * 1.0;
-  let la = Math.sin(ph) * 0.8 * run, lb = -la, armA = -la * 0.9, armB = la * 0.9, lean = run * 0.8, z = 0, rot = 0, raise = false;
+  const spd = Math.hypot(p.vx, p.vy), run = clamp(spd / 90, 0, 1.25), ph = p.anim, tnow = performance.now() / 1000;
+  let la = Math.sin(ph) * 0.8 * run, lb = -la, armA = -la * 0.9, armB = la * 0.9, lean = run * 0.8, z = 0, rot = 0, raise = false, armsOut = false, handsHead = false, kneel = false, bob = run < 0.1 ? Math.sin(tnow * 2.2 + p.runOff) * 0.15 : Math.abs(Math.sin(ph)) * 0.45 * run;
   if (p.kickT > 0) { const kq = 1 - p.kickT / 0.3; la = -0.9 + kq * 2.3; lb = 0.15; lean = -1.2; armA = -1.2; armB = 1.0; }
-  if (p.celebrate) { raise = true; z = Math.abs(Math.sin(performance.now() / 120 + p.runOff)) * 2.5; }
+  if (p.headT > 0) { const hq = Math.sin((1 - p.headT / 0.4) * Math.PI); z = hq * 6; la = 0.5; lb = -0.3; raise = false; armA = -1.6; armB = 1.6; lean = 1.4; }
+  if (m.ball.owner === p && p.throwIn) { raise = true; la = 0.15; lb = -0.15; }
+  if (p.celebrate) {
+    const st = p === m.scorerP ? m.celeStyle : 'brazos';
+    if (st === 'avion') { armsOut = true; lean = 0.6; } else if (st === 'rodilla' && spd < 40) { kneel = true; raise = true; } else if (st === 'salto') { raise = true; z = Math.abs(Math.sin(tnow * 6 + p.runOff)) * 5; } else { raise = true; z = Math.abs(Math.sin(tnow * 8 + p.runOff)) * 2.5; }
+  }
+  if (p.sad) { handsHead = true; lean = 1.2; la *= 0.3; lb *= 0.3; }
   if (p.slideT > 0) { rot = dir * 1.25; la = 1.2; lb = 0.9; z = 1; }
   if (p.fallT > 0) { rot = dir * -1.45; la = 0.2; lb = -0.2; armA = 1.5; armB = 1.2; }
   if (gk && p.diving && (m.state === 'pk' || (m.ball.shot && !m.ball.owner))) { rot = (p.diving > 0 ? 1 : -1) * 1.1; z = 5; raise = true; }
-  ctx.save(); ctx.translate(P.x, P.y - z * k); ctx.scale(k, k); if (rot) { ctx.translate(0, -6); ctx.rotate(rot); ctx.translate(0, 6); }
+  const gkHold = gk && m.ball.owner === p && !p.goalKick;
+  ctx.save(); ctx.translate(P.x, P.y - (z + bob) * k); ctx.scale(k, k); if (rot) { ctx.translate(0, -6); ctx.rotate(rot); ctx.translate(0, 6); }
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  const hipY = -9, shY = -14.6, dx = side ? dir : 0, sx = side ? 0 : 1;
+  const hipY = kneel ? -5.5 : -9, shY = hipY - 5.6, dx = side ? dir : 0, sx = side ? 0 : 1;
+  const boot = BOOTS[(p.pid || 0) % BOOTS.length];
   const leg = (a, offX, shade) => {
-    const kneeX = offX + Math.sin(a) * 4.6 * dx, kneeY = hipY + Math.cos(a) * 4.6 - (!side ? Math.max(0, Math.sin(a)) * 1.6 : 0);
-    const b2 = a - (0.25 + Math.max(0, -Math.sin(a + 0.6)) * 1.1 * Math.min(1, run + (p.kickT > 0 ? 1 : 0)));
-    const ftX = kneeX + Math.sin(b2) * 4.4 * dx, ftY = kneeY + Math.cos(b2) * 4.4;
-    ctx.strokeStyle = shade ? shadeC(p.skin, -25) : p.skin; ctx.lineWidth = 1.7; ctx.beginPath(); ctx.moveTo(offX, hipY); ctx.lineTo(kneeX, kneeY); ctx.stroke();
-    ctx.strokeStyle = shade ? shadeC(main, -35) : main; ctx.lineWidth = 1.75; ctx.beginPath(); ctx.moveTo(kneeX, kneeY + 0.4); ctx.lineTo(ftX, ftY); ctx.stroke();
-    ctx.strokeStyle = BOOTS[p.pid % BOOTS.length]; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(ftX - 0.3 * dx, ftY); ctx.lineTo(ftX + 1.5 * (dx || 0.3), ftY + 0.1); ctx.stroke();
+    let kneeX = offX + Math.sin(a) * 4.6 * dx, kneeY = hipY + Math.cos(a) * 4.6 - (!side ? Math.max(0, Math.sin(a)) * 1.6 : 0);
+    let b2 = a - (0.25 + Math.max(0, -Math.sin(a + 0.6)) * 1.1 * Math.min(1, run + (p.kickT > 0 ? 1 : 0)));
+    if (kneel) { kneeY = hipY + 3.4; b2 = Math.PI / 2 * (dx || 1); }
+    const ftX = kneeX + Math.sin(b2) * 4.4 * (dx || (kneel ? 1 : 0)), ftY = kneeY + Math.cos(b2) * 4.4;
+    ctx.strokeStyle = shade ? shadeC(p.skin, -28) : p.skin; ctx.lineWidth = 1.75; ctx.beginPath(); ctx.moveTo(offX, hipY); ctx.lineTo(kneeX, kneeY); ctx.stroke();
+    ctx.strokeStyle = shade ? shadeC(socks, -40) : socks; ctx.lineWidth = 1.85; ctx.beginPath(); ctx.moveTo(kneeX, kneeY + 0.5); ctx.lineTo(ftX, ftY); ctx.stroke();
+    ctx.strokeStyle = boot; ctx.lineWidth = 1.55; ctx.beginPath(); ctx.moveTo(ftX - 0.3 * dx, ftY); ctx.lineTo(ftX + 1.6 * (dx || 0.3), ftY + 0.1); ctx.stroke();
   };
-  leg(lb, -0.9 * sx, true); leg(la, 0.9 * sx, false);
-  // shorts
-  ctx.fillStyle = shorts; ctx.beginPath(); ctx.moveTo(-1.9, hipY - 2.2); ctx.lineTo(1.9, hipY - 2.2); ctx.lineTo(2.1 + (side ? 0 : 0.2), hipY + 1.3); ctx.lineTo(-2.1, hipY + 1.3); ctx.closePath(); ctx.fill();
-  // torso
+  leg(lb, -0.95 * sx, true); leg(la, 0.95 * sx, false);
+  ctx.fillStyle = shorts; ctx.beginPath(); ctx.moveTo(-2, hipY - 2.3); ctx.lineTo(2, hipY - 2.3); ctx.lineTo(2.25, hipY + 1.4); ctx.lineTo(-2.25, hipY + 1.4); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(-0.15, hipY - 0.6, 0.3, 2);
   const lx = lean * 0.5 * dx;
-  ctx.fillStyle = main; ctx.strokeStyle = 'rgba(0,0,0,.35)'; ctx.lineWidth = 0.25;
-  ctx.beginPath(); ctx.moveTo(-1.9, hipY - 1.6); ctx.lineTo(1.9, hipY - 1.6); ctx.lineTo(2.3 + lx, shY + 0.6); ctx.quadraticCurveTo(lx, shY - 0.4, -2.3 + lx, shY + 0.6); ctx.closePath(); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = trim; ctx.fillRect(-2.2 + lx, shY + 0.1, 4.4, 0.6);
-  if (k > 1.15) { ctx.fillStyle = trim; ctx.textAlign = 'center'; ctx.font = `900 ${back ? 3.2 : 1.6}px Arial`; ctx.fillText(p.num, lx * 0.6 + (side && !back ? dir * 0.7 : 0), back ? hipY - 1.9 : shY + 2.8); }
-  // brazos
+  const torso = () => { ctx.beginPath(); ctx.moveTo(-2, hipY - 1.7); ctx.lineTo(2, hipY - 1.7); ctx.lineTo(2.45 + lx, shY + 0.6); ctx.quadraticCurveTo(lx, shY - 0.5, -2.45 + lx, shY + 0.6); ctx.closePath(); };
+  ctx.fillStyle = main; torso(); ctx.fill();
+  if (pat && alt) {
+    ctx.save(); torso(); ctx.clip(); ctx.fillStyle = alt;
+    if (pat === 'v') for (let x = -2.6; x < 3; x += 1.3) ctx.fillRect(x + lx * 0.5, shY - 1, 0.62, 8);
+    else if (pat === 'h') for (let y = shY; y < hipY; y += 1.5) ctx.fillRect(-3 + lx, y, 6.5, 0.75);
+    else if (pat === 'band') ctx.fillRect(-3 + lx, shY + 2.1, 6.5, 1.3);
+    else if (pat === 'diag') { ctx.beginPath(); ctx.moveTo(-2.6 + lx, shY + 0.2); ctx.lineTo(-1.4 + lx, shY - 0.2); ctx.lineTo(2.6, hipY - 1.3); ctx.lineTo(1.4, hipY - 0.6); ctx.closePath(); ctx.fill(); }
+    ctx.restore();
+  }
+  const shg = ctx.createLinearGradient(-2.5, 0, 2.5, 0); shg.addColorStop(0, 'rgba(0,0,0,.25)'); shg.addColorStop(0.45, 'rgba(255,255,255,.12)'); shg.addColorStop(1, 'rgba(0,0,0,.18)'); ctx.fillStyle = shg; torso(); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,.4)'; ctx.lineWidth = 0.22; torso(); ctx.stroke();
+  ctx.fillStyle = trim; ctx.fillRect(-2.3 + lx, shY + 0.15, 4.6, 0.55);
+  if (k > 1.1 && !ref) { ctx.fillStyle = (pat && alt) ? '#ffffff' : trim; ctx.textAlign = 'center'; ctx.font = `900 ${back ? 3.3 : 1.7}px Arial`; ctx.fillText(p.num, lx * 0.6 + (side && !back ? dir * 0.7 : 0), back ? hipY - 2 : shY + 2.9); }
+  const skinArm = gk ? '#f1f5f9' : p.skin;
   const arm = (a, offX, shade) => {
-    const ang = raise ? -2.7 + (offX > 0 ? 0.3 : -0.3) : a, ex = lx + offX + Math.sin(ang) * 3.1 * (dx || (offX > 0 ? 0.6 : -0.6)), ey = shY + 0.8 + Math.cos(ang) * 3.1;
-    const hx = ex + Math.sin(ang - (raise ? 0 : 0.5)) * 2.8 * (dx || (offX > 0 ? 0.6 : -0.6)), hy = ey + Math.cos(ang - (raise ? 0 : 0.5)) * 2.8;
-    ctx.strokeStyle = shade ? shadeC(main, -30) : main; ctx.lineWidth = 1.35; ctx.beginPath(); ctx.moveTo(lx + offX, shY + 0.9); ctx.lineTo(ex, ey); ctx.stroke();
-    ctx.strokeStyle = gk ? '#f1f5f9' : (shade ? shadeC(p.skin, -25) : p.skin); ctx.lineWidth = 1.1; ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(hx, hy); ctx.stroke();
-    if (gk) { ctx.fillStyle = '#e2e8f0'; ctx.beginPath(); ctx.arc(hx, hy, 0.9, 0, 7); ctx.fill(); }
+    const sgn = offX > 0 ? 1 : -1, ddx = dx || sgn * 0.6;
+    let ang = a, ang2 = a - 0.5;
+    if (raise) { ang = -2.7 + sgn * 0.3; ang2 = ang; }
+    if (armsOut) { ang = sgn * 1.57 * (dx ? dir : 1) - (dx ? 0 : 0); ang2 = ang; }
+    if (handsHead) { ang = -2.3; ang2 = 0.6; }
+    if (gkHold) { ang = 1.2 * (dx || 0.4); ang2 = 1.4 * (dx || 0.4); }
+    if (p.card && offX > 0 && p.cardT > 0) { ang = -3.0; ang2 = -3.0; }
+    const ex = lx + offX + Math.sin(ang) * 3.1 * (armsOut && !dx ? 1 : ddx), ey = shY + 0.8 + Math.cos(ang) * 3.1 * (armsOut ? 0.15 : 1);
+    const hx = ex + Math.sin(ang2) * 2.8 * (armsOut && !dx ? 1 : ddx), hy = ey + Math.cos(ang2) * 2.8 * (armsOut ? 0.15 : 1);
+    ctx.strokeStyle = shade ? shadeC(main, -32) : main; ctx.lineWidth = 1.4; ctx.beginPath(); ctx.moveTo(lx + offX, shY + 0.9); ctx.lineTo(ex, ey); ctx.stroke();
+    ctx.strokeStyle = shade ? shadeC(skinArm, -25) : skinArm; ctx.lineWidth = 1.12; ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(hx, hy); ctx.stroke();
+    if (gk) { ctx.fillStyle = '#e2e8f0'; ctx.beginPath(); ctx.arc(hx, hy, 0.95, 0, 7); ctx.fill(); }
+    if (p.card && offX > 0 && p.cardT > 0) { ctx.fillStyle = p.card; ctx.fillRect(hx - 0.9, hy - 2.6, 1.8, 2.4); }
   };
-  arm(armB, side ? -0.3 * dir : -2.3, true); arm(armA, side ? 0.4 * dir : 2.3, false);
-  // cabeza
-  const hx = lx * 1.1 + (side ? 0.35 * dir : 0), hy = shY - 1.9;
-  ctx.fillStyle = p.skin; ctx.fillRect(hx - 0.5, shY - 0.9, 1, 1); ctx.beginPath(); ctx.arc(hx, hy, 1.55, 0, 7); ctx.fill();
-  const hs = p.pid % 5; ctx.fillStyle = p.hair;
-  if (hs === 0) { ctx.beginPath(); ctx.arc(hx - (side ? 0.2 * dir : 0), hy - 0.25, 1.62, Math.PI * 1.02, Math.PI * 1.98); ctx.fill(); if (back) { ctx.beginPath(); ctx.arc(hx, hy, 1.55, 0, 7); ctx.fill(); } }
-  else if (hs === 1) { ctx.beginPath(); ctx.arc(hx, hy - 0.35, 1.58, Math.PI, 0); ctx.fill(); }
-  else if (hs === 2) { ctx.beginPath(); ctx.arc(hx - (side ? 0.3 * dir : 0), hy - 0.4, 2.05, Math.PI * 0.9, Math.PI * 2.1); ctx.fill(); }
-  else if (hs === 3) { ctx.beginPath(); ctx.arc(hx, hy - 0.3, 1.65, Math.PI, 0); ctx.fill(); ctx.fillRect(hx - (side ? 1.6 * dir : 1.6), hy - 0.3, side ? 1.2 * -dir : 3.2, 2.4); }
-  if (side && !back && hs !== 4) { ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(hx + 0.75 * dir - 0.2, hy - 0.2, 0.4, 0.4); }
+  arm(armB, side ? -0.3 * dir : -2.4, true); arm(armA, side ? 0.4 * dir : 2.4, false);
+  const hx = lx * 1.1 + (side ? 0.35 * dir : 0) + (p.sad ? lx * 0.6 : 0), hy = shY - 1.95 + (p.sad ? 0.6 : 0);
+  ctx.fillStyle = p.skin; ctx.fillRect(hx - 0.55, shY - 0.95, 1.1, 1.1); ctx.beginPath(); ctx.arc(hx, hy, 1.6, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,.12)'; ctx.beginPath(); ctx.arc(hx + 0.4, hy + 0.3, 1.4, -0.2, 1.6); ctx.fill();
+  const hs = (p.pid || 0) % 6; ctx.fillStyle = p.hair;
+  if (hs === 0) { ctx.beginPath(); ctx.arc(hx - (side ? 0.2 * dir : 0), hy - 0.25, 1.66, Math.PI * 1.02, Math.PI * 1.98); ctx.fill(); if (back) { ctx.beginPath(); ctx.arc(hx, hy, 1.6, 0, 7); ctx.fill(); } }
+  else if (hs === 1) { ctx.beginPath(); ctx.arc(hx, hy - 0.35, 1.62, Math.PI, 0); ctx.fill(); }
+  else if (hs === 2) { ctx.beginPath(); ctx.arc(hx - (side ? 0.3 * dir : 0), hy - 0.4, 2.1, Math.PI * 0.9, Math.PI * 2.1); ctx.fill(); }
+  else if (hs === 3) { ctx.beginPath(); ctx.arc(hx, hy - 0.3, 1.7, Math.PI, 0); ctx.fill(); ctx.fillRect(hx - (side ? 1.6 * dir : 1.6), hy - 0.3, side ? 1.2 * -dir : 3.2, 2.5); }
+  else if (hs === 4) { for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(hx - 1.2 + i * 0.6, hy - 1.25 + Math.abs(i - 2) * 0.18, 0.5, 0, 7); ctx.fill(); } }
+  if (side && !back && hs !== 5) { ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(hx + 0.78 * dir - 0.2, hy - 0.2, 0.4, 0.42); }
+  if (!back && !side) { ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(hx - 0.7, hy - 0.15, 0.35, 0.4); ctx.fillRect(hx + 0.35, hy - 0.15, 0.35, 0.4); }
   ctx.restore();
-  if (p.yc && k > 1) { ctx.fillStyle = '#facc15'; ctx.fillRect(P.x + 4 * k, P.y - 19 * k, 1.4 * k, 2 * k); }
+  if (p.yc && k > 1 && !ref) { ctx.fillStyle = '#facc15'; ctx.fillRect(P.x + 4.5 * k, P.y - 21 * k, 1.5 * k, 2.1 * k); }
 }
 function shadeC(hex, amt) { try { return shade(hex, amt); } catch (e) { return hex; } }
 function drawBall3D(ctx, V, m) {
-  const b = m.ball, P = V.p(b.x, b.y, b.z + BR), r = Math.max(2, BR * P.k * 0.95);
+  const b = m.ball, o = b.owner; let bz = b.z, bx = b.x, by = b.y;
+  if (o && o.throwIn) { bz = 22; bx = o.x; by = o.y; } else if (o && o.isGK && !o.goalKick) { bz = 9; bx = o.x + Math.cos(o.face) * 3; by = o.y + Math.sin(o.face) * 3; }
+  const P = V.p(bx, by, bz + BR), r = Math.max(2, BR * P.k * 0.95);
   const sp = Math.hypot(b.vx, b.vy);
   if (sp > 380 && !b.owner) { const Q = V.p(b.x - b.vx * 0.04, b.y - b.vy * 0.04, Math.max(0, b.z - b.vz * 0.04) + BR); const gr = ctx.createLinearGradient(Q.x, Q.y, P.x, P.y); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(1, 'rgba(255,255,255,.55)'); ctx.strokeStyle = gr; ctx.lineWidth = r * 1.6; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(Q.x, Q.y); ctx.lineTo(P.x, P.y); ctx.stroke(); }
   const g = ctx.createRadialGradient(P.x - r * 0.35, P.y - r * 0.35, r * 0.1, P.x, P.y, r); g.addColorStop(0, '#ffffff'); g.addColorStop(0.7, '#e5e7eb'); g.addColorStop(1, '#9ca3af');
@@ -2155,7 +2418,7 @@ function quickSim(home, away, ko) { const s = new SimMatch(home, away, { ko }); 
    MODO MANAGER — lógica (sin interfaz)
    ========================================================= */
 let career = null;
-const SAVE_KEY = 'golazo26_v2';
+const SAVE_KEY = 'golazo26_v3';
 const CUP_R = ['Octavos', 'Cuartos', 'Semifinal', 'Final'];
 const CONT_R = ['Grupos · F1', 'Grupos · F2', 'Grupos · F3', 'Semifinal', 'Final'];
 const COMP_N = { L: 'Liga Andina', C: 'Copa Nacional', K: 'Copa Continental' };
@@ -2165,7 +2428,9 @@ const PRIZE_L1 = [4e6, 3e6, 2.4e6, 1.9e6, 1.5e6, 1.2e6, 1e6, 8e5, 6e5, 5e5], PRI
 const PRIZE_C = [1.5e5, 3e5, 6e5, 1e6], PRIZE_K = { g: 4e5, s: 8e5, f: 1.5e6, w: 3e6 };
 const club = id => career.clubs.find(c => c.id === id);
 const myClub = () => club(career.teamId);
-const isDom = id => !!DOM_CLUBS.find(d => d.id === id);
+const curWorld = () => WORLDS[(career && career.world) || 'andina'];
+const isDom = id => { const w = curWorld(); return w.d1.includes(id) || w.d2.includes(id); };
+function applyWorld(w) { const W2 = WORLDS[w] || WORLDS.andina; LEAGUE_N[1] = W2.L[1]; LEAGUE_N[2] = W2.L[2]; COMP_N.L = W2.L[1]; }
 const NAT_BONUS = { ESP: 6, BRA: 5, ARG: 4, URU: 2, COL: 2, CHI: 1, PER: 0, ECU: 0, PAR: 0, VEN: -1 };
 const EXT_CLUB = { PER: ['Atlético Rímac', 'Sport Chancay', 'Unión Pisco'], ARG: ['Club Pampero', 'Deportivo Mendoza Sur', 'Rivera Juniors'], BRA: ['Esporte Recife Norte', 'Clube Atlântico', 'Paraná Futebol'], COL: ['Deportivo Caribe', 'Atlético Llanero'], URU: ['Club Rambla', 'Montevideo Oeste'], CHI: ['Deportivo Austral', 'Unión Valparaíso Alto'], PAR: ['Club Asunción Sur'], ECU: ['Deportivo Costa'], VEN: ['Atlético Caribe'], ESP: ['CD Meseta', 'Real Club Levante Norte', 'UD Cantábrica'] };
 
@@ -2173,20 +2438,23 @@ function saveCareer() {
   if (!career) return true; career.nextPID = PID;
   const ok = store.set(SAVE_KEY, career); if (!ok) toast('No se pudo guardar en este navegador'); return ok;
 }
-function loadCareer() { const s = store.get(SAVE_KEY); if (!s || !s.clubs) return false; career = s; PID = s.nextPID || 90000; return true; }
+function loadCareer() { const s = store.get(SAVE_KEY); if (!s || !s.clubs) return false; career = s; PID = s.nextPID || 90000; applyWorld(career.world); return true; }
 function addNews(t, ic = '📰') { career.news.unshift({ s: career.seasonN, d: career.season ? career.season.idx + 1 : 0, t, ic }); career.news = career.news.slice(0, 60); }
 function inbox(o) { o.id = Date.now() + Math.random(); o.read = false; o.s = career.seasonN; o.d = career.season ? career.season.idx : 0; career.inbox.unshift(o); career.inbox = career.inbox.slice(0, 80); return o; }
 const totalWages = t => t.players.reduce((s, p) => s + (p.wage || 0), 0);
 
 /* ---------- mundo ---------- */
-function newWorld() { PID = 1; return [...DOM_CLUBS.map(makeClub), ...FOR_CLUBS.map(makeClub)]; }
+function newWorld(w) { PID = 1; const W2 = WORLDS[w || 'andina']; return [...W2.d1, ...W2.d2, ...W2.for].map(id => buildClub(defById(id))); }
+function quickAll() { return ALL_DEFS().map(buildClub); }
 function genScoutPool() { return Array.from({ length: 7 }, () => { const exp = rint(1, 5), jud = rint(1, 5); return { id: PID++, name: genName(pick(['PER', 'ARG', 'URU', 'COL'])), exp, jud, cost: (exp + jud) * 45000, mission: null }; }); }
 function genFreeAgents(n) { return Array.from({ length: n }, () => { const pos = pick(POSL), p = makePlayer(pos, rint(54, 72), rint(19, 34), pick(['PER', 'PER', 'ARG', 'COL', 'URU', 'VEN', 'ECU', 'PAR', 'CHI', 'BRA']), { cEnd: 0 }); p.free = true; return p; }); }
-function startBudget(t) { return [0, 9e5, 1.6e6, 2.6e6, 4.2e6, 6.5e6][t.rep]; }
-function newCareer(teamId, clubs, mgrName) {
+function startBudget(t) { return [0, 9e5, 1.6e6, 2.6e6, 4.2e6, 6.5e6][t.rep] * (curWorld().money || 1); }
+function newCareer(teamId, clubs, mgrName, world) {
+  world = world || 'andina'; applyWorld(world);
   career = {
+    world,
     ver: 2, mgr: { name: mgrName || 'Profe', rep: 30, history: [], titles: 0 }, teamId, clubs, seasonN: 1, year: 2026,
-    divs: { 1: DOM_CLUBS.filter(d => d.div === 1).map(d => d.id), 2: DOM_CLUBS.filter(d => d.div === 2).map(d => d.id) },
+    divs: { 1: WORLDS[world].d1.slice(), 2: WORLDS[world].d2.slice() },
     inbox: [], news: [], scoutPool: [], scouts: [], youthScout: null, academy: [], ext: [], free: [], shortlist: [], loansOut: [], tlog: [], awards: [], trophies: [],
     intensity: 1, pressAt: -1, lastReport: null, neg: {}, fired: false, summary: null, jobOffers: null, nextPID: 0, contQ: null
   };
@@ -2212,7 +2480,7 @@ function buildSeason() {
   const cupT = shuffle([...career.divs[1], ...shuffle(career.divs[2].slice()).slice(0, 6)]);
   S.cup = { teams: cupT, rounds: [[]], champ: null };
   for (let i = 0; i < 16; i += 2) S.cup.rounds[0].push({ a: cupT[i], b: cupT[i + 1], w: null });
-  const dom = shuffle(career.contQ.slice()), fr = shuffle(FOR_CLUBS.map(c => c.id));
+  const dom = shuffle(career.contQ.slice()), fr = shuffle(curWorld().for.filter(id => career.clubs.some(c => c.id === id)));
   const gA = [dom[0], dom[1], fr[0], fr[1]], gB = [dom[2], dom[3], fr[2], fr[3]], gf = g => [[[g[0], g[1]], [g[2], g[3]]], [[g[3], g[0]], [g[1], g[2]]], [[g[0], g[2]], [g[3], g[1]]]];
   S.cont = { teams: [...gA, ...gB], groups: [gA, gB], gfx: [0, 1, 2].map(r => [...gf(gA)[r], ...gf(gB)[r]]), res: [], semis: null, final: null, champ: null };
   for (let r = 0; r < 18; r++) {
@@ -2261,7 +2529,7 @@ function setObjectives() {
   const me = myClub(), div = myDiv(), r = me.rep, S = career.season;
   const rankIn = career.divs[div].map(club).sort((a, b) => squadOvr(b) - squadOvr(a)).findIndex(c => c.id === me.id) + 1;
   let liga;
-  if (div === 1) liga = rankIn <= 1 ? { pos: 1, txt: 'Salir campeón de la Liga Andina' } : rankIn <= 3 ? { pos: 3, txt: 'Terminar en el top 3' } : rankIn <= 6 ? { pos: 5, txt: 'Terminar en el top 5' } : { pos: 8, txt: 'Evitar el descenso' };
+  if (div === 1) liga = rankIn <= 1 ? { pos: 1, txt: `Salir campeón de la ${LEAGUE_N[1]}` } : rankIn <= 3 ? { pos: 3, txt: 'Terminar en el top 3' } : rankIn <= 6 ? { pos: 5, txt: 'Terminar en el top 5' } : { pos: 8, txt: 'Evitar el descenso' };
   else liga = rankIn <= 4 ? { pos: 2, txt: 'Lograr el ascenso (top 2)' } : { pos: 5, txt: 'Terminar en el top 5 de Segunda' };
   const inCup = S.cup.teams.includes(me.id), inCont = S.cont.teams.includes(me.id);
   career.board = {
@@ -2555,7 +2823,7 @@ function seasonSummary() {
   const pos = (div === 1 ? t1 : t2).findIndex(r => r.id === me.id) + 1;
   const sum = { season: S.n, div, pos, champ1: t1[0].id, champ2: t2[0].id, cup: S.cup.champ, cont: S.cont.champ, up: [t2[0].id, t2[1].id], down: [t1[8].id, t1[9].id], trophies: [], prize: 0 };
   sum.prize = div === 1 ? PRIZE_L1[pos - 1] : PRIZE_L2[pos - 1]; career.money += sum.prize;
-  if (div === 1 && pos === 1) sum.trophies.push('Liga Andina'); if (div === 2 && pos === 1) sum.trophies.push('Segunda Andina');
+  if (div === 1 && pos === 1) sum.trophies.push(LEAGUE_N[1]); if (div === 2 && pos === 1) sum.trophies.push(LEAGUE_N[2]);
   if (S.cup.champ === me.id) sum.trophies.push('Copa Nacional'); if (S.cont.champ === me.id) sum.trophies.push('Copa Continental');
   sum.trophies.forEach(t => career.trophies.push({ s: S.n, t, club: me.name })); career.mgr.titles += sum.trophies.length;
   const B = career.board, o = B.obj; const met = { liga: pos <= o.liga.pos };
@@ -2605,7 +2873,7 @@ function startNextSeason() {
   // ascensos y descensos
   career.divs[1] = career.divs[1].filter(id => !sum.down.includes(id)).concat(sum.up);
   career.divs[2] = career.divs[2].filter(id => !sum.up.includes(id)).concat(sum.down);
-  sum.up.forEach(id => addNews(`⬆️ ${club(id).name} asciende a la Liga Andina.`, '⬆️')); sum.down.forEach(id => addNews(`⬇️ ${club(id).name} desciende a Segunda.`, '⬇️'));
+  sum.up.forEach(id => addNews(`⬆️ ${club(id).name} asciende a la ${LEAGUE_N[1]}.`, '⬆️')); sum.down.forEach(id => addNews(`⬇️ ${club(id).name} desciende a Segunda.`, '⬇️'));
   career.contQ = leagueTable(1).slice(0, 4).map(r => r.id).filter(id => career.divs[1].includes(id));
   while (career.contQ.length < 4) { const x = career.divs[1].find(id => !career.contQ.includes(id)); career.contQ.push(x); }
   // préstamos de vuelta
@@ -2724,13 +2992,14 @@ const formBadge = f => `<span style="display:inline-block;width:18px;height:18px
 function sideOf(t, formOverride) { if (formOverride && formOverride !== t.formation) { t.formation = formOverride; autoXI(t); } fixXI(t); return { xi: xiPlayers(t), bench: benchPlayers(t), form: t.formation, style: t.style, press: t.press, pk: t.pk, fk: t.fk }; }
 
 /* ---------- partido rápido ---------- */
-let quickWorld = null, qSel = [], qDiff = 1, qDur = 5, qTab = 1, qKo = 0, qForm = null;
-function openQuick() { if (!quickWorld) { const keep = PID; quickWorld = newWorld(); PID = Math.max(PID, keep); } if (!qSel.length) qSel = ['CON', 'TIB']; renderQuick(); show('quick'); }
+let quickWorld = null, qSel = [], qDiff = 1, qDur = 5, qTab = 'EU', qKo = 0, qForm = null;
+function openQuick() { if (!quickWorld) { const keep = PID; quickWorld = quickAll(); PID = Math.max(PID, keep); } if (!qSel.length) qSel = ['BAR', 'RMA']; renderQuick(); show('quick'); }
 function renderQuick() {
-  const tabs = [[1, 'Liga Andina'], [2, 'Segunda'], [3, 'Internacionales']];
+  const tabs = [['EU', '🇪🇺 Europa'], ['SUD', '🌎 Sudamérica'], ['NAT', '🏳️ Selecciones'], ['AND', '🇵🇪 Liga Andina']];
   $('#qTabs').innerHTML = tabs.map(([k, l]) => `<button class="${qTab === k ? 'on' : ''}" data-k="${k}">${l}</button>`).join('');
-  $$('#qTabs button').forEach(b => b.onclick = () => { qTab = +b.dataset.k; renderQuick(); });
-  const list = quickWorld.filter(t => qTab === 3 ? !isDom(t.id) : (DOM_CLUBS.find(d => d.id === t.id) || {}).div === qTab);
+  $$('#qTabs button').forEach(b => b.onclick = () => { qTab = b.dataset.k; renderQuick(); });
+  const grpOf = id => (ALL_DEFS().find(d => d.id === id) || {}).grp, G = { EU: ['EU1', 'EU2'], SUD: ['SUD', 'FOR'], NAT: ['NAT'], AND: ['L1', 'L2'] }[qTab];
+  const list = quickWorld.filter(t => G.includes(grpOf(t.id))).sort((a, b) => b.str - a.str);
   $('#qTeams').innerHTML = list.map(t => `<button class="tcard ${qSel[0] === t.id ? 'sel' : ''} ${qSel[1] === t.id ? 'sel2' : ''}" data-t="${t.id}">${crestSVG(t, 54)}<div class="nm">${esc(t.name)}</div><div class="st">${starsHTML(t.rep)} · ${teamOvr(t)}</div></button>`).join('');
   $$('#qTeams .tcard').forEach(b => b.onclick = () => { Sound.click(); const id = b.dataset.t; if (qSel[0] === id) return; if (qSel[1] === id) qSel = [id, qSel[0]]; else { qSel._n = qSel._n ? 0 : 1; qSel[qSel._n ? 1 : 0] = id; if (qSel[0] === qSel[1]) qSel[1] = quickWorld.find(t => t.id !== id).id; } renderQuick(); });
   const A = quickWorld.find(t => t.id === qSel[0]), B = quickWorld.find(t => t.id === qSel[1]);
@@ -2769,16 +3038,18 @@ $('#pQuit').onclick = () => {
 /* =========================================================
    MODO MANAGER — interfaz
    ========================================================= */
-let pickTab = 1, pickWorld = null, sec = 'central', sub = {};
+let pickTab = 1, pickWorld = null, pickW = 'andina', sec = 'central', sub = {};
 function openPick() {
-  const keep = PID; pickWorld = newWorld(); renderPick(); show('pick');
+  pickWorld = newWorld(pickW); renderPick(); show('pick');
 }
 function renderPick() {
-  $('#pickTabs').innerHTML = [[1, 'Liga Andina'], [2, 'Segunda Andina']].map(([k, l]) => `<button class="${pickTab === k ? 'on' : ''}" data-k="${k}">${l}</button>`).join('');
-  $$('#pickTabs button').forEach(b => b.onclick = () => { pickTab = +b.dataset.k; renderPick(); });
-  const list = pickWorld.filter(t => (DOM_CLUBS.find(d => d.id === t.id) || {}).div === pickTab);
+  const Wd = WORLDS[pickW];
+  $('#pickTabs').innerHTML = Object.entries(WORLDS).map(([k, w]) => `<button class="${pickW === k ? 'on' : ''}" data-w="${k}">${w.n}</button>`).join('') + '<span style="width:14px"></span>' + [[1, Wd.L[1]], [2, Wd.L[2]]].map(([k, l]) => `<button class="${pickTab === k ? 'on' : ''}" data-k="${k}">${l}</button>`).join('');
+  $$('#pickTabs [data-k]').forEach(b => b.onclick = () => { pickTab = +b.dataset.k; renderPick(); });
+  $$('#pickTabs [data-w]').forEach(b => b.onclick = () => { pickW = b.dataset.w; pickWorld = newWorld(pickW); renderPick(); });
+  const list = pickWorld.filter(t => Wd['d' + pickTab].includes(t.id)).sort((a, b) => b.str - a.str);
   $('#pTeams').innerHTML = list.map(t => `<button class="tcard" data-t="${t.id}">${crestSVG(t, 60)}<div class="nm">${esc(t.name)}</div><div class="st">${starsHTML(t.rep)}</div><div class="st">Media ${squadOvr(t)} · ${money(startBudget(t))}</div></button>`).join('');
-  $$('#pTeams .tcard').forEach(b => b.onclick = () => { Sound.click(); const nm = $('#mgrName').value.trim() || 'Profe'; newCareer(b.dataset.t, pickWorld, nm); pickWorld = null; show('dt'); renderDT('central'); toast(`¡Firmaste con ${myClub().name}!`); });
+  $$('#pTeams .tcard').forEach(b => b.onclick = () => { Sound.click(); const nm = $('#mgrName').value.trim() || 'Profe'; newCareer(b.dataset.t, pickWorld, nm, pickW); pickWorld = null; show('dt'); renderDT('central'); toast(`¡Firmaste con ${myClub().name}!`); });
 }
 
 /* ---- hub ---- */
@@ -3097,7 +3368,7 @@ function secFichajes(el, me) {
     all.sort((a, b) => mk.sort === 'ovr' ? b.p.ovr - a.p.ovr : mk.sort === 'pot' ? potN(b.p) - potN(a.p) : mk.sort === 'val' ? a.p.value - b.p.value : a.p.age - b.p.age);
     el.innerHTML = html + head + `<div class="card"><div class="row"><input class="num-in" style="width:170px" id="mkQ" placeholder="Buscar nombre" value="${esc(mk.q)}">
       <select id="mkPos"><option value="ALL">Todas las posiciones</option>${['GK', 'DEF', 'MID', 'FWD'].map(g => `<option value="${g}" ${mk.pos === g ? 'selected' : ''}>${GRP_ES[g]}</option>`).join('')}${POSL.map(x => `<option ${mk.pos === x ? 'selected' : ''}>${x}</option>`).join('')}</select>
-      <select id="mkSrc">${[['all', 'Todos'], ['L1', 'Liga Andina'], ['L2', 'Segunda'], ['INT', 'Internacionales'], ['free', 'Libres'], ['ext', 'Ojeados']].map(([k, l]) => `<option value="${k}" ${mk.src === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
+      <select id="mkSrc">${[['all', 'Todos'], ['L1', LEAGUE_N[1]], ['L2', LEAGUE_N[2]], ['INT', 'Internacionales'], ['free', 'Libres'], ['ext', 'Ojeados']].map(([k, l]) => `<option value="${k}" ${mk.src === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
       <select id="mkAge">${[[40, 'Cualquier edad'], [21, '≤ 21'], [23, '≤ 23'], [27, '≤ 27'], [30, '≤ 30']].map(([k, l]) => `<option value="${k}" ${mk.age === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
       <select id="mkMax">${[[0, 'Cualquier valor'], [3e5, '≤ $300K'], [6e5, '≤ $600K'], [1e6, '≤ $1M'], [2e6, '≤ $2M']].map(([k, l]) => `<option value="${k}" ${mk.max === k ? 'selected' : ''}>${l}</option>`).join('')}</select>
       <select id="mkSort">${[['ovr', 'Mejor media'], ['pot', 'Mejor potencial'], ['val', 'Más barato'], ['age', 'Más joven']].map(([k, l]) => `<option value="${k}" ${mk.sort === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
@@ -3166,19 +3437,19 @@ function tableHTML(tbl, div) {
 }
 const tieHTML = (t, label) => { if (!t || !t.a) return `<div class="tie"><div class="muted">${label || 'Por definir'}</div></div>`; const A = club(t.a), B = club(t.b), me = career.teamId; return `<div class="tie ${t.a === me || t.b === me ? 'me' : ''}"><div class="${t.w === t.a ? 'w' : ''}"><span>${A.icon} ${esc(A.short)}</span><b>${t.ga ?? ''}${t.pens ? ` (${t.pens[0]})` : ''}</b></div><div class="${t.w === t.b ? 'w' : ''}"><span>${B.icon} ${esc(B.short)}</span><b>${t.gb ?? ''}${t.pens ? ` (${t.pens[1]})` : ''}</b></div></div>`; };
 function secCompe(el, me) {
-  const S = career.season, { cur, html } = subNav('compe', [['l1', '🏆 Liga Andina'], ['l2', '🥈 Segunda'], ['copa', '🥇 Copa Nacional'], ['cont', '🌎 Continental'], ['stats', '📊 Estadísticas']]);
+  const S = career.season, { cur, html } = subNav('compe', [['l1', '🏆 ' + LEAGUE_N[1]], ['l2', '🥈 ' + LEAGUE_N[2]], ['copa', '🥇 Copa Nacional'], ['cont', '🌎 Continental'], ['stats', '📊 Estadísticas']]);
   if (cur === 'l1' || cur === 'l2') { const div = cur === 'l1' ? 1 : 2; el.innerHTML = html + `<div class="card"><h3>${LEAGUE_N[div]} · Temporada ${career.seasonN}</h3>${tableHTML(leagueTable(div), div)}<p class="muted mt-s" style="font-size:12px">${div === 1 ? 'Morado: clasifica a la Copa Continental · Rojo: desciende' : 'Verde: asciende a la Liga Andina'}</p></div>`; return; }
   if (cur === 'copa') { const R = S.cup.rounds; el.innerHTML = html + `<div class="card"><h3>Copa Nacional ${S.cup.champ ? '· Campeón: ' + club(S.cup.champ).icon + ' ' + esc(club(S.cup.champ).name) : ''}</h3><div class="bracket">${[0, 1, 2, 3].map(r => `<div class="col"><div class="kpi">${CUP_R[r]}</div>${(R[r] || Array(8 >> r).fill(null)).map(t => tieHTML(t)).join('')}</div>`).join('')}</div></div>`; return; }
   if (cur === 'cont') {
     const K = S.cont;
     el.innerHTML = html + `<div class="cols"><div>${[0, 1].map(g => `<div class="card ${g ? 'mt' : ''}"><h3>Grupo ${'AB'[g]}</h3>${tableHTML(groupTable(g), 3)}</div>`).join('')}</div>
       <div class="card"><h3>Fase final ${K.champ ? '· Campeón: ' + club(K.champ).icon + ' ' + esc(club(K.champ).name) : ''}</h3><div class="kpi">Semifinales</div>${(K.semis || [null, null]).map(t => tieHTML(t, '1° A vs 2° B')).join('')}<div class="kpi mt">Final</div>${tieHTML(K.final, 'Por definir')}
-      <p class="muted mt" style="font-size:13px">Clasifican los 4 primeros de la Liga Andina de la temporada anterior y 4 grandes del continente.</p></div></div>`; return;
+      <p class="muted mt" style="font-size:13px">Clasifican los 4 primeros de la ${LEAGUE_N[1]} de la temporada anterior y 4 grandes del continente.</p></div></div>`; return;
   }
   const pl = []; career.divs[1].forEach(id => club(id).players.forEach(p => pl.push({ p, c: club(id) })));
   const top = (f, n = 10) => pl.filter(x => f(x) > 0).sort((a, b) => f(b) - f(a)).slice(0, n);
   const tbl = (arr, f, lbl) => `<table class="tb tbl-mini"><tr><th>#</th><th>Jugador</th><th>Club</th><th class="n">${lbl}</th></tr>${arr.map((x, i) => `<tr class="click ${x.c.id === me.id ? 'me' : ''}" data-pid="${x.p.id}"><td>${i + 1}</td><td><b>${esc(x.p.name)}</b></td><td>${x.c.icon} ${esc(x.c.short)}</td><td class="n"><b>${f(x)}</b></td></tr>`).join('') || '<tr><td colspan="4" class="muted">Sin datos aún.</td></tr>'}</table>`;
-  el.innerHTML = html + `<div class="cols"><div class="card"><h3>Goleadores (Liga Andina)</h3>${tbl(top(x => x.p.st.lg || 0), x => x.p.st.lg || 0, '⚽')}</div><div class="card"><h3>Asistencias (todas)</h3>${tbl(top(x => x.p.st.a), x => x.p.st.a, '🅰️')}</div>
+  el.innerHTML = html + `<div class="cols"><div class="card"><h3>Goleadores (${LEAGUE_N[1]})</h3>${tbl(top(x => x.p.st.lg || 0), x => x.p.st.lg || 0, '⚽')}</div><div class="card"><h3>Asistencias (todas)</h3>${tbl(top(x => x.p.st.a), x => x.p.st.a, '🅰️')}</div>
     <div class="card"><h3>Mejor promedio (5+ PJ)</h3>${tbl(top(x => x.p.st.ap >= 5 ? avgR(x.p) : 0), x => avgR(x.p).toFixed(2), 'Prom')}</div><div class="card"><h3>Vallas invictas</h3>${tbl(top(x => x.p.pos === 'POR' ? x.p.st.cs : 0), x => x.p.st.cs, '🧤')}</div></div>`;
 }
 
@@ -3209,9 +3480,9 @@ function openMsg(m) {
   if (m.type === 'complaint' && !m.done) acts = `<button class="btn go" id="mP">Prometer más minutos</button><button class="btn" id="mL">Declararlo transferible</button><button class="btn warn" id="mI">Ignorar</button>`;
   modal(`<div style="text-align:left"><div class="kpi">${esc(m.from)}</div><h2 class="h-title" style="font-size:24px">${esc(m.t)}</h2><p class="mt">${m.body || ''}</p></div><div class="btns">${acts}<button class="btn" data-close>Cerrar</button></div>`, mm => {
     const done = (s) => { m.done = s; saveCareer(); closeModal(); renderDT(); };
-    if ($('#mA', mm)) $('#mA', mm).onclick = () => { const p = pById(me, m.pid), b = club(m.fromId); if (me.players.length <= 16) return toast('Necesitas al menos 16 jugadores'); sellPlayer(p, b, m.amount); done('aceptada'); toast('Venta cerrada'); };
-    if ($('#mR', mm)) $('#mR', mm).onclick = () => { const p = pById(me, m.pid); if (p && (p.morale < 45 || club(m.fromId).rep > me.rep)) { p.morale = clamp(p.morale - 12, 0, 100); toast(`${shortName(p.name)} se molestó por no dejarlo salir`); } done('rechazada'); };
-    if ($('#mC', mm)) $('#mC', mm).onclick = () => { const p = pById(me, m.pid), b = club(m.fromId), ask = Math.round(m.amount * 1.25 / 5000) * 5000; if (ask <= p.value * rnd(1.15, 1.5) && b.budget >= ask * 0.8) { sellPlayer(p, b, ask); done('vendido tras contraoferta'); toast(`¡Aceptaron! Vendido por ${money(ask)}`); } else { done('se retiraron'); toast(`${b.name} se retiró de la negociación`); } };
+    if ($('#mA', mm)) $('#mA', mm).onclick = () => { const p = pById(me, m.pid), b = club(m.fromId); if (!p || !b) { done('expirada'); return toast('La oferta ya no está vigente'); } if (me.players.length <= 16) return toast('Necesitas al menos 16 jugadores'); sellPlayer(p, b, m.amount); done('aceptada'); toast('Venta cerrada'); };
+    if ($('#mR', mm)) $('#mR', mm).onclick = () => { const p = pById(me, m.pid); if (p && club(m.fromId) && (p.morale < 45 || club(m.fromId).rep > me.rep)) { p.morale = clamp(p.morale - 12, 0, 100); toast(`${shortName(p.name)} se molestó por no dejarlo salir`); } done('rechazada'); };
+    if ($('#mC', mm)) $('#mC', mm).onclick = () => { const p = pById(me, m.pid), b = club(m.fromId), ask = Math.round(m.amount * 1.25 / 5000) * 5000; if (!p || !b) { done('expirada'); return; } if (ask <= p.value * rnd(1.15, 1.5) && b.budget >= ask * 0.8) { sellPlayer(p, b, ask); done('vendido tras contraoferta'); toast(`¡Aceptaron! Vendido por ${money(ask)}`); } else { done('se retiraron'); toast(`${b.name} se retiró de la negociación`); } };
     if ($('#mP', mm)) $('#mP', mm).onclick = () => { const p = pById(me, m.pid); if (p) { const i = ROLES.indexOf(p.role); p.role = ROLES[Math.max(0, i - 1)]; p.morale = clamp(p.morale + 18, 0, 100); } done('prometiste más minutos'); };
     if ($('#mL', mm)) $('#mL', mm).onclick = () => { const p = pById(me, m.pid); if (p) { p.list = true; p.morale = clamp(p.morale + 6, 0, 100); } done('transferible'); };
     if ($('#mI', mm)) $('#mI', mm).onclick = () => { const p = pById(me, m.pid); if (p) p.morale = clamp(p.morale - 6, 0, 100); done('ignorado'); };
@@ -3229,7 +3500,7 @@ function secClub(el, me) {
     el.innerHTML = html + `<div class="cols"><div class="card"><h3>Presupuestos</h3><div class="boardbar"><span>Fichajes</span><b style="grid-column:span 2">${money(career.money)}</b></div><div class="boardbar"><span>Tope salarial</span><b style="grid-column:span 2">${money(career.wageCap)}/sem</b></div><div class="boardbar"><span>Sueldos actuales</span><b style="grid-column:span 2">${money(w)}/sem (${Math.round(w / career.wageCap * 100)}%)</b></div>
       <h3 class="mt">Ajustar presupuesto</h3><p class="muted" style="font-size:13px">Mueve dinero entre fichajes y sueldos: cada $1K semanal de tope cuesta $30K de fichajes.</p>
       <div class="slider-row mt-s"><input type="range" id="fnR" min="${minCap}" max="${Math.max(minCap, maxCap)}" step="1000" value="${career.wageCap}"><b id="fnT">${money(career.wageCap)}/sem</b></div><p id="fnD" class="muted" style="font-size:13px"></p><button class="btn go mt-s" id="fnOk">Aplicar</button></div>
-      <div class="card"><h3>Ingresos de la temporada</h3><p style="font-size:14px">Premios Liga Andina: 1° ${money(PRIZE_L1[0])} … 10° ${money(PRIZE_L1[9])}<br>Copa Nacional: ${PRIZE_C.map(money).join(' / ')} por ronda superada<br>Continental: grupos ${money(PRIZE_K.g)}, semis ${money(PRIZE_K.s)}, final ${money(PRIZE_K.f)}, campeón ${money(PRIZE_K.w)}<br>Al final de la temporada la directiva aporta dinero extra según el club y tus resultados.</p></div></div>`;
+      <div class="card"><h3>Ingresos de la temporada</h3><p style="font-size:14px">Premios ${LEAGUE_N[1]}: 1° ${money(PRIZE_L1[0])} … 10° ${money(PRIZE_L1[9])}<br>Copa Nacional: ${PRIZE_C.map(money).join(' / ')} por ronda superada<br>Continental: grupos ${money(PRIZE_K.g)}, semis ${money(PRIZE_K.s)}, final ${money(PRIZE_K.f)}, campeón ${money(PRIZE_K.w)}<br>Al final de la temporada la directiva aporta dinero extra según el club y tus resultados.</p></div></div>`;
     const r = $('#fnR'), upd = () => { const v = +r.value, d = (v - career.wageCap) * 30; $('#fnT').textContent = money(v) + '/sem'; $('#fnD').textContent = d >= 0 ? `Cuesta ${money(d)} de fichajes` : `Devuelve ${money(-d)} a fichajes`; };
     r.oninput = upd; upd(); $('#fnOk').onclick = () => { const v = +r.value, d = (v - career.wageCap) * 30; if (d > career.money) return toast('No alcanza'); career.money -= d; career.wageCap = v; saveCareer(); toast('Presupuesto ajustado'); renderDT(); };
   } else if (cur === 'palmares') {
@@ -3255,7 +3526,7 @@ function seasonModal() {
     ${s.trophies.length ? `<p class="fluo" style="font-size:18px">${s.trophies.join(' · ')}</p>` : ''}
     <p class="mt">Terminaste <b>${s.pos}°</b> en la ${LEAGUE_N[s.div]}. Premio: ${money(s.prize)}.</p>
     <div style="text-align:left" class="mt"><div class="kpi">Campeones</div>
-      <div>🏆 Liga Andina: <b>${esc(club(s.champ1).name)}</b></div><div>🥈 Segunda: <b>${esc(club(s.champ2).name)}</b></div>
+      <div>🏆 ${LEAGUE_N[1]}: <b>${esc(club(s.champ1).name)}</b></div><div>🥈 ${LEAGUE_N[2]}: <b>${esc(club(s.champ2).name)}</b></div>
       <div>🥇 Copa Nacional: <b>${s.cup ? esc(club(s.cup).name) : '—'}</b></div><div>🌎 Continental: <b>${s.cont ? esc(club(s.cont).name) : '—'}</b></div>
       <div class="mt-s">⬆️ Ascienden: ${s.up.map(id => esc(club(id).name)).join(', ')} · ⬇️ Descienden: ${s.down.map(id => esc(club(id).name)).join(', ')}</div>
       <div class="kpi mt">Premios individuales</div>${aw('👟 Bota de Oro', A.bota, ' goles')}${aw('⭐ Mejor jugador', A.mejor)}${aw('🌱 Mejor joven', A.joven)}${aw('🧤 Guante de Oro', A.guante, ' invictas')}${aw('🅰️ Rey de asistencias', A.asist)}
