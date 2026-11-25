@@ -16,7 +16,7 @@
 (function(){
 /* ---------------- 1) Rascacielos: stairs ---------------- */
 if(typeof CL_V!=='undefined'&&typeof clRow==='function'){
-  CL_V[0]=26;CL_V[1]=32;CL_V[2]=38;
+  CL_V[0]=20;CL_V[1]=24;CL_V[2]=28;
   window.clRow=clRow=function(L,y){const C=L.climb,prev=C.last??1;let a=prev;const r=rand();if(r<.35)a=prev-1;else if(r<.7)a=prev+1;a=clamp(a,0,2);
     const lanes=[a],o=[0,1,2].filter(k=>k!==a);lanes.push(o[Math.floor(rand()*o.length)]);if(rand()<.35)for(const k of[0,1,2])if(!lanes.includes(k))lanes.push(k);C.last=a;
     for(const k of lanes){const w=190+Math.floor(rand()*70),x=clamp(CL_LANES[k]-w/2+(rand()-.5)*60,36,W-36-w);L.solids.push({x,y,w,h:14,oneWay:true,mv:true,dx:0,gird:true,rv:rand()<.2});}
@@ -24,7 +24,7 @@ if(typeof CL_V!=='undefined'&&typeof clRow==='function'){
     const sk=Math.floor(rand()*3),sw=96,sx=clamp(CL_LANES[sk]-sw/2+(rand()-.5)*120,40,W-40-sw);L.solids.push({x:sx,y:y+CL_GAP/2,w:sw,h:12,oneWay:true,mv:true,dx:0,gird:true,step:true});
     C.top=y;};
   const _pl=pitFall;pitFall=function(L,p){const r=_pl.apply(this,arguments);if(L&&L.climb&&!p.dead)p.inv=Math.max(p.inv||0,2.6);return r;};
-  const _cr=LEVELS.rascacielos&&LEVELS.rascacielos.create;if(_cr)LEVELS.rascacielos.create=(...a)=>{const L=_cr(...a);if(L&&L.climb&&cfg.diff==='facil'){CL_V[0]=20;CL_V[1]=25;CL_V[2]=30;}else{CL_V[0]=26;CL_V[1]=32;CL_V[2]=38;}return L;};
+  const _cr=LEVELS.rascacielos&&LEVELS.rascacielos.create;if(_cr)LEVELS.rascacielos.create=(...a)=>{const L=_cr(...a);if(L&&L.climb&&cfg.diff==='facil'){CL_V[0]=16;CL_V[1]=19;CL_V[2]=22;}else{CL_V[0]=20;CL_V[1]=24;CL_V[2]=28;}return L;};
   if(typeof MECH_INFO!=='undefined')MECH_INFO.rascacielos='Las vigas bajan sin parar: sube por los escalones y las vigas, o te caes (pierdes un corazón)';}
 
 /* ---------------- 2) new mechanics ---------------- */
@@ -65,3 +65,5 @@ for(const id of Object.keys(LEVELS)){const d=LEVELS[id];if(!d.phases||d.parryOnl
 /* never draw a bullet whose position went bad for a frame (it is removed on the next update) */
 const _dsV=drawSpr;drawSpr=function(e,t){if(!e||!Number.isFinite(e.x)||!Number.isFinite(e.y))return;return _dsV.apply(this,arguments);};
 })();
+/* El Rascacielos: falling off the girders no longer costs a heart — you just come back up with a moment of safety */
+{const _pfR=pitFall;pitFall=function(L,p){if(L&&L.climb&&p&&!p.dead&&!(p.inv>0)){p.hp++;L.hits=Math.max(0,(L.hits||0)-1);}return _pfR(L,p);};}
