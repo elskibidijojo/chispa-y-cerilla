@@ -1286,7 +1286,7 @@ class Match {
   gainBall(p) {
     const b = this.ball;
     if (b.kicker && b.kicker.team === p.team && b.passTarget && b.kicker !== p) b.kicker.ms.pa++;
-    b.owner = p; b.last = p; b.shot = false; b.passTarget = null; b.z = 0; b.vz = 0; b.kicker = null; b.spin = 0;
+    b.owner = p; b.last = p; b.tipped = null; b.shot = false; b.passTarget = null; b.z = 0; b.vz = 0; b.kicker = null; b.spin = 0;
     if (this.poss !== p.team) this.poss = p.team;
     p.decT = Math.max(p.decT, rnd(0.15, 0.4)); if (p.isGK) p.holdT = 0.9;
     if (p.team === this.human) this.setCtrl(p);
@@ -1354,6 +1354,7 @@ class Match {
     const r = Math.random(), redP = slide && behind ? 0.1 : slide ? 0.035 : 0.008, yelP = slide ? 0.36 : behind ? 0.3 : 0.12;
     let card = r < redP ? 'red' : r < redP + yelP ? 'yellow' : null;
     if (card === 'yellow' && f.yc >= 1) card = 'red2';
+    f.complainT = performance.now() / 1000 + 1.8; if (card) FX.card(card === 'yellow' ? 'yellow' : 'red', f, this.teams[f.team]);
     this.tick(fmt(pick(COMMENT.foul), { p: f.sname }));
     if (card) {
       if (card === 'yellow') { f.yc++; this.stats.yc[f.team]++; this.events.push({ min: this.minNow(), type: 'card', team: f.team, pid: f.pid, name: f.name, red: false }); this.tick(`🟨 Amarilla para ${f.sname}.`); Object.assign(this.ref, { card: '#facc15', cardT: 2.2, x: f.x + 18, y: f.y + 6 }); }
@@ -1386,7 +1387,7 @@ class Match {
     if (this.ball.owner === outP) this.gainBall(np);
     if (this.ctrl === outP) this.setCtrl(np);
     T.subs--; this.events.push({ min: this.minNow(), type: 'sub', team: ti, pin: inRef.id, pout: outP.pid });
-    if (!silent) this.tick(`🔁 Cambio en ${T.t.short}: entra ${np.sname}, sale ${outP.sname}.`);
+    if (!silent) { this.tick(`🔁 Cambio en ${T.t.short}: entra ${np.sname}, sale ${outP.sname}.`); FX.sub(T, np, outP); }
     return true;
   }
   aiSubs() {
@@ -1472,7 +1473,7 @@ class Match {
       else if (d < 30 && d > 18 && role === 'chase' && Math.random() < dt * 0.35 * this.aiK(p)) this.startSlide(p);
     }
   }
-  startSlide(p) { p.slideT = 0.38; const a = p.face; p.vx = Math.cos(a) * 210; p.vy = Math.sin(a) * 210; p.tackleCD = 0; }
+  startSlide(p) { FX.dust(this, p.x, p.y, 10); p.slideT = 0.38; const a = p.face; p.vx = Math.cos(a) * 210; p.vy = Math.sin(a) * 210; p.tackleCD = 0; }
   nearestOpp(p) { let best = null, bd = 1e9; this.players.forEach(q => { if (q.team === p.team) return; const d = dist(p, q); if (d < bd) { bd = d; best = q; } }); return [best, bd]; }
   laneOpen(from, to, team) {
     let m = 999; const dx = to.x - from.x, dy = to.y - from.y, L2 = dx * dx + dy * dy || 1;
@@ -1612,7 +1613,9 @@ class Match {
         best.ms.sv++; this.tick(fmt(pick(COMMENT.save), { k: best.sname })); Voice.say(pick(['¡Atajadón!', '¡Qué atajada!', '¡Sacó el arquero!']));
         Sound.ooh(); b.spin = 0;
         if (sp < 560 && Math.random() < 0.65) this.gainBall(best);
-        else { const dir = this.teamOf(best).dir; this.kickBall(best, dir * rnd(60, 160), (b.y < H / 2 ? -1 : 1) * rnd(150, 280), 50); b.kickT = 0.35; b.cornerAfterSave = 1 - best.team; }
+        else if (Math.random() < 0.45 && Math.min(best.x, W - best.x) < 45) { const dir = this.teamOf(best).dir; this.kickBall(best, -dir * rnd(50, 90), (b.y < H / 2 ? -1 : 1) * rnd(90, 170), 260); b.kickT = 0.35; b.tipped = best; best.diveUntil = performance.now() / 1000 + 0.75; best.diving = b.y < best.y ? -1 : 1; FX.word('¡LA MANDÓ AL CÓRNER!', 'save'); }
+        else { const dir = this.teamOf(best).dir; this.kickBall(best, dir * rnd(60, 160), (b.y < H / 2 ? -1 : 1) * rnd(150, 280), 50); b.kickT = 0.35; b.cornerAfterSave = 1 - best.team; best.diveUntil = performance.now() / 1000 + 0.75; best.diving = b.y < best.y ? -1 : 1; }
+        if (sp > 480) FX.word(pick(['¡ATAJADÓN!', '¡QUÉ MANOS!', '¡VOLÓ!']), 'save');
         return;
       }
       b.ignoreGK = 0.4; return;
@@ -1665,17 +1668,17 @@ class Match {
       const d = Math.hypot(b.x - gx, b.y - gy);
       if (d < BR + 3.2 && b.z < 26) {
         const nx = (b.x - gx) / d, ny = (b.y - gy) / d, dot = b.vx * nx + b.vy * ny;
-        if (dot < 0) { b.vx = (b.vx - 2 * dot * nx) * 0.6; b.vy = (b.vy - 2 * dot * ny) * 0.6; b.x = gx + nx * (BR + 3.4); b.y = gy + ny * (BR + 3.4); Sound.post(); this.tick('¡EN EL PALO! ¡Casi, casi!'); Voice.say('¡En el palo!'); b.shot = false; b.spin = 0; }
+        if (dot < 0) { b.vx = (b.vx - 2 * dot * nx) * 0.6; b.vy = (b.vy - 2 * dot * ny) * 0.6; b.x = gx + nx * (BR + 3.4); b.y = gy + ny * (BR + 3.4); Sound.post(); FX.word('¡AL PALO!', 'post'); this.shake = 0.8; this.tick('¡EN EL PALO! ¡Casi, casi!'); Voice.say('¡En el palo!'); b.shot = false; b.spin = 0; }
       }
     }
     const crossing = (px >= 0 && b.x < 0) || (px <= W && b.x > W);
-    if (crossing && b.y > GY1 && b.y < GY2 && b.z >= 24 && b.z < 30) { b.vx = -b.vx * 0.5; b.vz = Math.abs(b.vz) * 0.5 + 40; b.x = px; Sound.post(); this.tick('¡Al travesaño!'); b.shot = false; }
+    if (crossing && b.y > GY1 && b.y < GY2 && b.z >= 24 && b.z < 30) { b.vx = -b.vx * 0.5; b.vz = Math.abs(b.vz) * 0.5 + 40; b.x = px; Sound.post(); FX.word('¡TRAVESAÑO!', 'post'); this.shake = 0.8; this.tick('¡Al travesaño!'); b.shot = false; }
   }
   checkOut() {
     const b = this.ball; if (b.owner) { b.x = clamp(b.x, -2, W + 2); b.y = clamp(b.y, -2, H + 2); }
     if (b.x < 0 || b.x > W) {
       const side = b.x < 0 ? 0 : 1;
-      if (b.y > GY1 && b.y < GY2 && b.z < 24) { const sc = this.teams.findIndex(T => (T.dir === 1) === (side === 1)); this.goal(sc); return; }
+      if (b.y > GY1 && b.y < GY2 && b.z < 24 && !(b.tipped && b.last === b.tipped)) { const sc = this.teams.findIndex(T => (T.dir === 1) === (side === 1)); this.goal(sc); return; }
       const defT = this.teams.findIndex(T => (T.dir === 1) === (side === 0)), lastT = b.last ? b.last.team : 1 - defT;
       if (b.shot || (b.last && b.last === b.shooter && lastT !== defT)) { this.tick(fmt(pick(COMMENT.miss), { p: b.shooter ? b.shooter.sname : '' })); Sound.ooh(); }
       if (lastT === defT) this.setPiece('corner', 1 - defT, side ? W - 3 : 3, b.y < H / 2 ? 3 : H - 3);
@@ -1692,7 +1695,7 @@ class Match {
     const lp = this.lastPass[ti]; if (!own && !fromPk && lp && lp.p !== sc && this.time - lp.t < 8 && this.players.includes(lp.p)) ast = lp.p;
     if (sc && !own) sc.ms.g++; if (ast) ast.ms.a++;
     this.events.push({ min, type: 'goal', team: ti, pid: own ? null : sc && sc.pid, name: sc ? sc.name : '', own, apid: ast ? ast.pid : null, aname: ast ? ast.name : '', pen: !!fromPk });
-    this.state = 'goal'; this.stateT = 4.2; this.goalTeam = ti; this.lastPass = [null, null]; this.scorerP = own ? this.players.filter(q => q.team === ti && !q.isGK).sort((a, c) => dist(a, b) - dist(c, b))[0] : sc; this.netPuff = { gx: b.x < W / 2 ? 0 : W, v: 1 }; this.celeStyle = pick(['brazos', 'avion', 'rodilla', 'salto']); this.players.forEach(q => { q.sad = q.team !== ti && !q.isGK && Math.random() < 0.7; });
+    this.state = 'goal'; this.stateT = 4.2; this.goalTeam = ti; this.lastPass = [null, null]; this.scorerP = own ? this.players.filter(q => q.team === ti && !q.isGK).sort((a, c) => dist(a, b) - dist(c, b))[0] : sc; this.netPuff = { gx: b.x < W / 2 ? 0 : W, v: 1 }; this.celeStyle = pick(['brazos', 'avion', 'rodilla', 'salto', 'baile', 'puno', 'corazon', 'deslizar', 'silencio']); this.shake = 1.2; FX.goal(this, ti); this.players.forEach(q => { q.sad = q.team !== ti && !q.isGK && Math.random() < 0.7; });
     b.vx *= 0.2; b.vy *= 0.2; b.owner = null;
     Sound.roar(); Sound.whistle(1);
     const who = sc ? (own ? `Autogol de ${sc.sname}` : `${sc.sname} · ${min}'${ast ? ' (asist. ' + ast.sname + ')' : ''}`) : '';
@@ -1804,7 +1807,7 @@ class Match {
   }
   updateCamPk(dt) { const k = this.pk; if (!k) return; const tx = k.gx - k.dir * 70; this.cam.x += (tx - this.cam.x) * Math.min(1, dt * 4); this.cam.y += (H / 2 - this.cam.y) * Math.min(1, dt * 4); }
   halfTime() {
-    this.state = 'half'; this.half = 2; Sound.whistle(2, true); Voice.say('Final del primer tiempo.', true); this.showHalf();
+    this.state = 'half'; this.half = 2; FX.stamp('MEDIO TIEMPO'); Sound.whistle(2, true); Voice.say('Final del primer tiempo.', true); this.showHalf();
   }
   showHalf() {
     const btns = [{ t: 'Segundo tiempo ▶', go: true, f: () => { this.teams.forEach(T => T.dir *= -1); this.players.forEach(p => p.en = Math.min(1, p.en + 0.06)); this.kickoff(1); this.state = 'play'; } }];
@@ -1813,7 +1816,7 @@ class Match {
   }
   fullTime(afterSo) {
     if (this.ko && !afterSo && this.teams[0].score === this.teams[1].score && !this.so) { this.state = 'end_wait'; Sound.whistle(2, true); setTimeout(() => { this.startShootout(); }, 1200); return; }
-    this.state = 'end'; this.over = true; Sound.whistle(3, true); Sound.setCrowd(0.3);
+    this.state = 'end'; this.over = true; FX.stamp('FINAL DEL PARTIDO'); Sound.whistle(3, true); Sound.setCrowd(0.3);
     const [a, c] = this.teams; Voice.say(`¡Final del partido! ${a.t.name} ${a.score}, ${c.t.name} ${c.score}${this.so ? ', y se define por penales' : ''}.`, true);
     const res = this.result(), h = this.human;
     let win = 'FINAL';
@@ -1927,7 +1930,7 @@ class Match {
     const hint = this.hintText(); if (hint) { ctx.font = 'bold 14px Segoe UI, Arial'; ctx.textAlign = 'center'; const w = ctx.measureText(hint).width + 24; ctx.fillStyle = 'rgba(11,18,32,.85)'; ctx.fillRect(cw / 2 - w / 2, ch - 92, w, 30); ctx.fillStyle = '#ffd23f'; ctx.fillText(hint, cw / 2, ch - 72); }
   }
   hintText() {
-    if (this.state === 'intro') return 'Presentación · presiona J (o PASE) para empezar';
+    if (this.state === 'intro') return '';
     if (this.state === 'play' && this.ball.owner && this.ball.owner.throwIn && this.ball.owner.team === this.human) return 'Saque de banda: apunta y J pase corto · L pase largo';
     if (this.state === 'set' && this.sp && this.sp.team === this.human) return this.sp.type === 'corner' ? 'Córner: L centro al área · J pase corto' : this.sp.dGoal < 360 ? 'Tiro libre: ↑↓ apuntar · mantén K para patear · J pase · L centro' : 'Tiro libre: J pase · L pase largo · I al hueco';
     if (this.state === 'pk' && this.pk && this.pk.phase === 'aim') { if (this.pk.team === this.human) return 'Penal: ↑↓ apunta · mantén K y suelta (¡no te pases de potencia!)'; if (this.human >= 0) return 'Ataja: mantén ↑ o ↓ para lanzarte a ese lado'; }
@@ -2099,7 +2102,7 @@ function camSetup(m, cw, ch) {
   cv.vw += (viewW - cv.vw) * 0.08;
   const camX = cv.x, Ly = cv.ly, Cy = H + D, Cz = Hc, th = Math.atan2(Hc, Cy - Ly);
   const fy = -Math.cos(th), fz = -Math.sin(th), uy = -Math.sin(th), uz = Math.cos(th);
-  const dL = Math.hypot(Cy - Ly, Hc), focal = cw * dL / cv.vw, cx0 = cw / 2, cy0 = ch * 0.56;
+  const dL = Math.hypot(Cy - Ly, Hc), focal = cw * dL / cv.vw, sh = m.shake || 0, cx0 = cw / 2 + (sh ? (Math.random() - 0.5) * sh * 16 : 0), cy0 = ch * 0.56 + (sh ? (Math.random() - 0.5) * sh * 12 : 0);
   const V = { camX, Cy, Cz, fy, fz, uy, uz, focal, cx0, cy0, cw, ch };
   V.p = (X, Y, Z) => { const ry = Y - Cy, rz = Z - Cz, d = ry * fy + rz * fz; return { x: cx0 + focal * (X - camX) / d, y: cy0 - focal * (ry * uy + rz * uz) / d, k: focal / d, d }; };
   return V;
@@ -2116,7 +2119,8 @@ function render3D(ctx, cw, ch, dpr) {
   if (!tex3 || tex3.key !== this.teams[0].t.id + this.teams[1].t.id) { tex3 = buildTextures3D(this.teams[0].t, this.teams[1].t); tex3.key = this.teams[0].t.id + this.teams[1].t.id; }
   const V = camSetup(this, cw, ch), t = performance.now() / 1000;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.imageSmoothingEnabled = true;
-  const sky = ctx.createLinearGradient(0, 0, 0, ch * 0.5); sky.addColorStop(0, '#050914'); sky.addColorStop(1, '#16213b'); ctx.fillStyle = sky; ctx.fillRect(0, 0, cw, ch);
+  if (this.shake) { this.shake *= 0.9; if (this.shake < 0.03) this.shake = 0; }
+  const WX = WEATHER[this.weather || 'noche'], sky = ctx.createLinearGradient(0, 0, 0, ch * 0.5); sky.addColorStop(0, WX.sky[0]); sky.addColorStop(1, WX.sky[1]); ctx.fillStyle = sky; ctx.fillRect(0, 0, cw, ch);
   // césped por líneas de barrido
   const step = ch > 700 ? 2 : 1;
   for (let sy = Math.max(0, Math.floor(V.cy0 - V.focal * 0.8)); sy < ch; sy += step) {
@@ -2139,7 +2143,8 @@ function render3D(ctx, cw, ch, dpr) {
   }
   const roof = V.p(V.camX, STAND.y0 - STAND.depth, STAND.z0 + STAND.h);
   { const rh = 30 * roof.k; const rg = ctx.createLinearGradient(0, roof.y - rh, 0, roof.y); rg.addColorStop(0, '#05080f'); rg.addColorStop(1, '#1a2233'); ctx.fillStyle = rg; ctx.fillRect(0, roof.y - rh, cw, rh); ctx.fillStyle = '#fffbe6'; for (let x = (-(V.camX * roof.k) % (26 * roof.k)); x < cw; x += 26 * roof.k) ctx.fillRect(x, roof.y - 4 * roof.k, 9 * roof.k, 2.2 * roof.k); }
-  [[-120, 1], [W * 0.33, 0.7], [W * 0.66, 0.7], [W + 120, 1]].forEach(([x, s]) => { const L = V.p(x, STAND.y0 - STAND.depth - 20, STAND.z0 + STAND.h + 40); if (L.x < -200 || L.x > cw + 200) return; const r = 90 * L.k * s; const gl = ctx.createRadialGradient(L.x, L.y, 1, L.x, L.y, r); gl.addColorStop(0, 'rgba(255,255,235,.95)'); gl.addColorStop(0.15, 'rgba(255,250,210,.45)'); gl.addColorStop(1, 'rgba(255,250,210,0)'); ctx.fillStyle = gl; ctx.fillRect(L.x - r, L.y - r, r * 2, r * 2); ctx.fillStyle = '#fffbe0'; ctx.fillRect(L.x - 10 * L.k, L.y - 3 * L.k, 20 * L.k, 6 * L.k); });
+  drawCrowdFx(ctx, V, this, t, roof);
+  if (WX.lights) [[-120, 1], [W * 0.33, 0.7], [W * 0.66, 0.7], [W + 120, 1]].forEach(([x, s]) => { const L = V.p(x, STAND.y0 - STAND.depth - 20, STAND.z0 + STAND.h + 40); if (L.x < -200 || L.x > cw + 200) return; const r = 90 * L.k * s; const gl = ctx.createRadialGradient(L.x, L.y, 1, L.x, L.y, r); gl.addColorStop(0, 'rgba(255,255,235,.95)'); gl.addColorStop(0.15, 'rgba(255,250,210,.45)'); gl.addColorStop(1, 'rgba(255,250,210,0)'); ctx.fillStyle = gl; ctx.fillRect(L.x - r, L.y - r, r * 2, r * 2); ctx.fillStyle = '#fffbe0'; ctx.fillRect(L.x - 10 * L.k, L.y - 3 * L.k, 20 * L.k, 6 * L.k); });
   // vallas LED
   const a0 = V.p(V.camX, AD_Y, 0), a1 = V.p(V.camX, AD_Y, AD_H), aX0 = V.camX - V.cx0 / a0.k, aXw = cw / a0.k, scroll = (t * 40) % 260;
   ctx.drawImage(tex3.ads, (aX0 - C3.X0) * 1 + scroll, 0, aXw, 36, 0, a1.y, cw, a0.y - a1.y);
@@ -2160,6 +2165,7 @@ function render3D(ctx, cw, ch, dpr) {
   // apuntado
   const aim = (this.state === 'set' && this.sp && this.sp.team === this.human && this.sp.type === 'fk' && this.sp.dGoal < 360) ? { gx: this.goalOf(this.sp.team, false).x, y: this.sp.aimY } : (this.state === 'pk' && this.pk && this.pk.team === this.human && this.pk.phase === 'aim') ? { gx: this.pk.gx, y: this.pk.aimY } : null;
   if (aim) { const A = V.p(b.x, b.y, 2), B = V.p(aim.gx, aim.y, 10); ctx.strokeStyle = 'rgba(255,210,63,.85)'; ctx.setLineDash([8, 7]); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#ffd23f'; ctx.beginPath(); ctx.arc(B.x, B.y, 5, 0, 7); ctx.fill(); }
+  drawTrail(ctx, V, this);
   // objetos ordenados por profundidad
   const items = [];
   [0, W].forEach(gx => { items.push({ y: GY1 - 1, f: () => drawGoalPart(ctx, V, gx, 'far', this.netPuff && this.netPuff.gx === gx ? this.netPuff.v : 0) }); items.push({ y: GY2 + 0.5, f: () => drawGoalPart(ctx, V, gx, 'near', 0) }); });
@@ -2174,6 +2180,7 @@ function render3D(ctx, cw, ch, dpr) {
   const chP = this.state === 'pk' ? this.pk && this.pk.taker : this.state === 'set' ? this.sp && this.sp.taker : this.ctrl;
   if (this.charging && chP) { const P = V.p(chP.x, chP.y, 0); const w = 44; ctx.fillStyle = 'rgba(0,0,0,.6)'; ctx.fillRect(P.x - w / 2, P.y + 8, w, 6); ctx.fillStyle = this.charge > 0.85 ? '#ff4d5e' : this.charge > 0.55 ? '#ffd23f' : '#3dff8f'; ctx.fillRect(P.x - w / 2, P.y + 8, w * this.charge, 6); }
   if (this.ctrl && this.human >= 0 && this.ctrl.sta < 0.98 && this.state === 'play') { const P = V.p(this.ctrl.x, this.ctrl.y, 0); ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(P.x - 18, P.y + 16, 36, 4); ctx.fillStyle = '#4da3ff'; ctx.fillRect(P.x - 18, P.y + 16, 36 * this.ctrl.sta, 4); }
+  drawWeatherFg(ctx, V, this, t, WX);
   // viñeta
   const vg = ctx.createRadialGradient(cw / 2, ch / 2, Math.min(cw, ch) * 0.45, cw / 2, ch / 2, Math.max(cw, ch) * 0.75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.35)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, cw, ch);
   drawOverlays.call(this, ctx, cw, ch);
@@ -2211,9 +2218,24 @@ function drawPlayer3D(ctx, V, m, p) {
   if (p.headT > 0) { const hq = Math.sin((1 - p.headT / 0.4) * Math.PI); z = hq * 6; la = 0.5; lb = -0.3; raise = false; armA = -1.6; armB = 1.6; lean = 1.4; }
   if (m.ball.owner === p && p.throwIn) { raise = true; la = 0.15; lb = -0.15; }
   if (p.celebrate) {
-    const st = p === m.scorerP ? m.celeStyle : 'brazos';
+    const st = p === m.scorerP ? (['baile', 'puno', 'corazon', 'silencio', 'deslizar'].includes(m.celeStyle) ? 'none' : m.celeStyle) : (p.pid % 3 ? 'brazos' : 'salto');
     if (st === 'avion') { armsOut = true; lean = 0.6; } else if (st === 'rodilla' && spd < 40) { kneel = true; raise = true; } else if (st === 'salto') { raise = true; z = Math.abs(Math.sin(tnow * 6 + p.runOff)) * 5; } else { raise = true; z = Math.abs(Math.sin(tnow * 8 + p.runOff)) * 2.5; }
   }
+  let handsKnees = false, handsHips = false, crouch = false, point = false, heart = false, hush = false, pump = false;
+  if (p.celebrate) {
+    const st = p === m.scorerP ? m.celeStyle : (p.pid % 3 ? 'brazos' : 'salto');
+    if (st === 'baile') { raise = false; armA = Math.sin(tnow * 9) * 2.2; armB = -armA; z = Math.abs(Math.sin(tnow * 9)) * 1.5; la = Math.sin(tnow * 9) * 0.5; lb = -la; }
+    else if (st === 'puno') { pump = true; raise = false; z = Math.abs(Math.sin(tnow * 7)) * 2; }
+    else if (st === 'corazon') { heart = true; raise = false; }
+    else if (st === 'silencio') { hush = true; raise = false; }
+    else if (st === 'deslizar') { kneel = true; lean = -0.8; raise = true; }
+  }
+  if (p.complainT && tnow < p.complainT && !p.celebrate) { raise = true; z = Math.abs(Math.sin(tnow * 10)) * 0.8; }
+  if (!ref && !gk && p.en < 0.38 && spd < 14 && (m.state === 'play' || m.state === 'set')) { handsKnees = true; lean = 1.8; }
+  if (!ref && !gk && m.state === 'set' && spd < 10 && !(m.sp && m.sp.taker === p) && !handsKnees && p.pid % 2) handsHips = true;
+  if (gk && m.state === 'play' && m.ball.owner !== p && spd < 50 && Math.min(Math.abs(m.ball.x - p.x), 9999) < 260) crouch = true;
+  if (ref && (m.state === 'set' || m.state === 'pk')) point = true;
+  if (gk && p.diveUntil && tnow < p.diveUntil) { rot = (p.diving > 0 ? 1 : -1) * 1.2; z = 6; raise = true; crouch = false; }
   if (p.sad) { handsHead = true; lean = 1.2; la *= 0.3; lb *= 0.3; }
   if (p.slideT > 0) { rot = dir * 1.25; la = 1.2; lb = 0.9; z = 1; }
   if (p.fallT > 0) { rot = dir * -1.45; la = 0.2; lb = -0.2; armA = 1.5; armB = 1.2; }
@@ -2221,7 +2243,7 @@ function drawPlayer3D(ctx, V, m, p) {
   const gkHold = gk && m.ball.owner === p && !p.goalKick;
   ctx.save(); ctx.translate(P.x, P.y - (z + bob) * k); ctx.scale(k, k); if (rot) { ctx.translate(0, -6); ctx.rotate(rot); ctx.translate(0, 6); }
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  const hipY = kneel ? -5.5 : -9, shY = hipY - 5.6, dx = side ? dir : 0, sx = side ? 0 : 1;
+  const hipY = kneel ? -5.5 : crouch ? -7.9 : -9, shY = hipY - 5.6, dx = side ? dir : 0, sx = side ? 0 : 1;
   const boot = BOOTS[(p.pid || 0) % BOOTS.length];
   const leg = (a, offX, shade) => {
     let kneeX = offX + Math.sin(a) * 4.6 * dx, kneeY = hipY + Math.cos(a) * 4.6 - (!side ? Math.max(0, Math.sin(a)) * 1.6 : 0);
@@ -2257,6 +2279,13 @@ function drawPlayer3D(ctx, V, m, p) {
     if (raise) { ang = -2.7 + sgn * 0.3; ang2 = ang; }
     if (armsOut) { ang = sgn * 1.57 * (dx ? dir : 1) - (dx ? 0 : 0); ang2 = ang; }
     if (handsHead) { ang = -2.3; ang2 = 0.6; }
+    if (handsKnees) { ang = 0.55 * (dx || sgn); ang2 = 0.25 * (dx || sgn); }
+    if (handsHips) { ang = sgn * 0.75; ang2 = -sgn * 1.9; }
+    if (crouch) { ang = sgn * 0.95 + (dx ? 0.4 * dir : 0); ang2 = sgn * 1.35; }
+    if (point && offX > 0) { ang = (dx ? dir : 1) * 1.7; ang2 = ang; }
+    if (heart) { ang = sgn * 0.5; ang2 = -sgn * 2.2; }
+    if (hush && offX > 0) { ang = -0.4 * (dx || 1); ang2 = -2.9; }
+    if (pump && offX > 0) { ang = -2.6 + Math.sin(performance.now() / 140) * 0.5; ang2 = -2.9; }
     if (gkHold) { ang = 1.2 * (dx || 0.4); ang2 = 1.4 * (dx || 0.4); }
     if (p.card && offX > 0 && p.cardT > 0) { ang = -3.0; ang2 = -3.0; }
     const ex = lx + offX + Math.sin(ang) * 3.1 * (armsOut && !dx ? 1 : ddx), ey = shY + 0.8 + Math.cos(ang) * 3.1 * (armsOut ? 0.15 : 1);
@@ -2297,6 +2326,65 @@ function drawBall3D(ctx, V, m) {
 /* integración con el motor */
 Match.prototype.render2D = Match.prototype.render;
 Match.prototype.render = function (ctx, cw, ch, dpr) { if (settings.cam === 'clasica') return this.render2D(ctx, cw, ch, dpr); return render3D.call(this, ctx, cw, ch, dpr); };
+
+/* ===== clima, hinchada y estelas ===== */
+const WEATHER = {
+  noche: { sky: ['#050914', '#16213b'], lights: true, n: 'Noche', ic: '🌙' },
+  tarde: { sky: ['#2c1e5c', '#ff9a62'], lights: false, tint: 'rgba(255,150,80,.06)', sun: true, n: 'Atardecer', ic: '🌇' },
+  lluvia: { sky: ['#06090f', '#26303f'], lights: true, tint: 'rgba(30,50,80,.16)', rain: true, n: 'Lluvia', ic: '🌧️' },
+  nieve: { sky: ['#1b2536', '#5d6b82'], lights: true, tint: 'rgba(230,240,255,.17)', snow: true, n: 'Nieve', ic: '❄️' }
+};
+function pickWeather() { const s = settings.weather || 'auto'; if (WEATHER[s]) return s; const r = Math.random(); return r < 0.5 ? 'noche' : r < 0.75 ? 'tarde' : r < 0.93 ? 'lluvia' : 'nieve'; }
+function drawCrowdFx(ctx, V, m, t, roof) {
+  const ad = V.p(V.camX, AD_Y, AD_H), top = roof.y, bot = ad.y; if (bot - top < 10) return;
+  const hot = m.state === 'goal' ? 1 : clamp(m.danger * 1.4, 0, 1);
+  // flashes de cámaras
+  const nf = Math.floor(2 + hot * 26);
+  for (let i = 0; i < nf; i++) { if (Math.random() > 0.5) continue; const x = Math.random() * V.cw, y = top + Math.random() * (bot - top) * 0.92, r = 1.5 + Math.random() * 3; const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3); g.addColorStop(0, 'rgba(255,255,255,.95)'); g.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = g; ctx.fillRect(x - r * 3, y - r * 3, r * 6, r * 6); }
+  // banderas flameando
+  const T0 = m.teams[0].t, T1 = m.teams[1].t;
+  for (let i = 0; i < 9; i++) {
+    const wx = -260 + i * (W + 520) / 8, P = V.p(wx, STAND.y0 - 30 - (i % 3) * 40, STAND.z0 + 30 + (i % 3) * 30); if (P.x < -80 || P.x > V.cw + 80) continue;
+    const tm = i % 3 === 1 ? T1 : T0, fw = 34 * P.k, fh = 18 * P.k, pole = 26 * P.k, bx = P.x, by = P.y - pole;
+    ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = Math.max(1, P.k * 0.8); ctx.beginPath(); ctx.moveTo(bx, P.y); ctx.lineTo(bx, by); ctx.stroke();
+    const sw = (x) => Math.sin(t * (5 + hot * 4) + i + x * 4) * fh * 0.18 * (x + 0.2);
+    ctx.fillStyle = tm.c1; ctx.beginPath(); ctx.moveTo(bx, by); for (let s = 0; s <= 1.001; s += 0.2) ctx.lineTo(bx + fw * s, by + sw(s)); for (let s = 1; s >= -0.001; s -= 0.2) ctx.lineTo(bx + fw * s, by + fh + sw(s)); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = tm.c2; ctx.beginPath(); for (let s = 0; s <= 1.001; s += 0.2) ctx.lineTo(bx + fw * s, by + fh * 0.4 + sw(s)); for (let s = 1; s >= -0.001; s -= 0.2) ctx.lineTo(bx + fw * s, by + fh * 0.62 + sw(s)); ctx.closePath(); ctx.fill();
+  }
+  // bengalas al gol
+  if (m.state === 'goal') {
+    const side = m.teams[m.goalTeam].dir === 1 ? W : 0;
+    for (let i = 0; i < 7; i++) { const P = V.p(side + (i - 3) * 60, STAND.y0 - 40 - (i % 3) * 50, STAND.z0 + 40 + (i % 3) * 40); const r = (22 + Math.sin(t * 13 + i) * 6) * P.k; const g = ctx.createRadialGradient(P.x, P.y, 0, P.x, P.y, r); g.addColorStop(0, 'rgba(255,240,200,.95)'); g.addColorStop(0.25, 'rgba(255,60,40,.8)'); g.addColorStop(1, 'rgba(255,40,30,0)'); ctx.fillStyle = g; ctx.fillRect(P.x - r, P.y - r, r * 2, r * 2); ctx.fillStyle = 'rgba(200,60,60,.18)'; ctx.beginPath(); ctx.arc(P.x + Math.sin(t + i) * 10 * P.k, P.y - r * 1.6, r * 1.3, 0, 7); ctx.fill(); }
+  }
+}
+function drawTrail(ctx, V, m) {
+  const b = m.ball, sp = Math.hypot(b.vx, b.vy), tr = m._trail || (m._trail = []);
+  if (!b.owner && sp > 300 && m.state === 'play') tr.push({ x: b.x, y: b.y, z: b.z, a: 1, shot: b.shot });
+  for (const q of tr) q.a -= 0.09; while (tr.length && tr[0].a <= 0) tr.shift(); if (tr.length > 14) tr.splice(0, tr.length - 14);
+  if (tr.length < 2) return;
+  ctx.lineCap = 'round';
+  for (let i = 1; i < tr.length; i++) { const A = V.p(tr[i - 1].x, tr[i - 1].y, tr[i - 1].z + BR), B = V.p(tr[i].x, tr[i].y, tr[i].z + BR); ctx.strokeStyle = tr[i].shot ? `rgba(255,210,63,${tr[i].a * 0.55})` : `rgba(255,255,255,${tr[i].a * 0.35})`; ctx.lineWidth = Math.max(1, BR * B.k * 1.4 * tr[i].a); ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); }
+}
+function drawWeatherFg(ctx, V, m, t, WX) {
+  const cw = V.cw, ch = V.ch;
+  if (WX.tint) { ctx.fillStyle = WX.tint; ctx.fillRect(0, 0, cw, ch); }
+  if (WX.sun) {
+    const g = ctx.createLinearGradient(0, 0, 0, ch * 0.55); g.addColorStop(0, 'rgba(255,140,60,.28)'); g.addColorStop(1, 'rgba(255,140,60,0)'); ctx.fillStyle = g; ctx.fillRect(0, 0, cw, ch * 0.55);
+    const sx = cw * 0.12, sy = -ch * 0.05, r = cw * 0.45, s = ctx.createRadialGradient(sx, sy, 0, sx, sy, r); s.addColorStop(0, 'rgba(255,235,180,.55)'); s.addColorStop(0.3, 'rgba(255,180,90,.18)'); s.addColorStop(1, 'rgba(255,180,90,0)'); ctx.fillStyle = s; ctx.fillRect(0, 0, cw, ch);
+    [[0.35, 26, .10], [0.55, 14, .14], [0.7, 40, .06]].forEach(([f, rr, a]) => { const fx = sx + (cw * 0.6 - sx) * f, fy = sy + (ch * 0.7 - sy) * f; ctx.fillStyle = `rgba(255,220,160,${a})`; ctx.beginPath(); ctx.arc(fx, fy, rr, 0, 7); ctx.fill(); });
+  }
+  if (WX.rain) {
+    ctx.strokeStyle = 'rgba(200,220,255,.45)'; ctx.lineWidth = 1.2; ctx.beginPath();
+    for (let i = 0; i < 170; i++) { const sx = ((i * 97.3 + t * 140) % (cw + 80)) - 40, sy = ((i * 53.7 + t * (720 + (i % 5) * 60)) % (ch + 40)) - 20; ctx.moveTo(sx, sy); ctx.lineTo(sx - 5, sy + 16); }
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(220,235,255,.35)';
+    for (let i = 0; i < 40; i++) { const sx = (i * 131.7 + Math.floor(t * 6) * 37) % cw, sy = ch * 0.45 + ((i * 71.3 + Math.floor(t * 6) * 53) % (ch * 0.55)); ctx.beginPath(); ctx.ellipse(sx, sy, 3, 1, 0, 0, 7); ctx.fill(); }
+  }
+  if (WX.snow) {
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    for (let i = 0; i < 150; i++) { const sx = ((i * 89.1 + Math.sin(t + i) * 30 + t * 18) % (cw + 20)) - 10, sy = ((i * 61.9 + t * (40 + (i % 7) * 9)) % (ch + 20)) - 10, r = 1 + (i % 3) * 0.7; ctx.beginPath(); ctx.arc(sx, sy, r, 0, 7); ctx.fill(); }
+  }
+}
 /* =========================================================
    SIMULADOR MINUTO A MINUTO
    ========================================================= */
@@ -3316,7 +3404,7 @@ function contractFlow(p, c, fee, loan, renew) {
         if (r.ok) {
           closeModal();
           if (renew) { p.wage = wage; p.cEnd = career.seasonN + yrs; p.role = role; p.morale = clamp(p.morale + 8, 0, 100); addNews(`✍️ ${p.name} renovó hasta la temporada ${p.cEnd}.`); saveCareer(); renderDT(); toast('¡Renovación firmada!'); }
-          else { if (!p.free && (fee > career.money)) return toast('No te alcanza'); completeSigning(p, c, fee, wage, yrs, role, loan); saveCareer(); Sound.roar(); renderDT(); modal(`<h2 class="h-title">¡Fichaje cerrado! ✍️</h2>${cardHTML(p, myClub())}<p class="mt">${esc(p.name)} firmó por ${yrs} año(s) a ${money(wage)}/sem.</p><div class="btns"><button class="btn go" data-close>¡Vamos!</button></div>`); }
+          else { if (!p.free && (fee > career.money)) return toast('No te alcanza'); completeSigning(p, c, fee, wage, yrs, role, loan); saveCareer(); Sound.roar(); renderDT(); FX.confetti(80); modal(`<h2 class="h-title">¡Fichaje cerrado! ✍️</h2><div class="sign-pop">${cardHTML(p, myClub())}</div><p class="mt">${esc(p.name)} firmó por ${yrs} año(s) a ${money(wage)}/sem.</p><div class="btns"><button class="btn go" data-close>¡Vamos!</button></div>`); }
         } else if (tries >= 3) { closeModal(); if (!renew) { delete career.neg[p.id]; } saveCareer(); modal(`<h2 class="h-title">Negociación rota</h2><p class="mt">${esc(p.name)} no aceptó las condiciones.</p><div class="btns"><button class="btn" data-close>Ok</button></div>`); }
         else draw(`❌ No acepta. Pide al menos ${money(r.dem)}/sem.`);
       };
@@ -3633,5 +3721,151 @@ function simSubs(done) {
 
 /* ---------- inicio ---------- */
 Input.init(); Voice.init(); refreshContinue();
+/* =========================================================
+   EFECTOS VISUALES: tarjetas, cambios, palos, transiciones,
+   confeti, clima y animaciones de menú / Modo Manager
+   ========================================================= */
+(function injectFxCss() {
+  const css = `
+#fxLayer{position:absolute;inset:0;pointer-events:none;z-index:8;overflow:hidden}
+.fx-word{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font-weight:900;font-style:italic;font-size:clamp(30px,6vw,64px);letter-spacing:1px;color:#fff;text-shadow:0 4px 0 rgba(0,0,0,.35),0 0 30px rgba(255,210,63,.6);animation:fxWord 1.5s cubic-bezier(.2,1.6,.4,1) both;white-space:nowrap}
+.fx-word.post{color:#ffd23f}.fx-word.save{color:#7dd3fc;text-shadow:0 4px 0 rgba(0,0,0,.35),0 0 30px rgba(56,189,248,.7)}
+@keyframes fxWord{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(-8deg)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.12) rotate(-3deg)}30%{transform:translate(-50%,-50%) scale(1) rotate(-3deg)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-62%) scale(1.04) rotate(-3deg)}}
+.fx-card{position:absolute;right:6%;top:22%;display:flex;align-items:center;gap:14px;background:rgba(8,12,24,.88);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:12px 18px 12px 12px;animation:fxSlide 2.6s ease both;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.fx-card .cd{width:44px;height:62px;border-radius:6px;animation:fxFlip .6s ease both .1s;box-shadow:0 6px 16px rgba(0,0,0,.5)}
+.fx-card .cd.yellow{background:linear-gradient(135deg,#fde047,#eab308)}.fx-card .cd.red{background:linear-gradient(135deg,#f87171,#dc2626)}
+.fx-card b{display:block;font-size:20px;font-style:italic}.fx-card small{color:#94a3b8;font-weight:700;letter-spacing:1px}
+@keyframes fxFlip{0%{transform:rotateY(90deg) rotate(-20deg)}100%{transform:rotateY(0) rotate(-8deg)}}
+@keyframes fxSlide{0%{opacity:0;transform:translateX(60px)}12%{opacity:1;transform:none}85%{opacity:1;transform:none}100%{opacity:0;transform:translateX(60px)}}
+.fx-sub{position:absolute;left:50%;top:16%;transform:translateX(-50%);display:flex;gap:0;border-radius:12px;overflow:hidden;animation:fxDrop 3.2s ease both;box-shadow:0 14px 40px rgba(0,0,0,.6);border:3px solid #1f2937}
+.fx-sub .hd{background:#111827;padding:10px 14px;display:flex;align-items:center;gap:8px;font-weight:900;font-size:13px;letter-spacing:1px}
+.fx-sub .pl{background:#0b0f17;padding:6px 16px;display:flex;align-items:center;gap:10px;font-weight:800;font-size:14px;min-width:150px}
+.fx-sub .num{font-family:'Courier New',monospace;font-size:34px;font-weight:900;text-shadow:0 0 10px currentColor;animation:fxLed .5s steps(2) 4}
+.fx-sub .in .num{color:#4ade80}.fx-sub .out .num{color:#f87171}
+@keyframes fxLed{50%{opacity:.35}}
+@keyframes fxDrop{0%{opacity:0;transform:translate(-50%,-40px)}10%{opacity:1;transform:translate(-50%,0)}88%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-30px)}}
+.fx-flash{position:absolute;inset:0;background:#fff;animation:fxFlash .45s ease-out both}
+@keyframes fxFlash{0%{opacity:.75}100%{opacity:0}}
+.fx-stamp{position:fixed;left:50%;top:14%;transform:translateX(-50%);z-index:60;pointer-events:none;font-weight:900;font-style:italic;font-size:clamp(28px,6vw,58px);color:#fff;background:linear-gradient(90deg,transparent,rgba(8,12,24,.92) 15%,rgba(8,12,24,.92) 85%,transparent);padding:10px 80px;white-space:nowrap;animation:fxStamp 2.4s ease both;text-shadow:0 0 24px rgba(61,255,143,.6)}
+.fx-stamp::after{content:'';position:absolute;left:15%;right:15%;bottom:4px;height:3px;background:linear-gradient(90deg,transparent,#3dff8f,transparent);animation:fxLine 2.4s ease both}
+@keyframes fxStamp{0%{opacity:0;letter-spacing:30px}15%{opacity:1;letter-spacing:2px}80%{opacity:1}100%{opacity:0}}
+@keyframes fxLine{0%{transform:scaleX(0)}25%{transform:scaleX(1)}}
+#hudScore.bump .hs-score{animation:fxBump .9s cubic-bezier(.2,1.8,.4,1)}
+@keyframes fxBump{0%{transform:scale(1)}30%{transform:scale(1.6);background:#ffd23f;color:#0b1220}100%{transform:scale(1)}}
+.fx-confetti{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
+.fx-confetti i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;animation:fxFall linear forwards}
+@keyframes fxFall{to{transform:translate3d(var(--dx),110vh,0) rotate(var(--r));}}
+.fx-trophy{position:fixed;inset:0;z-index:79;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;background:radial-gradient(circle,rgba(255,210,63,.25),rgba(0,0,0,0) 60%);animation:fxFade 3.2s ease both}
+.fx-trophy .cup{font-size:120px;animation:fxCup 3.2s cubic-bezier(.2,1.5,.4,1) both;filter:drop-shadow(0 0 30px rgba(255,210,63,.8))}
+.fx-trophy b{font-size:clamp(24px,5vw,44px);font-weight:900;font-style:italic;color:#ffd23f;text-shadow:0 4px 0 rgba(0,0,0,.4);animation:fxWordUp .8s ease .3s both}
+@keyframes fxCup{0%{transform:scale(0) rotate(-30deg)}25%{transform:scale(1.25) rotate(8deg)}40%{transform:scale(1) rotate(0)}100%{transform:scale(1)}}
+@keyframes fxFade{0%,85%{opacity:1}100%{opacity:0}}
+@keyframes fxWordUp{0%{opacity:0;transform:translateY(30px)}100%{opacity:1;transform:none}}
+/* transiciones de pantalla */
+.screen.active.scr-in{animation:scrIn .38s cubic-bezier(.2,.8,.3,1) both}
+@keyframes scrIn{0%{opacity:0;transform:translateY(14px) scale(.985)}100%{opacity:1;transform:none}}
+.fx-wipe{position:fixed;inset:0;z-index:90;pointer-events:none;background:linear-gradient(100deg,#0b6b3a 0 30%,#16c96a 30% 36%,#0b1220 36% 100%);animation:fxWipe .7s cubic-bezier(.7,0,.3,1) both}
+@keyframes fxWipe{0%{transform:translateX(-110%) skewX(-12deg)}45%,55%{transform:translateX(0) skewX(-12deg)}100%{transform:translateX(110%) skewX(-12deg)}}
+/* menú vivo */
+.menu-btns .mbtn{animation:tileIn .5s cubic-bezier(.2,1.2,.4,1) both}
+.menu-btns .mbtn:nth-child(1){animation-delay:.05s}.menu-btns .mbtn:nth-child(2){animation-delay:.12s}.menu-btns .mbtn:nth-child(3){animation-delay:.19s}.menu-btns .mbtn:nth-child(4){animation-delay:.26s}.menu-btns .mbtn:nth-child(5){animation-delay:.33s}
+@keyframes tileIn{0%{opacity:0;transform:translateY(24px) scale(.94)}100%{opacity:1;transform:none}}
+.mbtn::after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent);transform:skewX(-18deg);transition:left .6s ease}
+.mbtn:hover::after{left:130%}
+.mbtn.primary .ic{animation:ballBounce 1.4s ease-in-out infinite}
+@keyframes ballBounce{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-10px) rotate(180deg)}}
+.mbtn.primary{box-shadow:0 0 0 0 rgba(22,201,106,.5);animation:tileIn .5s cubic-bezier(.2,1.2,.4,1) both,pulseG 2.4s ease-in-out 1s infinite}
+@keyframes pulseG{0%,100%{box-shadow:0 10px 30px rgba(22,201,106,.25)}50%{box-shadow:0 10px 50px rgba(22,201,106,.55)}}
+/* Modo Manager: tarjetas que suben */
+#dtBody .card,#dtBody .pcard,#dtHead{animation:riseIn .42s cubic-bezier(.2,.9,.3,1) both}
+#dtBody > * > .card:nth-child(2),#dtBody .cols > .card:nth-child(2){animation-delay:.06s}
+#dtBody > * > .card:nth-child(3),#dtBody .cols > .card:nth-child(3){animation-delay:.12s}
+@keyframes riseIn{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
+.sign-pop > *{animation:cardFlip .9s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes cardFlip{0%{transform:perspective(600px) rotateY(180deg) scale(.6);opacity:0}60%{opacity:1}100%{transform:none}}
+/* intro: filas que entran */
+.intro-card.show .xi section div{animation:rowIn .35s ease both}
+${Array.from({ length: 11 }, (_, i) => `.intro-card.show .xi section div:nth-child(${i + 1}){animation-delay:${(0.25 + i * 0.05).toFixed(2)}s}`).join('')}
+.intro-card.show .top svg{animation:crestIn .7s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes rowIn{0%{opacity:0;transform:translateX(-12px)}100%{opacity:1;transform:none}}
+@keyframes crestIn{0%{opacity:0;transform:scale(.2) rotate(-25deg)}100%{opacity:1;transform:none}}
+.intro-card .wx{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.08);font-weight:800}
+@media (prefers-reduced-motion:reduce){.fx-word,.fx-card,.fx-sub,.fx-stamp,.fx-wipe,.fx-confetti,.fx-trophy,.menu-btns .mbtn,#dtBody .card,.screen.active.scr-in{animation-duration:.01s!important}}
+`;
+  const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+})();
+
+const FX = {
+  layer() {
+    let l = document.getElementById('fxLayer');
+    if (!l) { l = document.createElement('div'); l.id = 'fxLayer'; $('#screen-match').appendChild(l); }
+    return l;
+  },
+  add(html, ms) { if (!game) return; const d = document.createElement('div'); d.innerHTML = html; const el = d.firstElementChild; this.layer().appendChild(el); setTimeout(() => el.remove(), ms); return el; },
+  word(text, cls) { const l = this.layer(); l.querySelectorAll('.fx-word').forEach(e => e.remove()); this.add(`<div class="fx-word ${cls || ''}">${esc(text)}</div>`, 1500); },
+  card(col, p, T) {
+    this.add(`<div class="fx-card"><div class="cd ${col}"></div><div><small>${col === 'yellow' ? 'TARJETA AMARILLA' : 'TARJETA ROJA'}</small><b>${esc(p.name)}</b><small>${esc(T.t.name)} · #${p.num}</small></div></div>`, 2600);
+    if (col === 'red') this.word('¡EXPULSADO!', 'post');
+  },
+  sub(T, pin, pout) {
+    this.add(`<div class="fx-sub"><div class="hd">${crestSVG(T.t, 26)} CAMBIO</div><div class="pl in"><span class="num">${pin.num}</span><span>▲ ${esc(pin.sname)}</span></div><div class="pl out"><span class="num">${pout.num}</span><span>▼ ${esc(pout.sname)}</span></div></div>`, 3200);
+  },
+  goal(m, ti) {
+    this.add('<div class="fx-flash"></div>', 500);
+    const hs = $('#hudScore'); hs.classList.remove('bump'); void hs.offsetWidth; setTimeout(() => { hs.classList.add('bump'); }, 60);
+    for (let i = 0; i < 40; i++) m.particles.push({ x: m.ball.x + rnd(-30, 30), y: m.ball.y + rnd(-30, 30), z: rnd(10, 40), vx: rnd(-90, 90), vy: rnd(-90, 90), life: rnd(1, 2.2), c: pick([m.teams[ti].main, m.teams[ti].trim, '#ffd23f', '#fff']), s: 2.4, conf: true });
+    if (m.human === ti || (m.human < 0 && ti === 0)) setTimeout(() => FX.confetti(70), 300);
+  },
+  stamp(text) { const d = document.createElement('div'); d.className = 'fx-stamp'; d.textContent = text; document.body.appendChild(d); setTimeout(() => d.remove(), 2400); },
+  dust(m, x, y, n) { for (let i = 0; i < n; i++) m.particles.push({ x: x + rnd(-4, 4), y: y + rnd(-4, 4), z: rnd(0, 3), vx: rnd(-50, 50), vy: rnd(-50, 50), life: rnd(0.25, 0.6), c: pick(['#4d7c3a', '#6b8f45', '#8a7a52', '#3f6b30']), s: 2.2 }); },
+  confetti(n) {
+    const box = document.createElement('div'); box.className = 'fx-confetti'; const cols = ['#ffd23f', '#3dff8f', '#4da3ff', '#ff4d5e', '#fff', '#c084fc'];
+    box.innerHTML = Array.from({ length: n || 90 }, () => `<i style="left:${rnd(0, 100)}vw;background:${pick(cols)};--dx:${rnd(-120, 120)}px;--r:${rnd(360, 1080)}deg;animation-duration:${rnd(1.8, 3.4)}s;animation-delay:${rnd(0, 0.8)}s"></i>`).join('');
+    document.body.appendChild(box); setTimeout(() => box.remove(), 4400);
+  },
+  trophy(text) { const d = document.createElement('div'); d.className = 'fx-trophy'; d.innerHTML = `<div class="cup">🏆</div><b>${esc(text)}</b>`; document.body.appendChild(d); this.confetti(140); setTimeout(() => d.remove(), 3200); },
+  wipe() { const d = document.createElement('div'); d.className = 'fx-wipe'; document.body.appendChild(d); setTimeout(() => d.remove(), 750); }
+};
+
+/* ---- transiciones entre pantallas ---- */
+const _show = show;
+show = function (name) {
+  const prev = current; _show(name);
+  const s = $('#screen-' + name); s.classList.remove('scr-in'); void s.offsetWidth; s.classList.add('scr-in');
+  if (name === 'match' && prev !== 'match') FX.wipe();
+};
+
+/* ---- clima en cada partido + datos en la presentación ---- */
+const _startIntro = Match.prototype.startIntro;
+Match.prototype.startIntro = function () { if (!this.weather) this.weather = pickWeather(); _startIntro.call(this); };
+const _showIntroCard = showIntroCard;
+showIntroCard = function (g) { _showIntroCard(g); const ft = $('#introCard .ft'); const w = WEATHER[g.weather]; if (ft && w) ft.insertAdjacentHTML('afterbegin', `<span class="wx">${w.ic} ${w.n}</span> `); };
+
+/* ---- polvo en remates y sprints ---- */
+const _shoot = Match.prototype.shoot;
+Match.prototype.shoot = function (p, power) { const r = _shoot.apply(this, arguments); FX.dust(this, p.x, p.y, 6 + Math.round((power || 0.6) * 6)); return r; };
+const _human = Match.prototype.humanPlayer;
+Match.prototype.humanPlayer = function (p, inp, dt) { _human.call(this, p, inp, dt); if (inp.sprint && Math.hypot(p.vx, p.vy) > 110 && Math.random() < 0.3) FX.dust(this, p.x - p.vx * 0.03, p.y - p.vy * 0.03, 1); };
+
+/* ---- victoria: confeti ---- */
+const _fullTime = Match.prototype.fullTime;
+Match.prototype.fullTime = function (afterSo) {
+  _fullTime.call(this, afterSo);
+  if (this.over && this.human >= 0) { const me = this.teams[this.human].score, op = this.teams[1 - this.human].score, so = this.so ? this.shootoutWinner && this.shootoutWinner() : null; if (me > op || so === this.human) setTimeout(() => FX.confetti(110), 900); }
+};
+
+/* ---- opciones: clima ---- */
+const _optionsModal = optionsModal;
+optionsModal = function () {
+  _optionsModal();
+  const box = $('#optCam'); if (!box) return; const row = box.closest('.opt-row');
+  const WN = { auto: '🎲 Aleatorio', noche: '🌙', tarde: '🌇', lluvia: '🌧️', nieve: '❄️' };
+  row.insertAdjacentHTML('afterend', `<div class="opt-row"><span>🌦️ Clima</span><div class="seg" id="optWx">${Object.entries(WN).map(([k, v]) => `<button data-v="${k}" class="${(settings.weather || 'auto') === k ? 'on' : ''}" title="${k}">${v}</button>`).join('')}</div></div>`);
+  $$('#optWx button').forEach(b => b.onclick = () => { settings.weather = b.dataset.v; saveSettings(); $$('#optWx button').forEach(x => x.classList.toggle('on', x === b)); });
+};
+
+/* ---- Modo Manager: celebraciones ---- */
+const _seasonModal = seasonModal;
+seasonModal = function () { _seasonModal.apply(this, arguments); try { if ($('#modal .h-title').textContent.includes('CAMPEÓN')) setTimeout(() => FX.trophy('¡CAMPEONES!'), 250); } catch (e) { } };
 </script>
 </body></html>
