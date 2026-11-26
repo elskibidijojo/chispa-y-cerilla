@@ -35,7 +35,7 @@ const TIERS={
   varita:[1,'Bajo (pero llena el súper rapidísimo)'],
   luciernaga:[1.1,'Bajo (nunca falla)']};
 window.WEAPON_TIERS=TIERS;
-let CUR=1;const wm=w=>(TIERS[w]?TIERS[w][0]:1);
+let CUR=1;const BOOST=1.25;/* all weapons hit 25 % harder */const wm=w=>(TIERS[w]?TIERS[w][0]:1)*BOOST;
 const _B=B_;B_=function(L,p,b){if(CUR!==1&&typeof b.dmg==='number')b.dmg*=CUR;return _B(L,p,b);};
 let HOLD=0;const _dm=dmgM;dmgM=function(p){return _dm(p)*(HOLD&&p===HOLD.p?HOLD.m:1);};
 const _hw=holdWeapon;holdWeapon=function(L,p,dt,h,w){const m=wm(w),pc=CUR,ph=HOLD;CUR=m;HOLD={p,m};try{return _hw(L,p,dt,h,w);}finally{CUR=pc;HOLD=ph;}};
