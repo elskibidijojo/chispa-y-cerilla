@@ -424,9 +424,14 @@ function drawEquip(){const t=EQ.t,e=save.eq[EQ.pl],slide=easeOutQ(Math.min(1,t/.
   const bx=cx+200,by=cy+240,bw=cw-230;
   if(EQ.pick){const s=EQ_SLOTS[EQ.slot],list=eqList(EQ.slot);rr(bx-6,by-6,bw+12,146,8,'rgba(20,13,8,.08)',2);
     btxt(`Elige ${s.name.toLowerCase()} · tienes ${list.filter(Boolean).length} de ${eqTotal(EQ.slot)}`,bx,by+6,14,C.ink,'left',800);
-    list.forEach((id,i)=>{const c=i%7,r=Math.floor(i/7),x=bx+c*86,y=by+20+r*58,sel=i===EQ.sel,eqd=(e[s.key]??null)===id;
+    /* scrolling picker: only 2 rows fit, so the view follows your selection (wheel/arrows scroll it) */
+    const rowsT=Math.ceil(list.length/7),selR=Math.floor(EQ.sel/7);EQ.top=clamp(EQ.top??0,0,Math.max(0,rowsT-2));if(selR<EQ.top)EQ.top=selR;if(selR>EQ.top+1)EQ.top=selR-1;EQ.topS=lerp(EQ.topS??EQ.top,EQ.top,.3);
+    if(rowsT>2){const sx=bx+bw-14;rr(sx,by+20,8,110,4,'rgba(20,13,8,.15)',0);const hh=110*2/rowsT;rr(sx,by+20+(110-hh)*(EQ.topS/(rowsT-2)),8,hh,4,C.rust,0);
+      if(EQ.top>0)btxt('▲',sx+4,by+12,12,C.rust,'center',900);if(EQ.top<rowsT-2)btxt('▼ más',sx-10,by+142,12,C.rust,'center',900);}
+    ctx.save();ctx.beginPath();ctx.rect(bx-4,by+16,bw-12,120);ctx.clip();
+    list.forEach((id,i)=>{const c=i%7,r=Math.floor(i/7);if(r<EQ.top-1||r>EQ.top+2)return;const x=bx+c*86,y=by+20+(r-EQ.topS)*58,sel=i===EQ.sel,eqd=(e[s.key]??null)===id;
       rr(x,y,78,52,6,sel?C.brass:'#efe4c8',sel?4:2.5);if(id){ctx.save();ctx.translate(x+39,y+24);ctx.scale(.8,.8);itemIcon(id,0,0,t);ctx.restore();}else txt('VACÍO',x+39,y+26,11,C.ink,null);
-      if(eqd)btxt('PUESTO',x+39,y+45,10,C.rust,'center',900);});
+      if(eqd)btxt('PUESTO',x+39,y+45,10,C.rust,'center',900);});ctx.restore();
     const id=list[EQ.sel],d=eqDef(s.type,id);
     card(bx,by+148,bw,70,'#f6ecd4',2.5,6);if(d){btxt(d.name,bx+14,by+166,16,C.rust,'left',900);wrap(d.desc,bx+14,by+186,bw-28,16,13,C.ink,700);}
     else btxt('Dejar este espacio vacío.',bx+14,by+178,15,C.ink,'left',700);}

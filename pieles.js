@@ -21,3 +21,5 @@ try{Object.defineProperty(ctx,'filter',{configurable:true,get(){return 'none';},
 /* Auto quality now starts at "Media" (normal resolution, no film grain) instead of "Alta" (up to double
    resolution on sharp screens = 4x the pixels to paint). "Alta" is still there in Options for strong computers. */
 try{if(typeof PERF!=='undefined'&&PERF.auto&&PERF.level===0)perfApply(1);const _pf=perfFromCfg;perfFromCfg=function(){_pf();if(PERF.auto&&PERF.level===0)perfApply(1);};}catch(e){}
+/* mouse wheel scrolls the equipment picker */
+addEventListener('wheel',e=>{try{if(scene==='equip'&&EQ.pick){const n=eqList(EQ.slot).length;EQ.sel=clamp(EQ.sel+(e.deltaY>0?7:-7),0,n-1);sfx('move');e.preventDefault();}}catch(_){}},{passive:false});
