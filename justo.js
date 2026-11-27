@@ -21,3 +21,7 @@ if(typeof MINI!=='undefined'&&MINI.farolero){const F=MINI.farolero;F.init=e=>{e.
   F.shapes=e=>(e.fade||0)>.75?[]:[{x:e.x,y:e.y-8,r:56},{x:e.x,y:e.y+40,r:38},{x:e.x,y:e.y-76,r:24},{x:e.x+(e.face||1)*50,y:e.y+20,r:22}];
   const _u=F.upd;F.upd=function(e,L,dt,p){const r=_u.call(this,e,L,dt,p);if(e.base<285)e.base=290+(e.base-150)*.3;return r;};}
 })();
+/* falling into a pit always costs a heart (unless you just fell a moment ago). Before, being invincible after
+   a hit let you fall again and again without losing anything — "immortal" on the Reina Polilla's lamps. */
+{const _pf=pitFall;pitFall=function(L,p){if(!p||!L)return _pf(L,p);const recent=p._lastPit!=null&&(L.t-p._lastPit)<1.2;p._lastPit=L.t;
+  if(p.inv>0&&!recent){const iv=p.inv;p.inv=0;const r=_pf(L,p);p.inv=Math.max(p.inv,Math.min(iv,1.6));return r;}return _pf(L,p);};}
