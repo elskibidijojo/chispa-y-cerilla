@@ -87,7 +87,7 @@ const _db=drawBullets;drawBullets=function(L){const anyB=L&&L.bul&&L.bul.some(b=
 
 /* ---------------- looks ---------------- */
 const _dsa=drawSkinAcc;drawSkinAcc=function(o,ch,fy,f,ex){const sk=SKINS[o.skin];if(!sk||sk.acc!=='surf'){_dsa(o,ch,fy,f,ex);return;}
-  ctx.save();ctx.filter='none';ctx.lineJoin='round';ctx.lineCap='round';const top=fy-(ch==='cerilla'?20:ch==='velita'?22:26),t=(typeof LV!=='undefined'&&LV?LV.t:performance.now()/1000);
+  ctx.save();ctx.lineJoin='round';ctx.lineCap='round';const top=fy-(ch==='cerilla'?20:ch==='velita'?22:26),t=(typeof LV!=='undefined'&&LV?LV.t:performance.now()/1000);
   const by=fy+(ch==='chispa'?26:ch==='velita'?24:18),bob=o.run||o.air||o.dash?0:Math.sin(t*3)*2;
   /* surfboard on the back */
   ctx.save();ctx.translate(-f*22,by+4+bob);ctx.rotate(-f*.25);ell(0,0,9,34,'#fbf6ea',2.5);ctx.fillStyle='#1e7fe0';ctx.fillRect(-2.5,-30,5,60);ell(0,-22,4,3,'#e8562e',0);ctx.restore();
@@ -97,7 +97,7 @@ const _dsa=drawSkinAcc;drawSkinAcc=function(o,ch,fy,f,ex){const sk=SKINS[o.skin]
   const gx=ex-2*f;line(gx-14*f,fy-2,gx+16*f,fy-2,2.5);rr(gx-13*f-(f<0?-0:0)-(f>0?0:12),fy-6,12,10,4,'#14161e',2);rr(gx+3*f-(f>0?0:12),fy-6,12,10,4,'#14161e',2);
   ctx.globalAlpha=.85;line(gx-10*f,fy-3,gx-6*f,fy-5,2,'#9fe8ff');line(gx+6*f,fy-3,gx+10*f,fy-5,2,'#9fe8ff');ctx.globalAlpha=1;
   /* flower necklace */
-  const cols=['#ff5a8a','#ffd65a','#ff8a3a','#ffffff','#ff5a8a','#c08aff','#ffd65a'];for(let i=0;i<7;i++){const a=Math.PI*(.15+.7*i/6),x=Math.cos(a)*16,y=by-4+Math.sin(a)*7;for(let k=0;k<5;k++){const aa=k/5*TAU+t;circ(x+Math.cos(aa)*3,y+Math.sin(aa)*3,2.6,cols[i],1);}circ(x,y,1.6,'#ffd65a',0);}
+  const cols=['#ff5a8a','#ffd65a','#ff8a3a','#ffffff','#ff5a8a','#c08aff','#ffd65a'];for(let i=0;i<7;i++){const a=Math.PI*(.15+.7*i/6),x=Math.cos(a)*16,y=by-4+Math.sin(a)*7;circ(x,y,4.2,cols[i],1.5);circ(x,y,1.5,'#ffd65a',0);}
   ctx.restore();};
 
 /* extra surfer animations (drawing only) */

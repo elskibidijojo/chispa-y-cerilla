@@ -10,7 +10,7 @@ const TIERS={
   lanzallamas:[0.868,'Altísimo (de cerca)'],
   carga:[0.73,'Altísimo (hay que cargarlo)'],
   abanico:[0.633,'Muy alto (de cerca)'],
-  yoyo:[1,'Muy alto (de cerca)'],
+  yoyo:[1.1,'Muy alto (de cerca)'],
   bastones:[0.92,'Muy bueno (atraviesan)'],
   tachuelas:[0.832,'Muy bueno'],
   arco:[0.824,'Muy bueno (alcance medio)'],
@@ -19,21 +19,21 @@ const TIERS={
   shuriken:[1,'Bueno (atraviesa)'],
   murcielago:[1,'Bueno (persiguen solos)'],
   agua:[0.89,'Bueno (moja: +15% de daño)'],
-  petardo:[1,'Bueno (explota en área)'],
+  petardo:[1.12,'Bueno (explota en área)'],
   rebote:[1.158,'Bueno'],
   convergente:[.861,'Bueno'],
   espiral:[.854,'Bueno'],
   cohete:[1,'Normal'],
-  trueno:[1,'Normal (nunca falla)'],
+  trueno:[1.15,'Normal (nunca falla)'],
   palomitas:[1,'Bueno (explotan en tres)'],
   canicas:[1,'Normal (fácil de usar)'],
   chispa:[1,'Normal'],
-  partida:[1,'Normal'],
+  partida:[1.08,'Normal'],
   sierra:[.8,'Decente (te protege)'],
-  burbujas:[.765,'Decente (se come balas)'],
-  rebotapared:[1.023,'Decente'],
-  varita:[1,'Bajo (pero llena el súper rapidísimo)'],
-  luciernaga:[1.1,'Bajo (nunca falla)']};
+  burbujas:[0.88,'Decente (se come balas)'],
+  rebotapared:[1.146,'Decente'],
+  varita:[1.12,'Bajo (pero llena el súper rapidísimo)'],
+  luciernaga:[1.265,'Bajo (nunca falla)']};
 window.WEAPON_TIERS=TIERS;
 let CUR=1;const BOOST=1.25;/* all weapons hit 25 % harder */const wm=w=>(TIERS[w]?TIERS[w][0]:1)*BOOST;
 const _B=B_;B_=function(L,p,b){if(CUR!==1&&typeof b.dmg==='number')b.dmg*=CUR;return _B(L,p,b);};
