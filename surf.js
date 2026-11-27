@@ -14,7 +14,7 @@ const isSurf=p=>p&&p.eq&&p.eq.skin==='skin_surf';
 
 /* ---------------- the code ---------------- */
 const WORD='DEREK';let buf='';
-function grant(){cfg.derek=true;try{saveCfg();}catch(e){}syncSurf(true);sfx('secret');
+function grant(){cfg.derek=true;try{saveCfg();}catch(e){}syncSurf(true);sfx('magic');sfx('coin');
   const msg='¡SECRETO! Skin Surfista desbloqueada 🏄';if(scene==='title'&&typeof TI!=='undefined'){TI.msg=msg;TI.msgT=3.5;}
   else if(typeof ACHQ!=='undefined')ACHQ.push({a:{name:'¡Skin Surfista desbloqueada!',coins:0},t:0});}
 function syncSurf(equip){if(!cfg.derek||typeof save==='undefined'||!save||!save.owned)return;let ch=false;if(!save.owned.includes('skin_surf')){save.owned.push('skin_surf');ch=true;equip=true;}

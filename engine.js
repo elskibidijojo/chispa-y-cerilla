@@ -415,7 +415,7 @@ const ATK={
   fountain(L,B,a){const o=anc(B,a.from);for(let i=0;i<(a.n||5);i++){B.pc++;spawnEB(L,{k:'grav',x:o.x,y:o.y,vx:-(80+rand()*260),vy:-(420+rand()*320),g:a.g||900,r:a.r||10,spr:a.spr||'drop',parry:!!a.parry&&B.pc%a.parry===0});}sfx('splash');},
 };
 function updAct(L,B,dt){const a=B.act;a.t=(a.t||0)+dt;
-  if(a.type==='charge'){if(a.t<a.warn){B.shk=Math.sin(a.t*60)*3;return;}B.shk=0;B.x+=a.dir*a.spd*dt;const m=B.def.margin||170,lim=a.dir>0?W-m:m;if(rand()<.5)puff(L,B.x-a.dir*60,GROUND,1);
+  if(a.type==='charge'){if(a.t<a.warn){B.shk=Math.sin(a.t*60)*3;return;}B.shk=0;B.x+=a.dir*a.spd*dt;const m=a.m||B.def.margin||170,lim=a.dir>0?W-m:m;if(rand()<.5)puff(L,B.x-a.dir*60,GROUND,1);
     if((a.dir>0&&B.x>=lim)||(a.dir<0&&B.x<=lim)){B.x=lim;B.face=a.dir>0?-1:1;B.act=null;shake(L,8);sfx('stomp');}}
   else if(a.type==='leap'){a.vy+=2200*dt;B.x+=a.vx*dt;B.y+=a.vy*dt;if(B.y>=a.gy&&a.vy>0){B.y=a.gy;B.act=null;B.squash=.3;shake(L,20);sfx('stomp');puff(L,B.x-60,GROUND,6);puff(L,B.x+60,GROUND,6);
     if(a.landWave)ATK.wave(L,B,{from:'__feet',both:true,spd:430});if(B.def.faceTarget){const tp=nearestP(L,B.x,B.y);if(tp)B.face=tp.x<B.x?-1:1;}}}
