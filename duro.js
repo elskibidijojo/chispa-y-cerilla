@@ -5,7 +5,7 @@
    - Fácil only gets half of the extra, so it stays a good way to learn a boss; Experto keeps all of it
    Everything is plain multipliers on the simulation, the same on every machine, so online play stays in sync. */
 (function(){
-const ISL={1:{hp:1.1,mhp:1.15,pace:.8,spd:1.05,ent:1.25},2:{hp:1.14,mhp:1.2,pace:.76,spd:1.08,ent:1.35},3:{hp:1.18,mhp:1.24,pace:.72,spd:1.1,ent:1.45},4:{hp:1.22,mhp:1.28,pace:.69,spd:1.12,ent:1.55},5:{hp:1.26,mhp:1.32,pace:.67,spd:1.14,ent:1.6}};
+const ISL={1:{hp:1.65,mhp:1.15,pace:.8,spd:1.05,ent:1.25},2:{hp:1.71,mhp:1.2,pace:.76,spd:1.08,ent:1.35},3:{hp:1.77,mhp:1.24,pace:.72,spd:1.1,ent:1.45},4:{hp:1.83,mhp:1.28,pace:.69,spd:1.12,ent:1.55},5:{hp:1.89,mhp:1.32,pace:.67,spd:1.14,ent:1.6}};
 window.DURO=ISL;
 /* longer fights shouldn't ruin your grade: the par time grows with the extra life */
 for(const id in LEVELS){const d=LEVELS[id];if(!d.create||/^tutorial/.test(id)||d._duroPar)continue;const b=ISL[d.isl]||ISL[3];d._duroPar=true;
@@ -38,7 +38,7 @@ const _sebP=spawnEB;spawnEB=function(L,o){if(L&&L.boss&&o&&o.parry&&o.k!=='pstar
   const _mbl=makeBossLevel;makeBossLevel=function(def){const L=_mbl(def),B=L.boss;if(!B||!L.id)return L;const r=RANK[L.id];
     if(r!==undefined){const e=ease();const hp=1+((.92+.16*r)-1)*e,pc=1+((1.1-.18*r)-1)*e;B.hp*=hp;B.max*=hp;B.pace*=pc;}
     /* El Rascacielos: a climbing level is hard enough on its own — less life and calmer attacks */
-    if(L.id==='rascacielos'){B.hp*=.6;B.max*=.6;B.pace*=cfg.diff==='facil'?1.5:1.35;}
+    if(L.id==='rascacielos'){B.hp*=.4;B.max*=.4;B.pace*=cfg.diff==='facil'?1.5:1.35;}
     return L;};
   const _mk=mkEnt;mkEnt=function(L,o){const e=_mk(L,o);if(L&&L.kind==='run'&&e&&!e.boss&&e.ai!=='mini'&&!e._rank){const r=RANK[L.id];if(r!==undefined){e._rank=true;const m=.85+.3*r;e.hp=Math.max(1,Math.round(e.hp*m));if(e.max)e.max=Math.max(1,Math.round(e.max*m));}}return e;};
 })();

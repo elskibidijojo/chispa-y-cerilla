@@ -10,7 +10,7 @@
 SKINS.skin_pato={name:'Patito',price:0,isl:1,secret:true,acc:'pato',trail:'spark',tcol:'#ffd23a',
   desc:'Secreta (código DUCK). ¡Cuac! Pico naranja, alitas y patas de pato.'};
 const PAL={glass:'#ffe066',steel:'#e8a21a',steelD:'#b87a10',match:'#ffd23a',matchHead:'#ff9a1a',paper:'#fff6c8'};
-if(window.SKIN_PERK)SKIN_PERK.skin_pato={hp:1,t:'+1 corazón, +16 % de daño, +10 % en las súper, la súper se recarga sola, parry de largo alcance, patitos al hacer parry, un patito acompañante que dispara y entrada propia'};
+if(window.SKIN_PERK)SKIN_PERK.skin_pato={hp:1,t:'+1 corazón, +10 % de daño, +10 % en las súper, la súper se recarga sola, parry de largo alcance, patitos al hacer parry, un patito acompañante que dispara y entrada propia'};
 SKINS.skin_pato.desc+=' Bonus: '+SKIN_PERK.skin_pato.t+'.';
 if(typeof refreshShopTabs==='function'){const _r=refreshShopTabs;refreshShopTabs=function(){_r();try{for(const t of SHOP_TABS){const i=t.ids.indexOf('skin_pato');if(i>=0)t.ids.splice(i,1);}}catch(e){}};refreshShopTabs();}
 const isPato=p=>p&&p.eq&&p.eq.skin==='skin_pato';
@@ -27,14 +27,14 @@ addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.key.length!=
 
 /* ---------- bonuses (simulation) ---------- */
 const _st=startSuper;startSuper=function(L,p){const r=_st(L,p);if(isPato(p)&&L)p._dSup=(L.t||0)+5;return r;};
-const _dm=dmgM;dmgM=function(p){const m=_dm(p);if(!isPato(p))return m;const inSup=typeof LV!=='undefined'&&LV&&p._dSup>(LV.t||0);return m*(inSup?1.1:1.16);};
-const _pt=ptimers;ptimers=function(p,dt){_pt(p,dt);if(!isPato(p)||p.dead)return;if(!(p.superT>0))p.cards=Math.min(5,(p.cards||0)+dt/11);if(p._feath>0)p._feath-=dt;
+const _dm=dmgM;dmgM=function(p){const m=_dm(p);if(!isPato(p))return m;const inSup=typeof LV!=='undefined'&&LV&&p._dSup>(LV.t||0);return m*(inSup?1.1:1.1);};
+const _pt=ptimers;ptimers=function(p,dt){_pt(p,dt);if(!isPato(p)||p.dead)return;if(!(p.superT>0))p.cards=Math.min(5,(p.cards||0)+dt/20);if(p._feath>0)p._feath-=dt;
   if(p.dash>0&&!p._dW){p._quack=.6;}p._dW=p.dash>0;if(p._quack>0)p._quack-=dt;};
-if(typeof reachOf==='function'){const _ro=reachOf;reachOf=function(p){const r=_ro(p);return isPato(p)?r+48:r;};}
+if(typeof reachOf==='function'){const _ro=reachOf;reachOf=function(p){const r=_ro(p);return isPato(p)?r+28:r;};}
 function duckling(b){const d=b.vx<0?-1:1;ctx.save();ctx.translate(b.x,b.y);ctx.scale(d,1);ell(0,2,9,7,'#ffd23a',2);circ(6,-5,5.5,'#ffd23a',2);poly([[10,-5],[16,-3],[10,-1]],'#ff9a1a',1.5);circ(7,-6,1.3,C.ink,0);ctx.restore();}
 const _dp=doParry;doParry=function(L,p,o){_dp(L,p,o);if(!isPato(p)||!L)return;const c=pCenter(p);for(let i=0;i<3;i++){const a=-Math.PI/2+(i-1)*.7;
-  B_(L,p,{x:c.x,y:c.y,vx:Math.cos(a)*420+(p.face||1)*200,vy:Math.sin(a)*420,r:9,dmg:3,life:2.2,k:'patito',homing:7,noGain:true,draw:duckling});}sfx('pop');};
-const _h=hurt;hurt=function(L,p){const b=p?p.hp:0;_h(L,p);if(isPato(p)&&p.hp<b&&!p.dead&&p.hp>0){p.inv=Math.max(p.inv,2.1);p._feath=1;}};
+  B_(L,p,{x:c.x,y:c.y,vx:Math.cos(a)*420+(p.face||1)*200,vy:Math.sin(a)*420,r:9,dmg:2,life:2.2,k:'patito',homing:7,noGain:true,draw:duckling});}sfx('pop');};
+const _h=hurt;hurt=function(L,p){const b=p?p.hp:0;_h(L,p);if(isPato(p)&&p.hp<b&&!p.dead&&p.hp>0){p.inv=Math.max(p.inv,1.9);p._feath=1;}};
 
 /* ---------- duck-yellow shots ---------- */
 const Y='#ffd23a',Y2='#fff0a0',OR='#ff9a1a';
@@ -81,8 +81,8 @@ const _dh=drawHero;drawHero=function(o){if(!o||o.skin!=='skin_pato'||o.scale||ty
 const _dh2=drawHero;drawHero=function(o){if(!o||o.skin!=='skin_pato'){_dh2(o);return;}const old={};for(const k in PAL){old[k]=C[k];C[k]=PAL[k];}try{_dh2(o);}finally{for(const k in old)C[k]=old[k];}};
 /* companion duckling: follows you and shoots like the Pajarito Ayudante (same damage) */
 const dPos=(p,t)=>({x:p.x-(p.face||1)*34,y:(p.type==='plane'?p.y+30:p.y-14)-Math.abs(Math.sin(t*8))*8});
-const _sT=superTick;superTick=function(L,p,dt){_sT(L,p,dt);if(!isPato(p)||!L||p.dead||L.state!=='play')return;p._dk=(p._dk||0)-dt;if(p._dk<=0){p._dk=.5;const d=dPos(p,L.t);
-  B_(L,p,{x:d.x,y:d.y-8,vx:(p.face||1)*520,vy:-40,r:6,dmg:2.6,life:2,k:'patito',homing:6,noGain:true,draw:duckling});}};
+const _sT=superTick;superTick=function(L,p,dt){_sT(L,p,dt);if(!isPato(p)||!L||p.dead||L.state!=='play')return;p._dk=(p._dk||0)-dt;if(p._dk<=0){p._dk=.65;const d=dPos(p,L.t);
+  B_(L,p,{x:d.x,y:d.y-8,vx:(p.face||1)*520,vy:-40,r:6,dmg:1.6,life:2,k:'patito',homing:6,noGain:true,draw:duckling});}};
 const _dl=drawLevel;drawLevel=function(L){_dl.apply(this,arguments);if(!L||!L.Ps||scene!=='level'||!L.Ps.some(p=>isPato(p)&&!p.dead))return;ctx.save();if(typeof DPR!=='undefined')ctx.setTransform(DPR,0,0,DPR,0,0);ctx.translate(-(L.camX||0),0);
   for(const p of L.Ps)if(isPato(p)&&!p.dead){const d=dPos(p,L.t);ctx.save();ctx.translate(d.x,d.y);ctx.scale((p.face||1)*1.6,1.6);duckling({x:0,y:0,vx:1});ctx.restore();}ctx.restore();};
 })();
