@@ -115,5 +115,6 @@ makeBossLevel=function(def){const L=_mbl(def);const bg=L.drawBG;if(bg)L.drawBG=f
 /* the camera breathes */
 const _dlS=drawLevel;drawLevel=function(L){const B=L&&L.boss,ph=B?B.phase:0,t=L?L.t:0;if(!L||L.state==='intro'&&!B){_dlS(L);return;}
   const amp=1.6+ph*1.4,rot=(.0015+ph*.0012)*Math.sin(t*.37),z=1+.008+.004*ph+.004*Math.sin(t*.53);
-  ctx.save();ctx.translate(W/2+Math.sin(t*.61)*amp,H/2+Math.cos(t*.47)*amp*.7);ctx.rotate(rot);ctx.scale(z,z);ctx.translate(-W/2,-H/2);try{_dlS(L);}finally{ctx.restore();}};
+  /* only a gentle whole-pixel sway: rotating/zooming the whole picture every frame made every layer get re-sampled (big lag on small laptops) */
+  ctx.save();ctx.translate(Math.round(Math.sin(t*.61)*amp),Math.round(Math.cos(t*.47)*amp*.7));try{_dlS(L);}finally{ctx.restore();}};
 })();

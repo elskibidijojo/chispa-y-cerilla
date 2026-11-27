@@ -18,3 +18,6 @@ if(typeof drawPlaneHero==='function'){const _dp=drawPlaneHero;drawPlaneHero=func
    while it's on, which is what made the game crawl on school laptops (the ghost after you die, the clone Súper,
    costume tints…). Small off-screen layers that are drawn once can still use them. */
 try{Object.defineProperty(ctx,'filter',{configurable:true,get(){return 'none';},set(v){}});}catch(e){}
+/* Auto quality now starts at "Media" (normal resolution, no film grain) instead of "Alta" (up to double
+   resolution on sharp screens = 4x the pixels to paint). "Alta" is still there in Options for strong computers. */
+try{if(typeof PERF!=='undefined'&&PERF.auto&&PERF.level===0)perfApply(1);const _pf=perfFromCfg;perfFromCfg=function(){_pf();if(PERF.auto&&PERF.level===0)perfApply(1);};}catch(e){}

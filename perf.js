@@ -22,8 +22,8 @@ step=function(dt){_stepP(dt);if(PERF.level>0&&LV&&LV.fx){const cap=PERF.level===
 const _renderP=render;
 render=function(){const now=performance.now(),dt=PERF.last?now-PERF.last:16.7;PERF.last=now;_renderP();
   if(dt<250&&!document.hidden){PERF.ema+=(dt-PERF.ema)*.05;
-    if(PERF.auto&&PERF.level<2&&((scene==='level'&&LV&&LV.state==='play')||scene==='map')){if(PERF.ema>22)PERF.slow+=dt;else PERF.slow=Math.max(0,PERF.slow-dt*.5);
-      if(PERF.slow>2500){perfApply(PERF.level+1);PERF.slow=0;PERF.ema=16.7;PERF.toast=`Calidad automática: ${PERF_NAMES[PERF.level]} · para que el juego no se trabe`;PERF.toastT=3.5;}}}
+    if(PERF.auto&&PERF.level<2&&((scene==='level'&&LV&&LV.state==='play')||scene==='map')){if(PERF.ema>20)PERF.slow+=dt;else PERF.slow=Math.max(0,PERF.slow-dt*.5);
+      if(PERF.slow>1200){perfApply(PERF.level+1);PERF.slow=0;PERF.ema=16.7;PERF.toast=`Calidad automática: ${PERF_NAMES[PERF.level]} · para que el juego no se trabe`;PERF.toastT=3.5;}}}
   if(PERF.toastT>0){PERF.toastT-=dt/1000;ctx.save();ctx.setTransform(DPR,0,0,DPR,0,0);ctx.globalAlpha=Math.min(1,PERF.toastT*2);card(W/2-230,10,460,30,'rgba(43,29,20,.9)',2.5,8);btxt(PERF.toast,W/2,25,13,C.gold,'center',800);ctx.restore();}};
 /* small laptops (2–4 cores or little memory) start one step down */
 if((cfg.quality||'auto')==='auto'){const hc=navigator.hardwareConcurrency||8,dm=navigator.deviceMemory||8;if(hc<=4||dm<=4)PERF.level=1;}
