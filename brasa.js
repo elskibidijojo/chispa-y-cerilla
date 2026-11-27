@@ -12,7 +12,8 @@ function drawSun(b,L){const t=L?L.t:0,r=b.bomb?20:26;ctx.save();ctx.translate(b.
   else{ctx.globalAlpha=.5;for(let i=1;i<4;i++)circ(b.x-b.vx*.02*i,b.y-b.vy*.02*i,r-i*3,RED2,0);ctx.globalAlpha=1;}}
 WEAPONS.brasa={name:'Brasa Rastreadora',price:4,isl:3,desc:'Brasas rojas que persiguen solas al enemigo. Daño: Normal.',exd:'EX: un pequeño sol rojo que dispara rayos al enemigo. ¿Y si le haces parry…?',
   fire(L,p,h,ax,ay){p.cool=.16;B_(L,p,{x:h.x,y:h.y,vx:ax*680,vy:ay*680,r:7,dmg:2.56,life:1.9,k:'brasa',homing:6,draw:drawEmber});},
-  ex(L,p,h,ax,ay){const s=B_(L,p,{x:h.x+ax*60,y:h.y+ay*40-20,vx:ax*90+.001,vy:-30,r:26,dmg:0,life:2.6,k:'solrojo',pierce:true,noGain:true,draw:drawSun,tk:.25,n:0});
+  ex(L,p,h,ax,ay){for(const o of L.bul)if(o.k==='solrojo'&&o.own===p&&!o.bomb&&o.life>0){o.life=0;for(let i=0;i<8;i++){const a=i/8*TAU;L.fx.push({k:'puff',x:o.x+Math.cos(a)*10,y:o.y+Math.sin(a)*10,vx:Math.cos(a)*140,vy:Math.sin(a)*140,life:.4,max:.4,r:9,col:RED2});}puff(L,o.x,o.y,4,'#ffb08a');sfx('pop');}
+    const s=B_(L,p,{x:h.x+ax*60,y:h.y+ay*40-20,vx:ax*90+.001,vy:-30,r:26,dmg:0,life:2.6,k:'solrojo',pierce:true,noGain:true,draw:drawSun,tk:.25,n:0});
     s.upd=(b,L,dt)=>{if(b.bomb)return;b.vx*=Math.max(0,1-dt*2);b.vy*=Math.max(0,1-dt*2);b.tk-=dt;if(b.tk<=0&&b.n<8){b.tk=.28;b.n++;const t=nearestEnt(L,b.x,b.y);let a=0;if(t){const c=nearPt(t,b.x,b.y);a=Math.atan2(c.y-b.y,c.x-b.x);}
       B_(L,p,{x:b.x,y:b.y,vx:Math.cos(a)*760,vy:Math.sin(a)*760,r:9,dmg:2.5,life:1.4,k:'brasa',homing:8,noGain:true,draw:drawEmber});sfx('fire');}};}};
 if(typeof SHOTS!=='undefined')SHOTS.brasa=SHOTS.luciernaga||SHOTS.chispa;

@@ -60,10 +60,14 @@ const _db=drawBullets;drawBullets=function(L){const any=L&&((L.bul&&L.bul.some(b
 /* ---------- looks ---------- */
 const _dsa=drawSkinAcc;drawSkinAcc=function(o,ch,fy,f,ex){const sk=SKINS[o.skin];if(!sk||sk.acc!=='pato'){_dsa(o,ch,fy,f,ex);return;}const t=typeof LV!=='undefined'&&LV?LV.t:performance.now()/1000;
   ctx.save();ctx.lineJoin='round';ctx.lineCap='round';const top=fy-(ch==='cerilla'?20:ch==='velita'?22:26),by=fy+(ch==='chispa'?26:ch==='velita'?24:18);
-  /* feather tuft */ if(ch!=='velita')for(let i=-1;i<=1;i++){ctx.beginPath();ctx.moveTo(i*5,top+3);ctx.quadraticCurveTo(i*9+f*3,top-14,i*4+f*8,top-10);ctx.quadraticCurveTo(i*4,top-2,i*5+3,top+3);ctx.fillStyle='#ffd23a';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=C.ink;ctx.stroke();}
-  /* beak */ const bx=ex+f*12,byk=fy+7;ctx.beginPath();ctx.moveTo(bx-f*4,byk-5);ctx.quadraticCurveTo(bx+f*16,byk-6,bx+f*17,byk);ctx.quadraticCurveTo(bx+f*12,byk+6,bx-f*4,byk+5);ctx.closePath();ctx.fillStyle=OR;ctx.fill();ctx.lineWidth=2.2;ctx.strokeStyle=C.ink;ctx.stroke();line(bx-f*2,byk,bx+f*14,byk,1.5);
-  /* little wings */ const fl=o.air||o.dash?Math.sin(t*30)*.6:Math.sin(t*3)*.12;for(const s of[-1,1]){ctx.save();ctx.translate(s*16,by-2);ctx.rotate(s*(.4+fl));ell(s*8,0,11,6,'#ffd23a',2.2);ctx.restore();}
-  /* webbed feet */ for(const s of[-1,1])poly([[s*8,-3],[s*8+9,3],[s*8-9,3]],OR,1.8);
+  /* a little rubber duck sitting on your head (Velita: beside the flame) */ {const hx=ch==='velita'?-f*14:0,hy=top-(ch==='velita'?2:ch==='chispa'?-6:4),bob=Math.sin(t*4)*1.5;ctx.save();ctx.translate(hx,hy+bob);ctx.scale(f,1);
+    ell(0,-6,11,8,'#ffd23a',2.2);circ(7,-15,6.5,'#ffd23a',2.2);poly([[12,-16],[19,-14],[12,-12]],OR,1.6);circ(8.5,-17,1.4,C.ink,0);ell(-4,-7,5,3,'#f2b81a',0);ctx.restore();}
+  /* duck bill over the mouth: upper and lower bill, with nostrils */ {const bx=ex-f*2,byk=fy+10;ctx.save();ctx.translate(bx,byk);ctx.scale(f,1);
+    ctx.beginPath();ctx.moveTo(-6,-4);ctx.quadraticCurveTo(10,-9,17,-2);ctx.quadraticCurveTo(12,1,-6,1);ctx.closePath();ctx.fillStyle=OR;ctx.fill();ctx.lineWidth=2.2;ctx.strokeStyle=C.ink;ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-5,1);ctx.quadraticCurveTo(10,2,15,1);ctx.quadraticCurveTo(8,7,-5,5);ctx.closePath();ctx.fillStyle='#e8801a';ctx.fill();ctx.stroke();circ(6,-4,1,C.ink,0);circ(10,-4,1,C.ink,0);ctx.restore();}
+  /* little wings at the sides of the body, flapping when you jump or dash */ const fl=o.air||o.dash?Math.sin(t*30)*.7:Math.sin(t*3)*.1,wy=by+(ch==='cerilla'?6:2);
+  for(const s of[-1,1]){ctx.save();ctx.translate(s*17,wy);ctx.rotate(s*(.9+fl));ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(s*12,-6,s*14,4);ctx.quadraticCurveTo(s*8,4,s*10,10);ctx.quadraticCurveTo(s*3,8,0,0);ctx.closePath();ctx.fillStyle='#ffe066';ctx.fill();ctx.lineWidth=2;ctx.strokeStyle=C.ink;ctx.stroke();ctx.restore();}
+  /* blush */ ctx.globalAlpha=.55;ell(ex+f*12,fy+4,4,2.5,'#ff9a7a',0);ctx.globalAlpha=1;
   ctx.restore();};
 /* entrance: the duck flies down from the sky, lands with a splash and quacks (drawing only) */
 const _dh=drawHero;drawHero=function(o){if(!o||o.skin!=='skin_pato'||o.scale||typeof LV==='undefined'||!LV||scene!=='level'){_dh(o);return;}const L=LV,t=L.t;
