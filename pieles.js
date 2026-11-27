@@ -14,3 +14,7 @@ window.SKIN_PAL2=PAL;
 const _dh=drawHero;drawHero=function(o){const pal=o&&o.skin&&PAL[o.skin];if(!pal){_dh(o);return;}const old={};for(const k in pal){old[k]=C[k];C[k]=pal[k];}try{_dh(o);}finally{for(const k in old)C[k]=old[k];}};
 if(typeof drawPlaneHero==='function'){const _dp=drawPlaneHero;drawPlaneHero=function(o){const pal=o&&o.skin&&PAL[o.skin];if(!pal){_dp(o);return;}const old={};for(const k in pal){old[k]=C[k];C[k]=pal[k];}try{_dp(o);}finally{for(const k in old)C[k]=old[k];}};}
 })();
+/* No colour filters at all on the main game canvas: a canvas filter is applied to every single shape drawn
+   while it's on, which is what made the game crawl on school laptops (the ghost after you die, the clone Súper,
+   costume tints…). Small off-screen layers that are drawn once can still use them. */
+try{Object.defineProperty(ctx,'filter',{configurable:true,get(){return 'none';},set(v){}});}catch(e){}
