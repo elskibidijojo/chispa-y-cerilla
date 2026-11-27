@@ -7,7 +7,7 @@
    All of it runs in the simulation (rand-free or with the game's own rand), so online play stays in sync. */
 (function(){
 Object.assign(CHARMS,{
-  pajarito:{name:'Pajarito Ayudante',price:4,isl:1,desc:'Un pajarito te sigue y dispara semillas que persiguen al enemigo él solito. Poco daño, pero nunca descansa.'},
+  pajarito:{name:'Pajarito Ayudante',price:3,isl:1,desc:'Un pajarito te sigue y dispara semillas que persiguen al enemigo él solito. Nunca descansa.'},
   paraguas:{name:'Paraguas',price:3,isl:2,desc:'Mantén SALTAR mientras caes para bajar flotando despacito. Perfecto para esquivar lo que pasa por el suelo.'},
   te:{name:'Taza de Té',price:4,isl:3,desc:'Una vez por pelea: si te queda 1 corazón y aguantas 8 segundos sin que te peguen, recuperas un corazón.'}});
 SUPERS.ola={name:'Ola Gigante',price:5,isl:2,desc:'Una ola enorme cruza toda la pantalla: golpea a todos los enemigos que toca y se lleva las balas enemigas (menos las rosas).'};
@@ -17,7 +17,7 @@ if(typeof refreshShopTabs==='function')refreshShopTabs();
 const birdPos=(p,t)=>({x:p.x-(p.face||1)*30,y:(p.type==='plane'?p.y-40:p.y-86)+Math.sin(t*4+(p.i||0))*6});
 const _sT=superTick;superTick=function(L,p,dt){_sT(L,p,dt);if(!L||!p||p.dead||L.state!=='play')return;
   if(hasCharm(p,'pajarito')){p._bird=(p._bird||0)-dt;if(p._bird<=0){p._bird=.5;const b=birdPos(p,L.t);
-      B_(L,p,{x:b.x,y:b.y,vx:(p.face||1)*520,vy:-40,r:6,dmg:.9,life:2,k:'semilla',homing:6,noGain:true,draw:drawSeed});}}
+      B_(L,p,{x:b.x,y:b.y,vx:(p.face||1)*520,vy:-40,r:6,dmg:2.6,life:2,k:'semilla',homing:6,noGain:true,draw:drawSeed});}}
   if(hasCharm(p,'te')&&!p._teUsed){if(p._lastHp!==undefined&&p.hp<p._lastHp)p._teT=0;p._lastHp=p.hp;
     if(p.hp===1){p._teT=(p._teT||0)+dt;if(p._teT>=8){p._teUsed=true;p.hp++;p._lastHp=p.hp;sfx('coin');sfx('magic');pop(L,p.x,p.y-110,'¡+1 ♥ TÉ CALENTITO!','#7fd05a');}}else p._teT=0;}};
 const _pu=platUpdate;platUpdate=function(L,p,dt,I){const r=_pu(L,p,dt,I);if(p&&hasCharm(p,'paraguas')&&!p.ground&&I&&I.h&&I.h.jump&&p.vy>140&&p.dash<=0){p.vy=140;p._umb=.15;}else if(p&&p._umb>0)p._umb-=dt;return r;};
